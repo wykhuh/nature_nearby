@@ -3,7 +3,7 @@ import { html } from "../../lib/component_utils";
 export const template = html`
   <header>
     <nav class="navbar" id="sitenav">
-      <span class="navbar-brand">My site</span>
+      <span class="navbar-brand">Nature Near Me</span>
       <ul class="navbar-nav">
         <li>
           <a href="/" class="navlink" role="menuitem">Home</a>

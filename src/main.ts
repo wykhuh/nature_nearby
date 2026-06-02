@@ -1,6 +1,9 @@
 import "./components/PageHome/component.ts";
 import "./components/PageAbout/component.ts";
 import "./components/AppHeader/component.ts";
+import "./components/ViewSearch/component.ts";
+import "./components/ViewSpecies/component.ts";
+import "./components/ViewObservations/component.ts";
 
 import store from "./lib/store.ts";
 import { initApp, registerServiceWorker } from "./lib/init_app.ts";

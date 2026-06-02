@@ -115,3 +115,10 @@ type GeolocationData = {
   };
   timestamp: number;
 };
+
+export type ValidViews = "search" | "observations" | "species";
+
+// https://stackoverflow.com/a/79734045
+export type ViewComponentType = {
+  [k in (typeof validView)[number]]: string;
+};
