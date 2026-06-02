@@ -1,3 +1,25 @@
-import './style.css'
+import "./components/PageHome/component.ts";
+import "./components/PageAbout/component.ts";
+import "./components/AppHeader/component.ts";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `hi`
+import store from "./lib/store.ts";
+import { initApp, registerServiceWorker } from "./lib/init_app.ts";
+import Router from "./lib/router.ts";
+
+await registerServiceWorker();
+
+window.app = { store: store, router: Router };
+
+// populate app store
+await initApp(
+  window.location.search,
+  window.location.pathname,
+  window.app.store,
+);
+// load page component
+Router.init();
+
+// called when user pressess browser back or next
+window.addEventListener("popstate", (event) => {
+  Router.go(event.state.pathname);
+});
