@@ -1,4 +1,7 @@
-import type { iNatObservationsAPI } from "../../types/inat_api";
+import type {
+  iNatObservationsAPI,
+  iNatObservationsSpeciesAPI,
+} from "../../types/inat_api";
 
 export const globalObs: iNatObservationsAPI = {
   total_results: 321601271,
@@ -180,6 +183,133 @@ export const globalObs: iNatObservationsAPI = {
           license_code: null,
         },
       ],
+    },
+  ],
+};
+
+export const globalObsSpecies: iNatObservationsSpeciesAPI = {
+  total_results: 15645,
+  page: 1,
+  per_page: 5,
+  results: [
+    {
+      count: 42755,
+      taxon: {
+        id: 36204,
+        establishment_means: {
+          establishment_means: "native",
+        },
+        default_photo: {
+          id: 36416485,
+          attribution:
+            "(c) Steven Kurniawidjaja, some rights reserved (CC BY-NC), uploaded by Steven Kurniawidjaja",
+          license_code: "cc-by-nc",
+          medium_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/36416485/medium.jpeg",
+          square_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/36416485/square.jpeg",
+          url: "https://inaturalist-open-data.s3.amazonaws.com/photos/36416485/square.jpeg",
+        },
+        iconic_taxon_name: "Reptilia",
+        name: "Sceloporus occidentalis",
+        preferred_common_name: "Western Fence Lizard",
+        rank: "species",
+      },
+    },
+    {
+      count: 22430,
+      taxon: {
+        id: 46020,
+        establishment_means: {
+          establishment_means: "introduced",
+        },
+        default_photo: {
+          id: 337444041,
+          attribution:
+            "(c) Tobin Brown, some rights reserved (CC BY-NC), uploaded by Tobin Brown",
+          license_code: "cc-by-nc",
+          medium_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/337444041/medium.jpeg",
+          square_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/337444041/square.jpeg",
+          url: "https://inaturalist-open-data.s3.amazonaws.com/photos/337444041/square.jpeg",
+        },
+        iconic_taxon_name: "Mammalia",
+        name: "Sciurus niger",
+        preferred_common_name: "Eastern Fox Squirrel",
+        rank: "species",
+      },
+    },
+    {
+      count: 21234,
+      taxon: {
+        id: 47219,
+        establishment_means: {
+          establishment_means: "introduced",
+        },
+        default_photo: {
+          id: 2369526,
+          attribution:
+            "(c) Georges-Alexandre Cotnoir, all rights reserved, uploaded by Georges-Alexandre Cotnoir",
+          license_code: null,
+          medium_url:
+            "https://static.inaturalist.org/photos/2369526/medium.jpg",
+          square_url:
+            "https://static.inaturalist.org/photos/2369526/square.jpg",
+          url: "https://static.inaturalist.org/photos/2369526/square.jpg",
+        },
+        iconic_taxon_name: "Insecta",
+        name: "Apis mellifera",
+        preferred_common_name: "Western Honey Bee",
+        rank: "species",
+      },
+    },
+    {
+      count: 19624,
+      taxon: {
+        id: 5212,
+        establishment_means: {
+          establishment_means: "native",
+        },
+        default_photo: {
+          id: 101327658,
+          attribution:
+            "(c) Craig K. Hunt, some rights reserved (CC BY-NC), uploaded by Craig K. Hunt",
+          license_code: "cc-by-nc",
+          medium_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/101327658/medium.jpg",
+          square_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/101327658/square.jpg",
+          url: "https://inaturalist-open-data.s3.amazonaws.com/photos/101327658/square.jpg",
+        },
+        iconic_taxon_name: "Aves",
+        name: "Buteo jamaicensis",
+        preferred_common_name: "Red-tailed Hawk",
+        rank: "species",
+      },
+    },
+    {
+      count: 16465,
+      taxon: {
+        id: 6930,
+        establishment_means: {
+          establishment_means: "native",
+        },
+        default_photo: {
+          id: 95268822,
+          attribution: "(c) anonymous, some rights reserved (CC BY-SA)",
+          license_code: "cc-by-sa",
+          medium_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/95268822/medium.jpg",
+          square_url:
+            "https://inaturalist-open-data.s3.amazonaws.com/photos/95268822/square.jpg",
+          url: "https://inaturalist-open-data.s3.amazonaws.com/photos/95268822/square.jpg",
+        },
+        iconic_taxon_name: "Aves",
+        name: "Anas platyrhynchos",
+        preferred_common_name: "Mallard",
+        rank: "species",
+      },
     },
   ],
 };

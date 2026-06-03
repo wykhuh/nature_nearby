@@ -416,6 +416,14 @@
 }
 
 @layer components {
+  .popover__content {
+    position: absolute;
+    visibility: hidden;
+  }
+  .popover__wrapper:hover .popover__content {
+    visibility: visible;
+  }
+
   #view-container {
     margin: 1rem 0.5rem;
   }
@@ -442,20 +450,8 @@
     }
   }
 
-  #observations-grid {
-    .card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      border: var(--border-grey);
-    }
-
-    .details {
-      display: flex;
-      flex-direction: column;
-      padding: 0.5rem 0.75rem;
-    }
-
+  #observations-grid,
+  #observations-species-grid {
     .details {
       a.title,
       a.subtitle {
@@ -471,21 +467,6 @@
       }
     }
 
-    .observed-data {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .avatar-name {
-      margin-right: 1rem;
-    }
-    .observed {
-      height: 36px;
-      display: flex;
-      align-content: center;
-      flex-wrap: wrap;
-    }
-
     .title {
       font-weight: var(--fw-bold);
       line-height: 1.25;
@@ -499,6 +480,36 @@
 
     .scientific-name {
       font-style: italic;
+    }
+  }
+
+  #observations-grid {
+    .card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: var(--border-grey);
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .observed-data {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .avatar-name {
+      margin-right: 1rem;
+    }
+    .observed {
+      height: 36px;
+      display: flex;
+      align-content: center;
+      flex-wrap: wrap;
     }
 
     .media {
@@ -557,7 +568,7 @@
     }
   }
 
-  .species-grid {
+  #observations-species-grid {
     .card {
       display: flex;
       flex-direction: column;

@@ -63,7 +63,7 @@ class PageHome extends HTMLElement {
       appStore.map = renderMap();
     }
 
-    setView("observations", appStore, this);
+    setView("species", appStore, this);
   }
 }
 

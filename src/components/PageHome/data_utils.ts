@@ -1,7 +1,10 @@
-import { globalObs } from "../../data/api/observations";
+import { globalObs, globalObsSpecies } from "../../data/api/observations";
 import { getObservations, getObservationsSpecies } from "../../lib/inat_api";
 import type { AppStoreType } from "../../types/app";
-import type { iNatObservationsAPI } from "../../types/inat_api";
+import type {
+  iNatObservationsAPI,
+  iNatObservationsSpeciesAPI,
+} from "../../types/inat_api";
 
 export async function getObservationsData(appStore: AppStoreType) {
   if (import.meta.env?.VITE_CACHE === "true") {
@@ -18,12 +21,18 @@ export async function getObservationsData(appStore: AppStoreType) {
   }
 }
 
-export async function getSpeciesListData(appStore: AppStoreType) {
+export async function getObservationsSpeciesData(appStore: AppStoreType) {
+  if (import.meta.env?.VITE_CACHE === "true") {
+    return globalObsSpecies.results;
+  }
+
   let paramsString = new URLSearchParams(
     appStore.observationsParams as any,
   ).toString();
 
-  let data = await getObservationsSpecies(paramsString);
+  let data = (await getObservationsSpecies(
+    paramsString,
+  )) as iNatObservationsSpeciesAPI;
   if (data) {
     return data.results;
   }
