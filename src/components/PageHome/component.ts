@@ -6,7 +6,7 @@ import { setupComponent } from "../../lib/component_utils";
 import type { AppStoreType, ValidViews } from "../../types/app";
 import { template } from "./template";
 import { removeMap, renderMap } from "../../lib/map_utils.ts";
-import { changeView } from "./utils.ts";
+import { setView } from "./utils.ts";
 
 class PageHome extends HTMLElement {
   constructor() {
@@ -52,17 +52,18 @@ class PageHome extends HTMLElement {
       if (views.includes(target.id)) {
         let view = target.dataset.view as ValidViews;
         if (view) {
-          changeView(view, appStore, this);
+          setView(view, appStore, this);
         }
       }
     }
   }
 
   async render(appStore: AppStoreType) {
-    // render map
     if (!appStore.map) {
       appStore.map = renderMap();
     }
+
+    setView("observations", appStore, this);
   }
 }
 

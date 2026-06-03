@@ -1,5 +1,6 @@
 import { setupComponent } from "../../lib/component_utils";
-import type { AppStoreType } from "../../types/app";
+import type { AppStoreType, DataComponentType } from "../../types/app";
+import { getObservationsData } from "../PageHome/data_utils";
 import { template } from "./template";
 
 class ViewObservations extends HTMLElement {
@@ -7,9 +8,11 @@ class ViewObservations extends HTMLElement {
     super();
   }
 
+  containerEl: null | HTMLDivElement = null;
+
   connectedCallback() {
     setupComponent(template, this);
-
+    this.containerEl = this.querySelector("#observations-grid");
     this.render(window.app.store);
   }
 
@@ -22,7 +25,18 @@ class ViewObservations extends HTMLElement {
     console.log(appStore);
   }
 
-  async render(_appStore: AppStoreType) {}
+  async render(appStore: AppStoreType) {
+    let results = await getObservationsData(appStore);
+    if (results) {
+      results.forEach((result) => {
+        let component = document.createElement(
+          "card-observation",
+        ) as DataComponentType;
+        component.data = result;
+        this.containerEl?.appendChild(component);
+      });
+    }
+  }
 }
 
 customElements.define("view-observations", ViewObservations);

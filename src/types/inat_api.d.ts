@@ -2,51 +2,74 @@
 // obseservations
 // ==================
 
-type iNatObservationsBasicAPI = {
+type iNatObservationsAPI = {
   total_results: number;
   page: number;
   per_page: number;
-  results: ObservationsBasicResult[];
+  results: ObservationsResult[];
 };
 
-export type ObservationsBasicResult = {
+export type ObservationsResult = {
   uuid: string;
   id: number;
-  user: { id: number; login: string };
+  user: ObservationUser;
   place_guess: string;
+  obscured: boolean;
   observed_on: string;
   time_observed_at: string;
+  observed_time_zone: string;
   quality_grade: string;
   license_code: CCLicense;
-  photos: BasicPhoto[];
-  taxon: BasicTaxon;
+  photos: ObservationPhoto[];
+  sounds: ObservationSound[];
+  taxon: ObservationTaxon;
 };
 
-export type BasicTaxon = {
+export type ObservationUser = {
+  id: number;
+  login: string;
+  icon_url: string | null;
+  icon: string | null;
+};
+
+export type ObservationTaxon = {
+  conservation_status?: {
+    id: number;
+    status: string;
+  };
+  establishment_means?: { establishment_means: string };
+  iconic_taxon_name?: string;
   id: number;
   name: string;
   preferred_common_name?: string;
   rank: string;
-  default_photo?: BasicPhoto;
+  default_photo?: DefaultPhoto;
 };
 
-export type BasicPhoto = {
+export type ObservationPhoto = {
   id: number;
   url: string;
   attribution: string;
   license_code: CCLicense | null;
 };
 
-export type iNatObservationsSpeciesBasicAPI = {
+export interface ObservationSound {
+  attribution?: string;
+  file_url?: string;
+  id: number;
+  license_code?: CCLicense | null;
+}
+
+export type iNatObservationsSpeciesAPI = {
   total_results: number;
   page: number;
   per_page: number;
-  results: ObservationsSpeciesBasicResult[];
+  results: ObservationsSpeciesResult[];
 };
 
-export type ObservationsSpeciesBasicResult = {
+export type ObservationsSpeciesResult = {
   count: number;
-  taxon: BasicTaxon;
+  taxon: ObservationTaxon;
 };
 
 // ==================
@@ -214,3 +237,34 @@ type PlaceResult = {
   name: string;
   place_type: number;
 };
+
+// ==================
+// autocomplete api
+// ==================
+
+export interface iNatAutocompleteTaxaAPI {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: AutocompleteTaxaResult[];
+}
+
+export interface AutocompleteTaxaResult {
+  default_photo: DefaultPhoto | null;
+  iconic_taxon_name?: string;
+  id: number;
+  matched_term: string;
+  name: string;
+  preferred_common_name?: string;
+  rank: string;
+}
+
+export interface DefaultPhoto {
+  attribution_name?: string;
+  attribution: string;
+  id: number;
+  license_code?: CCLicense | "pd" | null;
+  medium_url: string;
+  square_url: string;
+  url: string;
+}

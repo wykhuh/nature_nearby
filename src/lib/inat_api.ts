@@ -1,6 +1,6 @@
 import type {
-  iNatObservationsBasicAPI,
-  iNatObservationsSpeciesBasicAPI,
+  iNatObservationsAPI,
+  iNatObservationsSpeciesAPI,
   iNatPlacesAPI,
 } from "../types/inat_api.d.ts";
 import { loggerUrl } from "./logger.ts";
@@ -23,6 +23,7 @@ export async function inatFetch(url: string, funcName: string) {
         message = json.error;
       }
       console.error(message);
+      return;
     }
 
     let data = await resp.json();
@@ -35,19 +36,22 @@ export async function inatFetch(url: string, funcName: string) {
 export async function getObservations(appParams: string) {
   const fields =
     "(id:!t," +
-    "user:(login:!t)," +
+    "user:(login:!t,icon_url:!t,icon:!t)," +
     "place_guess:!t," +
     "observed_on:!t," +
+    "observed_time_zone:!t," +
+    "obscured:!t," +
     "time_observed_at:!t," +
     "quality_grade:!t," +
     "license_code:!t," +
+    "sounds:(id:!t,file_url:!t,attribution:!t,license_code:!t)," +
     "taxon:(name:!t,preferred_common_name:!t,rank:!t)," +
     "photos:(id:!t,url:!t,attribution:!t,license_code:!t))";
   let url = `${observations_api}?${appParams}` + `&fields=${fields}`;
   let data = (await inatFetch(
     url,
     "getObservationPhoto",
-  )) as iNatObservationsBasicAPI;
+  )) as iNatObservationsAPI;
   if (data) {
     loggerUrl(url.split("&fields")[0] + "&fields...", data.total_results);
     return data;
@@ -58,6 +62,10 @@ export async function getObservationsSpecies(appParams: string) {
   let fields =
     "(taxon:" +
     "(" +
+    "establishment_means:(establishment_means:!t)," +
+    "conservation_status:(status:!t)," +
+    "default_photo:(attribution:!t,license_code:!t,medium_url:!t,square_url:!t,url:!t)," +
+    "iconic_taxon_name:!t," +
     "id:!t," +
     "name:!t," +
     "preferred_common_name:!t," +
@@ -68,7 +76,7 @@ export async function getObservationsSpecies(appParams: string) {
   let data = (await inatFetch(
     url,
     "getObservationsSpeciesBasic",
-  )) as iNatObservationsSpeciesBasicAPI;
+  )) as iNatObservationsSpeciesAPI;
   if (data) {
     loggerUrl(url.split("&fields")[0] + "&fields...", data.total_results);
     return data;

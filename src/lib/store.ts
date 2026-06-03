@@ -5,6 +5,8 @@ export const defaultStore: AppStoreType = {
   map: null,
   selectedPlaces: [],
   selectedTaxa: [],
+  observationsParams: { spam: false, verifiable: true, per_page: 24 },
+  viewMetadata: { name_order: "cs" },
 };
 
 const proxiedStore = new Proxy(structuredClone(defaultStore), {

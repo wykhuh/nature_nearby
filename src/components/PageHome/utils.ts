@@ -1,12 +1,12 @@
+import { viewComponentObj } from "../../data/app_data";
 import type { AppStoreType, ValidViews } from "../../types/app";
-import { viewComponent } from "../data/app_data";
 
-export function changeView(
+export function setView(
   view: ValidViews,
   _appStore: AppStoreType,
   componentCtx: any,
 ) {
   componentCtx.viewContainerEl.innerHTML = "";
-  let component = document.createElement(viewComponent[view]);
+  let component = document.createElement(viewComponentObj[view]);
   componentCtx.viewContainerEl.appendChild(component);
 }

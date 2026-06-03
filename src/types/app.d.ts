@@ -1,7 +1,7 @@
 import type { GeoJSON, Map } from "leaflet";
 
 import type {
-  BasicPhoto,
+  ObservationPhoto,
   CCLicense,
   MultiPolygonJson,
   PolygonJson,
@@ -18,6 +18,20 @@ export type AppStoreType = {
   map: Map | null;
   selectedPlaces: NormalizedPlace[];
   selectedTaxa: NormalizedTaxon[];
+  observationsParams: ObservationsApiParamsType;
+  viewMetadata: { name_order };
+};
+
+type ObservationsApiParamsType = {
+  taxon_id?: string;
+  place_id?: string;
+  verifiable?: boolean | "any";
+  spam?: boolean;
+  order?: string;
+  order_by?: string;
+  page?: number;
+  per_page?: number;
+  locale?: string;
 };
 
 export type AppPage = "home" | "about";
@@ -30,7 +44,7 @@ export type NormalizedTaxon = {
   name: string;
   preferred_common_name: string;
   rank: string;
-  photos: BasicPhoto[];
+  photos: ObservationPhoto[];
 };
 
 export type NormalizedPlace = {
@@ -117,8 +131,14 @@ type GeolocationData = {
 };
 
 export type ValidViews = "search" | "observations" | "species";
+export type NameOrderType = "cs" | "sc" | "s";
 
 // https://stackoverflow.com/a/79734045
 export type ViewComponentType = {
   [k in (typeof validView)[number]]: string;
 };
+
+export interface DataComponentType extends HTMLElement {
+  data?: any;
+  type?: string;
+}

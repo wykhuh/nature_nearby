@@ -4,6 +4,7 @@ import "./components/AppHeader/component.ts";
 import "./components/ViewSearch/component.ts";
 import "./components/ViewSpecies/component.ts";
 import "./components/ViewObservations/component.ts";
+import "./components/CardObservation/component.ts";
 
 import store from "./lib/store.ts";
 import { initApp, registerServiceWorker } from "./lib/init_app.ts";
