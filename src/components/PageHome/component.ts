@@ -60,8 +60,8 @@ class PageHome extends HTMLElement {
   }
 
   async render(appStore: AppStoreType) {
-    if (!appStore.map) {
-      appStore.map = renderMap();
+    if (!appStore.map.map) {
+      appStore.map.map = renderMap();
     }
     if (!this.viewContainerEl) return;
     if (!appStore.currentView) return;

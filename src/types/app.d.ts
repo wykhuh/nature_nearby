@@ -8,47 +8,85 @@ declare global {
   }
 }
 
+export type ValidViews = "search" | "observations" | "species";
+export type NameOrderType = "cs" | "sc" | "s";
+export type AppPage = "home" | "about";
 export type AppStoreType = {
   currentPage: AppPage;
   currentView?: ValidViews;
-  map: Map | null;
+  map: {
+    map: Map | null;
+    layerControl: Control.Layers | null;
+  };
   selectedPlaces: NormalizedPlace[];
   selectedTaxa: NormalizedTaxon[];
   observationsApiParams: ObservationsApiParamsType;
   viewMetadata: { name_order };
+  color?: string;
+  primaryColorScheme: keyof typeof appColorSchemes;
 };
 
 type ObservationsApiParamsType = {
-  taxon_id?: string;
-  place_id?: string;
-  verifiable?: boolean | "any";
-  spam?: boolean;
+  captive?: boolean;
+  colors?: string;
+  d1?: string;
+  d2?: string;
+  day?: string;
+  endemic?: boolean;
+  hour?: string;
+  introduced?: boolean;
+  lat?: number;
+  license?: string;
+  lng?: number;
+  locale?: string;
+  month?: string;
+  native?: boolean;
+  nelat?: number;
+  nelng?: number;
+  obscuration?: ObscurationValue;
   order?: string;
   order_by?: string;
   page?: number;
   per_page?: number;
-  locale?: string;
+  photo_license?: string;
+  photos?: boolean;
+  place_id?: string;
+  quality_grade?: QualityGrade;
+  radius?: number;
+  sounds?: boolean;
+  spam?: boolean;
+  swlat?: number;
+  swlng?: number;
+  taxon_id?: string;
+  verifiable?: boolean | "any";
+  year?: string;
 };
 
-export interface ValidAppParams extends ObservationsApiParamsType {}
+export type ObservationsApiParamsKeysType = keyof ObservationsApiParamsType;
 
-export type AppPage = "home" | "about";
+export interface ValidAppParams extends ObservationsApiParamsType {}
+export type ValidAppParamsKeys = keyof ValidAppParams;
 
 export type NormalizedTaxon = {
+  color?: string;
+  count?: number;
+  default_photo?: string;
+  iconic_taxon_name?: string;
   id: number;
-  count: number;
-  iconic_taxon_name: string;
-  name: string;
-  preferred_common_name: string;
-  rank: string;
-  photos: ObservationPhoto[];
+  matched_term?: string;
+  name?: string;
+  photos?: DefaultPhoto[];
+  preferred_common_name?: string;
+  rank?: string;
+  subtitle?: string;
+  title?: string;
 };
 
 export type NormalizedPlace = {
-  display_name?: string;
-  geometry?: PolygonJson | MultiPolygonJson;
   bounding_box?: PolygonJson;
+  geometry?: PolygonJson | MultiPolygonJson;
   id: number;
+  name?: string;
   place_type_name?: string;
 };
 
@@ -122,9 +160,6 @@ type GeolocationData = {
   timestamp: number;
 };
 
-export type ValidViews = "search" | "observations" | "species";
-export type NameOrderType = "cs" | "sc" | "s";
-
 // https://stackoverflow.com/a/79734045
 export type ViewComponentType = {
   [k in (typeof validView)[number]]: string;
@@ -136,3 +171,8 @@ export interface DataComponentType extends HTMLElement {
 }
 
 export type PaginationCallback = (currentPage: number, appStore: AppStoreType) => Promise<void>;
+export type AppColorSchemes = {
+  [k: string]: string[];
+};
+
+export type AppColorSchemesNames = keyof AppColorSchemes;

@@ -140,7 +140,7 @@ export function fitBoundsPlaces(
   place: NormalizedPlace,
   appStore: AppStoreType,
 ) {
-  let map = appStore.map;
+  let map = appStore.map.map;
   if (!map) return;
 
   let bbox = place.bounding_box;
@@ -192,9 +192,9 @@ export function renderCircleMarker(settings: CircleSettings, map: Map) {
 }
 
 export function removeMap(appStore: AppStoreType) {
-  if (appStore.map) {
+  if (appStore.map.map) {
     // remove map and event listeners
-    appStore.map.remove();
-    appStore.map = null;
+    appStore.map.map.remove();
+    appStore.map.map = null;
   }
 }

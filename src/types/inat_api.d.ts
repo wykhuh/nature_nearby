@@ -244,6 +244,35 @@ type PlaceResult = {
 };
 
 // ==================
+// taxa api
+// ==================
+
+export type iNatTaxaAPI = {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: TaxonResult[];
+};
+
+type TaxonResult = {
+  id: number;
+  preferred_common_name: string;
+  name: string;
+  iconic_taxon_name: string;
+  default_photo: DefaultPhoto;
+  rank: string;
+};
+
+export interface DefaultPhoto {
+  attribution: string;
+  id: number;
+  license_code?: CCLicense | "pd" | null;
+  medium_url: string;
+  square_url: string;
+  url: string;
+}
+
+// ==================
 // autocomplete api
 // ==================
 
