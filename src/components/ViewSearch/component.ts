@@ -1,6 +1,7 @@
 import { setupComponent } from "../../lib/component_utils";
 import type { AppStoreType } from "../../types/app";
 import { template } from "./template";
+import { initFilters } from "./utils";
 
 class ViewSearch extends HTMLElement {
   constructor() {
@@ -22,7 +23,9 @@ class ViewSearch extends HTMLElement {
     console.log(appStore);
   }
 
-  async render(_appStore: AppStoreType) {}
+  async render(appStore: AppStoreType) {
+    initFilters(appStore);
+  }
 }
 
 customElements.define("view-search", ViewSearch);
