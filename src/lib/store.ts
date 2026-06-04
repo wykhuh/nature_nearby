@@ -7,6 +7,7 @@ export const defaultStore: AppStoreType = {
   selectedTaxa: [],
   observationsParams: { spam: false, verifiable: true, per_page: 24 },
   viewMetadata: { name_order: "cs" },
+  currentView: "search",
 };
 
 const proxiedStore = new Proxy(structuredClone(defaultStore), {

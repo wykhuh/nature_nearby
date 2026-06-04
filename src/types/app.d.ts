@@ -10,6 +10,7 @@ declare global {
 
 export type AppStoreType = {
   currentPage: AppPage;
+  currentView?: ValidViews;
   map: Map | null;
   selectedPlaces: NormalizedPlace[];
   selectedTaxa: NormalizedTaxon[];
