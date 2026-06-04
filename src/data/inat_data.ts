@@ -17,3 +17,6 @@ export const CCLicenses = [
 export const gbifObservationsCC = ["cc0", "cc-by", "cc-by-nc"];
 export const wikimediaPhotosCC = ["cc0", "cc-by"];
 export const siteCC = ["cc0", "cc-by", "cc-by-nc", "cc-by-sa", "cc-by-nc-sa"];
+
+export const geoprivacyValues = ["obscured", "obscured_private", "open", "private"];
+export const obscurationValues = ["obscured", "private", "none"];

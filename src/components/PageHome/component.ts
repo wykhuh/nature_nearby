@@ -7,6 +7,7 @@ import type { AppStoreType, ValidViews } from "../../types/app";
 import { template } from "./template";
 import { removeMap, renderMap } from "../../lib/map_utils.ts";
 import { setView } from "./utils.ts";
+import { viewComponentObj } from "../../data/app_data.ts";
 
 class PageHome extends HTMLElement {
   constructor() {
@@ -62,8 +63,13 @@ class PageHome extends HTMLElement {
     if (!appStore.map) {
       appStore.map = renderMap();
     }
+    if (!this.viewContainerEl) return;
+    if (!appStore.currentView) return;
 
-    setView("observations", appStore, this);
+    let component = document.createElement(
+      viewComponentObj[appStore.currentView],
+    );
+    this.viewContainerEl.appendChild(component);
   }
 }
 
