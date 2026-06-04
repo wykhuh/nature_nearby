@@ -1,6 +1,18 @@
-import type { AppStoreType, NormalizedTaxon } from "../types/app";
-import type { ObservationTaxon } from "../types/inat_api";
+import type {
+  AppStoreType,
+  NormalizedPlace,
+  NormalizedTaxon,
+  PlaceTypesKey,
+} from "../types/app";
+import type {
+  ObservationTaxon,
+  PlaceResult,
+  PlaceSearchRecord,
+  TaxonResult,
+} from "../types/inat_api";
 import { capitalizeFirstLetter } from "./utils";
+import { getColor, primaryColorScheme } from "./map_colors_utils";
+import { placeTypes } from "../data/inat_data";
 
 export function formatTaxonName(
   item: ObservationTaxon | NormalizedTaxon,
@@ -62,5 +74,42 @@ export function formatTaxonName(
     subtitleAriaLabel,
     hasCommonName,
     rank,
+  };
+}
+
+export function normalizePlaceResult(
+  record: PlaceSearchRecord | PlaceResult,
+): NormalizedPlace {
+  let typeName;
+  if (record.place_type) {
+    typeName = placeTypes[record.place_type.toString() as PlaceTypesKey];
+  }
+  return {
+    name: record.display_name,
+    geometry: record.geometry_geojson as any,
+    bounding_box: record.bounding_box_geojson,
+    id: record.id,
+    place_type_name: typeName,
+  };
+}
+
+export function normalizeTaxonResult(
+  record: TaxonResult,
+  appStore: AppStoreType,
+): NormalizedTaxon {
+  let nameData = formatTaxonName(record, appStore);
+  let color = getColor(appStore, primaryColorScheme);
+  appStore.color = color;
+
+  return {
+    id: record.id,
+    name: record.name,
+    preferred_common_name: record.preferred_common_name,
+    iconic_taxon_name: record.iconic_taxon_name,
+    photos: [record.default_photo],
+    color: color,
+    rank: nameData.rank,
+    title: nameData.title,
+    subtitle: nameData.subtitle,
   };
 }

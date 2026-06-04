@@ -176,3 +176,8 @@ export type AppColorSchemes = {
 };
 
 export type AppColorSchemesNames = keyof AppColorSchemes;
+
+export type PlaceTypes = {
+  [key: string]: string;
+};
+export type PlaceTypesKey = keyof PlaceTypes;

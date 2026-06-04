@@ -3,6 +3,7 @@ import type {
   iNatObservationsAPI,
   iNatObservationsSpeciesAPI,
   iNatPlacesAPI,
+  iNatTaxaAPI,
 } from "../types/inat_api.d.ts";
 import { loggerUrl } from "./logger.ts";
 
@@ -11,6 +12,7 @@ export const autocomplete_places_api = `${search_api}?fields=all&sources=places`
 export const autocomplete_projects_api = `${search_api}?fields=all&sources=projects`;
 const observations_api = "https://api.inaturalist.org/v2/observations";
 const places_api = "https://api.inaturalist.org/v2/places";
+const taxa_api = "https://api.inaturalist.org/v2/taxa";
 
 export async function inatFetch(url: string, funcName: string) {
   try {
@@ -101,12 +103,28 @@ export async function getAutocompleteProjects(query: string) {
 export async function getPlaceById(id: number | string) {
   let fields =
     "(bounding_box_geojson:!t,display_name:!t,geometry_geojson:!t,name:!t,place_type:!t)";
-  let data = (await inatFetch(`${places_api}/${id}?fields=${fields}`, "getPlaceById")) as
+  let url = `${places_api}/${id}?fields=${fields}`;
+  let data = (await inatFetch(url, "getPlaceById")) as
     | iNatPlacesAPI
     | iNatAPIError;
   if ("results" in data) {
-    return data.results[0];
-  } else {
-    return data;
+    loggerUrl(url, data.total_results);
   }
+  return data;
+}
+
+export async function getTaxonById(ids: number | string) {
+  let fields =
+    `(preferred_common_name:!t,` +
+    `name:!t,` +
+    `iconic_taxon_name:!t,` +
+    "default_photo:(attribution:!t,license_code:!t,medium_url:!t,square_url:!t,url:!t)," +
+    `rank:!t` +
+    `)`;
+  let url = `${taxa_api}/${ids}?fields=${fields}`;
+  let data = (await inatFetch(url, "getTaxonById")) as iNatTaxaAPI;
+  if ("results" in data) {
+    loggerUrl(url, data.total_results);
+  }
+  return data;
 }
