@@ -1,4 +1,6 @@
-import type { PlaceTypes } from "../types/app";
+import { iNatOrange } from "../lib/map_colors_utils";
+import type { PlaceTypes, NormalizedTaxon } from "../types/app";
+
 export const iNatTaxaUrl = "https://www.inaturalist.org/taxa";
 export const iNatPlacesUrl = "https://www.inaturalist.org/places";
 export const iNatProjectsUrl = "https://www.inaturalist.org/projects";
@@ -26,6 +28,14 @@ export const geoprivacyValues = [
   "private",
 ];
 export const obscurationValues = ["obscured", "private", "none"];
+
+export const allTaxaRecord: NormalizedTaxon = {
+  id: 0,
+  color: iNatOrange,
+  title: "All species",
+  preferred_common_name: "All species",
+};
+
 //forum.inaturalist.org/t/what-is-places-type-for-the-api-call-for-places-nearby/49446/2?u=wy_bio
 export const placeTypes: PlaceTypes = {
   "0": "Undefined",

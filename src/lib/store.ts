@@ -19,6 +19,8 @@ export const defaultStore: AppStoreType = {
   },
   viewMetadata: { name_order: "cs" },
   currentView: "search",
+  taxaMapLayers: {},
+  placesMapLayers: {},
   primaryColorScheme: primaryColorSchemeName,
 };
 

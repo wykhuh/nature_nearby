@@ -1,4 +1,9 @@
 import type {
+  iNatObservationTilesSettingsType,
+  MapTilesAPIParamsType,
+  NormalizedTaxon,
+} from "../types/app";
+import type {
   iNatAPIError,
   iNatObservationsAPI,
   iNatObservationsSpeciesAPI,
@@ -128,3 +133,102 @@ export async function getTaxonById(ids: number | string) {
   }
   return data;
 }
+
+function formatDescription(
+  mapTilesApiParams: MapTilesAPIParamsType,
+  type: string,
+) {
+  // NOTE: update when adding selectedResource; map layer name
+  let text = `overlay: iNat ${type}`;
+  text += `, taxon_id ${mapTilesApiParams.taxon_id || 0}`;
+
+  if (mapTilesApiParams.place_id) {
+    text += `, place_id ${mapTilesApiParams.place_id}`;
+  }
+
+  return text;
+}
+
+export const getiNatMapTiles = (
+  mapTilesApiParams: MapTilesAPIParamsType,
+  taxonObj: NormalizedTaxon,
+): iNatObservationTilesSettingsType => {
+  let dupParams = structuredClone(mapTilesApiParams) as any;
+  if (dupParams.taxon_id === "0") {
+    delete dupParams.taxon_id;
+  }
+
+  let paramsString = new URLSearchParams(dupParams).toString();
+
+  let taxonRangeParamsString = new URLSearchParams({
+    color: dupParams.color,
+  }).toString();
+
+  delete dupParams.color;
+  let noColorParamsString = new URLSearchParams(dupParams).toString();
+
+  let tiles: iNatObservationTilesSettingsType = {
+    iNatGrid: {
+      name: "Grid",
+      type: "overlay",
+      url: `https://api.inaturalist.org/v1/grid/{z}/{x}/{y}.png?${paramsString}`,
+      options: {
+        attribution:
+          'Observation data by <a href="https://www.inaturalist.org/">iNaturalist</a>.',
+        minZoom: 0,
+        maxZoom: 21,
+        layer_description: formatDescription(mapTilesApiParams, "grid"),
+        layer_type: "taxa overlay",
+        control_name: `${taxonObj.title} Grid`,
+      },
+    },
+    iNatPoint: {
+      name: "Points",
+      type: "overlay",
+      url: `https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?${paramsString}`,
+      options: {
+        attribution:
+          'Observation data by <a href="https://www.inaturalist.org/">iNaturalist</a>.',
+        minZoom: 0,
+        maxZoom: 21,
+        layer_description: formatDescription(mapTilesApiParams, "points"),
+        layer_type: "taxa overlay",
+        control_name: `${taxonObj.title} Points`,
+      },
+    },
+    iNatTaxonRange: {
+      name: "Taxon Range",
+      type: "overlay",
+      url: `https://api.inaturalist.org/v1/taxon_ranges/${dupParams.taxon_id}/{z}/{x}/{y}.png?${taxonRangeParamsString}`,
+      options: {
+        attribution:
+          'Taxon range by <a href="https://www.inaturalist.org/">iNaturalist</a>.',
+        minZoom: 0,
+        maxZoom: 21,
+        layer_description: formatDescription(mapTilesApiParams, "taxon range"),
+        layer_type: "taxa overlay",
+        control_name: `${taxonObj.title} Taxon Range`,
+      },
+    },
+    iNatHeatmap: {
+      name: "Heatmap",
+      type: "overlay",
+      url: `https://api.inaturalist.org/v1/heatmap/{z}/{x}/{y}.png?${noColorParamsString}`,
+      options: {
+        attribution:
+          'Observation data by <a href="https://www.inaturalist.org/">iNaturalist</a>.',
+        minZoom: 0,
+        maxZoom: 21,
+        layer_description: formatDescription(mapTilesApiParams, "heatmap"),
+        layer_type: "taxa overlay",
+        control_name: `${taxonObj.title} Heatmap`,
+      },
+    },
+  };
+
+  if (taxonObj.id === 0 || taxonObj.id === undefined) {
+    delete tiles.iNatTaxonRange;
+  }
+
+  return tiles;
+};

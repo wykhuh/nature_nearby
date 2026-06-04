@@ -1,10 +1,17 @@
+import type { Map } from "leaflet";
 import type {
   AppPage,
   AppStoreType,
   ObservationsApiParamsKeysType,
 } from "../types/app";
 import { normalizePlaceResult, normalizeTaxonResult } from "./data_utils";
+import {
+  addDefaultTaxaRecordToMap,
+  addDefaultTaxaRecordToStore,
+} from "./data_utils";
 import { getPlaceById, getTaxonById } from "./inat_api";
+import { fitBoundsPlaces, renderSelectedPlacesBoundaries } from "./map_utils";
+import { updateTilesForSelectedTaxa } from "./search_utils";
 import { decodeAppUrl } from "./url_utils";
 
 const pathPage = {
@@ -36,6 +43,11 @@ export async function initApp(
       await fetchAndSaveTaxa(value as any, appStore);
     }
   }
+
+  // add default taxon if no search params
+  if (urlData.taxon_id === undefined) {
+    addDefaultTaxaRecordToStore(appStore);
+  }
 }
 
 async function fetchAndSavePlace(
@@ -62,10 +74,36 @@ async function fetchAndSaveTaxa(
   if (data && !("error" in data)) {
     data.results.forEach((result) => {
       let taxon = normalizeTaxonResult(result, appStore);
-
       appStore.selectedTaxa.push(taxon);
+      appStore.observationsApiParams.colors = appStore.selectedTaxa
+        .map((t) => t.color)
+        .join(",");
+      appStore.color = taxon.color;
     });
   }
+}
+
+// create map.
+// need to create new map instance whenever div for map changes.
+// used on inital app load, changing views, changing pages.
+export async function initRenderMap(map: Map, appStore: AppStoreType) {
+  if (!document.querySelector("#map")) return;
+
+  // add places layers
+  renderSelectedPlacesBoundaries(appStore);
+
+  // load default or selected taxa map layer
+  if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {
+    // load default Taxa map tiles
+    await addDefaultTaxaRecordToMap(appStore);
+  } else {
+    // update taxa tiles for selected taxa
+    await updateTilesForSelectedTaxa(appStore);
+  }
+
+  fitBoundsPlaces(appStore);
+
+  return map;
 }
 
 export async function registerServiceWorker() {

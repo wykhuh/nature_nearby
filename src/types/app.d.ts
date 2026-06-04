@@ -1,4 +1,4 @@
-import type { GeoJSON, Map } from "leaflet";
+import type { GeoJSON, GeoJSONOptions, Map, TileLayer } from "leaflet";
 
 import type { ObservationPhoto, CCLicense, MultiPolygonJson, PolygonJson } from "./inat_api";
 
@@ -11,6 +11,10 @@ declare global {
 export type ValidViews = "search" | "observations" | "species";
 export type NameOrderType = "cs" | "sc" | "s";
 export type AppPage = "home" | "about";
+export type AppStoreSelectedResourcesKeysType =
+  | "selectedPlaces"
+  | "selectedTaxa";
+
 export type AppStoreType = {
   currentPage: AppPage;
   currentView?: ValidViews;
@@ -22,6 +26,8 @@ export type AppStoreType = {
   selectedTaxa: NormalizedTaxon[];
   observationsApiParams: ObservationsApiParamsType;
   viewMetadata: { name_order };
+  taxaMapLayers: { [index: string]: TileLayer[] };
+  placesMapLayers: { [index: string]: CustomGeoJSONType[] };
   color?: string;
   primaryColorScheme: keyof typeof appColorSchemes;
 };
@@ -134,6 +140,7 @@ interface LeafletOptions {
 export interface GeoJSONSettings extends LeafletOptions {
   geometry: MultiPolygonJson | PolygonJson;
   interactive?: boolean;
+  layer_description?: string;
 }
 
 export interface CircleSettings extends LeafletOptions {
@@ -171,6 +178,36 @@ export interface DataComponentType extends HTMLElement {
 }
 
 export type PaginationCallback = (currentPage: number, appStore: AppStoreType) => Promise<void>;
+
+export type iNatObservationTilesSettingsType = {
+  iNatGrid: ObservationTilesSettingType;
+  iNatPoint: ObservationTilesSettingType;
+  iNatTaxonRange?: ObservationTilesSettingType;
+  iNatHeatmap: ObservationTilesSettingType;
+};
+
+export interface ObservationTilesSettingType {
+  name: string;
+  type: "overlay" | "basemap";
+  url: string;
+  options: {
+    attribution: string;
+    minZoom: number;
+    maxZoom: number;
+    layer_description: string;
+    layer_type: string;
+    control_name?: string;
+  };
+}
+
+interface ObservationsMapTilesAPIParamsType extends ObservationsApiParamsType {
+  color?: string;
+}
+
+type MapTilesAPIParamsType = ObservationsMapTilesAPIParamsType;
+
+export type MapTilesApiParamsKeysType = keyof MapTilesAPIParamsType;
+
 export type AppColorSchemes = {
   [k: string]: string[];
 };
@@ -181,3 +218,12 @@ export type PlaceTypes = {
   [key: string]: string;
 };
 export type PlaceTypesKey = keyof PlaceTypes;
+
+export interface CustomGeoJSONType extends GeoJSON {
+  options: CustomGeoJSONTypeOptions;
+}
+
+export interface CustomGeoJSONTypeOptions extends GeoJSONOptions {
+  layer_description: string;
+  layer_type: string;
+}

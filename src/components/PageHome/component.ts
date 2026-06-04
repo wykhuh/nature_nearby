@@ -8,6 +8,7 @@ import { template } from "./template";
 import { removeMap, renderMap } from "../../lib/map_utils.ts";
 import { setView } from "./utils.ts";
 import { viewComponentObj } from "../../data/app_data.ts";
+import { initRenderMap } from "../../lib/init_app.ts";
 
 class PageHome extends HTMLElement {
   constructor() {
@@ -61,7 +62,10 @@ class PageHome extends HTMLElement {
 
   async render(appStore: AppStoreType) {
     if (!appStore.map.map) {
-      appStore.map.map = renderMap();
+      let { map, layerControl } = renderMap();
+      appStore.map.map = map;
+      appStore.map.layerControl = layerControl;
+      await initRenderMap(map, appStore);
     }
     if (!this.viewContainerEl) return;
     if (!appStore.currentView) return;

@@ -6,6 +6,7 @@ import {
   places1APIResponse,
   places2APIResponse,
 } from "./data";
+import { allTaxaRecord } from "../../data/inat_data";
 
 export const defaultParamsString =
   "spam=false&verifiable=true&per_page=24&obscuration=none&photos=true";
@@ -16,6 +17,8 @@ export const defaultParams = {
   per_page: 24,
   obscuration: "none",
   photos: true,
+  taxon_id: `${allTaxaRecord.id}`,
+  colors: allTaxaRecord.color,
 };
 
 export function createMockServer() {

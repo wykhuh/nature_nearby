@@ -8,11 +8,12 @@ import { loggerUrl } from "./logger";
 import type {
   AppStoreType,
   CircleSettings,
+  CustomGeoJSONType,
   GeoJSONSettings,
   MarkerSettings,
-  NormalizedPlace,
   ObservationTilesSettingType,
 } from "../types/app";
+import type { MultiPolygonJson } from "../types/inat_api";
 
 export function renderMap() {
   let map = L.map("map", {
@@ -27,10 +28,17 @@ export function renderMap() {
   L.Icon.Default.imagePath = "";
 
   // add basemaps
-  let { OpenStreetMap } = getMapTiles();
+  let { OpenStreetMap, OpenTopo } = getMapTiles();
   L.tileLayer(OpenStreetMap.url, OpenStreetMap.options).addTo(map);
 
-  return map;
+  const layerControl = L.control
+    .layers(undefined, undefined, { collapsed: true })
+    .addTo(map);
+
+  addLayerToMap(OpenStreetMap, map, layerControl, true);
+  addLayerToMap(OpenTopo, map, layerControl);
+
+  return { map, layerControl };
 }
 
 export function getMapTiles(): {
@@ -136,17 +144,42 @@ export function addOverlayToMap(
   }
 }
 
-export function fitBoundsPlaces(
-  place: NormalizedPlace,
-  appStore: AppStoreType,
-) {
+export function fitBoundsPlaces(appStore: AppStoreType) {
+  let map = appStore.map.map;
+  if (!map) return;
+  if (appStore.selectedPlaces.length === 0) return;
+
+  let placesLayers = appStore.selectedPlaces
+    .filter((p) => p.bounding_box !== undefined)
+    .map((place) => {
+      return L.geoJSON(place.bounding_box);
+    });
+
+  let layers = placesLayers;
+  if (layers.length > 0) {
+    map.fitBounds(L.featureGroup(layers).getBounds());
+  }
+}
+
+export function renderSelectedPlacesBoundaries(appStore: AppStoreType) {
   let map = appStore.map.map;
   if (!map) return;
 
-  let bbox = place.bounding_box;
-  if (bbox) {
-    map.fitBounds(L.featureGroup([L.geoJSON(bbox)]).getBounds());
-  }
+  // add places layers
+  appStore.selectedPlaces.forEach((place) => {
+    let options: GeoJSONSettings = {
+      color: "red",
+      fillColor: "none",
+      layer_description: `place layer: ${place.name}, ${place.id}`,
+      geometry: place.geometry as MultiPolygonJson,
+    };
+    let layer = renderGeojsonLayer(options, map);
+
+    appStore.placesMapLayers = {
+      ...appStore.placesMapLayers,
+      [place.id]: [layer as CustomGeoJSONType],
+    };
+  });
 }
 
 export function fitBounds(layer: GeoJSON, map: Map) {
@@ -166,6 +199,7 @@ export function renderGeojsonLayer(
     fillColor: settings.fillColor,
     fillOpacity:
       settings.fillOpacity === undefined ? 0.2 : settings.fillOpacity,
+    layer_description: settings.layer_description,
   };
   // make geojson not clickable
   // https://stackoverflow.com/a/58675812
