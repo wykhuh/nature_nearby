@@ -40,11 +40,11 @@ export function formatAppParams(appStore: AppStoreType) {
   if (appStore.selectedPlaces.length > 0) {
     params.set("place_id", appStore.selectedPlaces.map((p) => p.id).join(","));
   }
-  if (appStore.observationsParams.page) {
-    params.set("page", appStore.observationsParams.page.toString());
+  if (appStore.observationsApiParams.page) {
+    params.set("page", appStore.observationsApiParams.page.toString());
   }
-  if (appStore.observationsParams.per_page) {
-    params.set("per_page", appStore.observationsParams.per_page.toString());
+  if (appStore.observationsApiParams.per_page) {
+    params.set("per_page", appStore.observationsApiParams.per_page.toString());
   }
 
   return params.toString();

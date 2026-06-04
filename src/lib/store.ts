@@ -5,7 +5,7 @@ export const defaultStore: AppStoreType = {
   map: null,
   selectedPlaces: [],
   selectedTaxa: [],
-  observationsParams: { spam: false, verifiable: true, per_page: 24 },
+  observationsApiParams: { spam: false, verifiable: true, per_page: 24 },
   viewMetadata: { name_order: "cs" },
   currentView: "search",
 };

@@ -6,7 +6,7 @@ export function setView(view: ValidViews, appStore: AppStoreType, componentCtx: 
   if (appStore.currentView === view) return;
 
   // reset page
-  delete appStore.observationsParams.page;
+  delete appStore.observationsApiParams.page;
   updateAppUrl(window.location, appStore);
   appStore.currentView = view;
 

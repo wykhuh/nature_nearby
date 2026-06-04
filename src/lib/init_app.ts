@@ -14,10 +14,10 @@ export async function initApp(searchParams: string, pathname: string, appStore: 
   let urlData = decodeAppUrl(searchParams, pathname);
 
   if (urlData.page) {
-    appStore.observationsParams.page = urlData.page;
+    appStore.observationsApiParams.page = urlData.page;
   }
   if (urlData.per_page) {
-    appStore.observationsParams.per_page = urlData.per_page;
+    appStore.observationsApiParams.per_page = urlData.per_page;
   }
 }
 

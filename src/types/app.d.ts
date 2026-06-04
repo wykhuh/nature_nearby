@@ -14,7 +14,7 @@ export type AppStoreType = {
   map: Map | null;
   selectedPlaces: NormalizedPlace[];
   selectedTaxa: NormalizedTaxon[];
-  observationsParams: ObservationsApiParamsType;
+  observationsApiParams: ObservationsApiParamsType;
   viewMetadata: { name_order };
 };
 

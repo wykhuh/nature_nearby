@@ -20,7 +20,7 @@ export function renderObservations(
     } else {
       containerEl.textContent = data.error;
     }
-    delete appStore.observationsParams.page;
+    delete appStore.observationsApiParams.page;
     return;
   }
 
@@ -54,8 +54,8 @@ export async function paginationCallback(num: number, appStore: AppStoreType) {
   const containerEl = document.querySelector("#observations-species-grid");
   if (!containerEl) return;
 
-  appStore.observationsParams = {
-    ...appStore.observationsParams,
+  appStore.observationsApiParams = {
+    ...appStore.observationsApiParams,
     page: num,
   };
 

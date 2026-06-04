@@ -53,7 +53,7 @@ function cleaniNatSiteParams(params: URLSearchParams) {
 }
 
 export function formatSpeciesToInatExploreParams(taxonId: number, appStore: AppStoreType) {
-  let params = new URLSearchParams(appStore.observationsParams as any) as URLSearchParams;
+  let params = new URLSearchParams(appStore.observationsApiParams as any) as URLSearchParams;
 
   cleaniNatSiteParams(params);
   deleteParams(["spam", "view", "subview"], params);
