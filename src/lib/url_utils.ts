@@ -23,13 +23,10 @@ export function formatAppParams(appStore: AppStoreType) {
 
   let params = new URLSearchParams();
 
-  if (appStore.selectedTaxa) {
-    params.set(
-      "place_id",
-      appStore.selectedTaxa.map((t) => t.taxon_id).join(","),
-    );
+  if (appStore.selectedTaxa.length > 0) {
+    params.set("place_id", appStore.selectedTaxa.map((t) => t.id).join(","));
   }
-  if (appStore.selectedPlaces) {
+  if (appStore.selectedPlaces.length > 0) {
     params.set("place_id", appStore.selectedPlaces.map((p) => p.id).join(","));
   }
 
@@ -45,15 +42,11 @@ export function updateAppUrl(url_location: Location, appStore: AppStoreType) {
   updatePushState(url_location.pathname, url, appStore);
 }
 
-export function updatePushState(
-  pathname: string,
-  url: string,
-  appStore: AppStoreType,
-) {
+export function updatePushState(pathname: string, url: string, appStore: AppStoreType) {
   let state = {
     pathname,
     place_id: appStore.selectedPlaces.map((p) => p.id).join(","),
-    taxon_id: appStore.selectedTaxa.map((p) => p.taxon_id).join(","),
+    taxon_id: appStore.selectedTaxa.map((p) => p.id).join(","),
   };
   window.history.pushState(state, "", url);
 }

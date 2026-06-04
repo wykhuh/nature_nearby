@@ -342,10 +342,7 @@
 
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(min(var(--autofill-min-col), 100%), 1fr)
-    );
+    grid-template-columns: repeat(auto-fill, minmax(min(var(--autofill-min-col), 100%), 1fr));
     /* all rows should take the height of the tallest content */
     /* grid-auto-rows: 1fr; */
   }
@@ -361,7 +358,7 @@
 
   #map {
     height: 250px;
-    width: 250px;
+    width: 100%;
     margin-bottom: 1rem;
   }
 
@@ -416,6 +413,41 @@
 }
 
 @layer components {
+  #observations-header {
+    padding: 0 1rem;
+    background-color: var(--clr-iNat-dark-gray);
+    color: var(--clr-white);
+  }
+
+  #observations-nav {
+    display: flex;
+    align-items: center;
+
+    ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      width: 100%;
+      justify-content: center;
+    }
+
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-count {
+      font-weight: var(--fw-bold);
+    }
+
+    @media (max-width: 450px) {
+      font-size: var(--font-size-sm);
+    }
+  }
+
   .popover__content {
     position: absolute;
     visibility: hidden;

@@ -1,11 +1,6 @@
 import type { GeoJSON, Map } from "leaflet";
 
-import type {
-  ObservationPhoto,
-  CCLicense,
-  MultiPolygonJson,
-  PolygonJson,
-} from "./inat_api";
+import type { ObservationPhoto, CCLicense, MultiPolygonJson, PolygonJson } from "./inat_api";
 
 declare global {
   interface Window {
@@ -37,8 +32,7 @@ type ObservationsApiParamsType = {
 export type AppPage = "home" | "about";
 
 export type NormalizedTaxon = {
-  project_id: number;
-  taxon_id: number;
+  id: number;
   count: number;
   iconic_taxon_name: string;
   name: string;
