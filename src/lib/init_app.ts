@@ -1,5 +1,5 @@
-
 import type { AppPage, AppStoreType } from "../types/app";
+import { decodeAppUrl } from "./url_utils";
 
 const pathPage = {
   "/about/": "about",
@@ -10,13 +10,15 @@ export function getAppPage(pathname: string) {
   return pathPage[pathname as keyof typeof pathPage] as AppPage;
 }
 
-export async function initApp(
-  searchParams: string,
-  pathname: string,
-  appStore: AppStoreType,
-) {
+export async function initApp(searchParams: string, pathname: string, appStore: AppStoreType) {
+  let urlData = decodeAppUrl(searchParams, pathname);
 
-  console.log(searchParams, pathname, appStore)
+  if (urlData.page) {
+    appStore.observationsParams.page = urlData.page;
+  }
+  if (urlData.per_page) {
+    appStore.observationsParams.per_page = urlData.per_page;
+  }
 }
 
 export async function registerServiceWorker() {

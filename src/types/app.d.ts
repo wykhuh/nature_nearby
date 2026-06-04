@@ -29,6 +29,8 @@ type ObservationsApiParamsType = {
   locale?: string;
 };
 
+export interface ValidAppParams extends ObservationsApiParamsType {}
+
 export type AppPage = "home" | "about";
 
 export type NormalizedTaxon = {
@@ -66,11 +68,6 @@ export interface ObservationTilesSettingType {
 type Spinner = {
   start: () => void;
   stop: () => void;
-};
-
-export type ValidAppParams = {
-  taxon_id?: string;
-  place_id?: string;
 };
 
 type RouterType = {

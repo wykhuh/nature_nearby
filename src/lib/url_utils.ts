@@ -15,6 +15,17 @@ export function decodeAppUrl(searchParams: string, path: string) {
   if (place_id) {
     params.place_id = place_id;
   }
+
+  let page = urlParams.get("page");
+  if (page) {
+    params.page = Number(page);
+  }
+
+  let per_page = urlParams.get("per_page");
+  if (per_page) {
+    params.per_page = Number(per_page);
+  }
+
   return params;
 }
 
@@ -28,6 +39,12 @@ export function formatAppParams(appStore: AppStoreType) {
   }
   if (appStore.selectedPlaces.length > 0) {
     params.set("place_id", appStore.selectedPlaces.map((p) => p.id).join(","));
+  }
+  if (appStore.observationsParams.page) {
+    params.set("page", appStore.observationsParams.page.toString());
+  }
+  if (appStore.observationsParams.per_page) {
+    params.set("per_page", appStore.observationsParams.per_page.toString());
   }
 
   return params.toString();
