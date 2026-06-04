@@ -1,3 +1,8 @@
+type iNatAPIError = {
+  error: string;
+  status?: number;
+};
+
 // ==================
 // obseservations
 // ==================
