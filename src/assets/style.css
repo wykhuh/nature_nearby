@@ -413,6 +413,28 @@
 }
 
 @layer components {
+  .pagination {
+    display: flex;
+    margin: 1rem 0;
+
+    li {
+      list-style: none;
+      border: var(--border-grey);
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+
+      &.disable {
+        color: var(--clr-gray-600);
+        cursor: text;
+      }
+
+      &.current-page {
+        background-color: var(--clr-gray-300);
+        font-weight: var(--fw-bold);
+      }
+    }
+  }
+
   #observations-header {
     padding: 0 1rem;
     background-color: var(--clr-iNat-dark-gray);

@@ -133,3 +133,5 @@ export interface DataComponentType extends HTMLElement {
   data?: any;
   type?: string;
 }
+
+export type PaginationCallback = (currentPage: number, appStore: AppStoreType) => Promise<void>;

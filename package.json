@@ -11,12 +11,14 @@
     "type": "tsc"
   },
   "devDependencies": {
+    "@types/bramus__pagination-sequence": "^1.2.2",
     "@types/leaflet": "^1.9.21",
     "markdown-it": "^14.2.0",
     "typescript": "~6.0.2",
     "vite": "^8.0.12"
   },
   "dependencies": {
+    "@bramus/pagination-sequence": "^1.2.1",
     "@tarekraafat/autocomplete.js": "^10.2.10",
     "leaflet": "^1.9.4"
   }
