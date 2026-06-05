@@ -60,10 +60,11 @@ export function renderTaxonNames(
   taxon: ObservationTaxon | NormalizedTaxon,
   appStore: AppStoreType,
   url?: string,
+  searchTerm = "",
   includeParathesis = true,
 ) {
   let { title, titleAriaLabel, subtitle, subtitleAriaLabel, rank } =
-    formatTaxonName(taxon, appStore);
+    formatTaxonName(taxon, appStore, searchTerm);
 
   let content = "";
   if (title && titleAriaLabel) {

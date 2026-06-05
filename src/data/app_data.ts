@@ -1,3 +1,5 @@
+import { renderPlacesList } from "../lib/search_places";
+import { renderTaxaList } from "../lib/search_taxa";
 import type {
   NameOrderType,
   ObservationsApiParamsKeysType,
@@ -27,10 +29,6 @@ export const observationsApiNonFilterableNames: ObservationsApiParamsKeysType[] 
     "per_page",
     "swlat",
     "swlng",
-
-    // selected resources
-    "place_id",
-    "taxon_id",
   ];
 
 export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] =
@@ -49,6 +47,7 @@ export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] 
     "spam",
     "verifiable",
   ];
+
 export const observationsFilterableImplementedArrays: ObservationsApiParamsKeysType[] =
   [
     "day",
@@ -59,6 +58,8 @@ export const observationsFilterableImplementedArrays: ObservationsApiParamsKeysT
     "quality_grade",
     "photo_license",
     "year",
+    "place_id",
+    "taxon_id",
   ];
 
 export const observationsApiNames = observationsFilterableImplemented
@@ -69,22 +70,26 @@ export const observationsFieldName_InputType = {
   captive: "select",
   d1: "dateInput",
   d2: "dateInput",
+  day: "multiselect",
   endemic: "select",
+  hour: "multiselect",
   introduced: "select",
-  // "lat",
-  // "lng",
+  lat: "textInput",
+  license: "multiselect",
+  lng: "textInput",
+  month: "multiselect",
   native: "select",
+  obscuration: "multiselect",
+  photo_license: "multiselect",
   photos: "select",
+  place_id: "textInput",
+  quality_grade: "multiselect",
   radius: "select",
   sounds: "select",
-  // "spam",
-  // verifiable,
-  day: "multiselect",
-  hour: "multiselect",
-  license: "multiselect",
-  month: "multiselect",
-  obscuration: "multiselect",
-  quality_grade: "multiselect",
-  photo_license: "multiselect",
+  spam: "textInput",
+  taxon_id: "textInput",
+  verifiable: "select",
   year: "multiselect",
 };
+
+export let renderSelectResourcesLists = [renderPlacesList, renderTaxaList];

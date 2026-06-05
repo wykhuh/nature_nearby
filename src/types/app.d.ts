@@ -1,6 +1,13 @@
 import type { GeoJSON, GeoJSONOptions, Map, TileLayer } from "leaflet";
 
-import type { ObservationPhoto, CCLicense, MultiPolygonJson, PolygonJson } from "./inat_api";
+import type {
+  ObservationPhoto,
+  CCLicense,
+  MultiPolygonJson,
+  PolygonJson,
+  DefaultPhoto,
+} from "./inat_api";
+import type { appColorSchemes } from "../lib/map_colors_utils";
 
 declare global {
   interface Window {
@@ -11,6 +18,8 @@ declare global {
 export type ValidViews = "search" | "observations" | "species";
 export type NameOrderType = "cs" | "sc" | "s";
 export type AppPage = "home" | "about";
+export type QualityGrade = "research" | "needs_id" | "casual";
+export type ObscurationValue = "obscured" | "private" | "none";
 export type AppStoreSelectedResourcesKeysType =
   | "selectedPlaces"
   | "selectedTaxa";
@@ -81,7 +90,7 @@ export type NormalizedTaxon = {
   id: number;
   matched_term?: string;
   name?: string;
-  photos?: DefaultPhoto[];
+  photos?: DefaultPhoto[] | null;
   preferred_common_name?: string;
   rank?: string;
   subtitle?: string;
@@ -89,6 +98,8 @@ export type NormalizedTaxon = {
 };
 
 export type NormalizedPlace = {
+  name?: string;
+  geometry?: PolygonJson | MultiPolygonJson;
   bounding_box?: PolygonJson;
   geometry?: PolygonJson | MultiPolygonJson;
   id: number;
@@ -177,7 +188,15 @@ export interface DataComponentType extends HTMLElement {
   type?: string;
 }
 
-export type PaginationCallback = (currentPage: number, appStore: AppStoreType) => Promise<void>;
+export type PaginationCallback = (
+  currentPage: number,
+  appStore: AppStoreType,
+) => Promise<void>;
+
+export type FiltersResults = {
+  params: ObservationsApiParamsType;
+  string: string;
+};
 
 export type iNatObservationTilesSettingsType = {
   iNatGrid: ObservationTilesSettingType;

@@ -1,6 +1,10 @@
 import { primaryColorScheme } from "../../lib/map_colors_utils";
 import type { NormalizedPlace, NormalizedTaxon } from "../../types/app";
-import type { iNatPlacesAPI, iNatTaxaAPI } from "../../types/inat_api";
+import type {
+  DefaultPhoto,
+  iNatPlacesAPI,
+  iNatTaxaAPI,
+} from "../../types/inat_api";
 
 export const places1APIResponse: iNatPlacesAPI = {
   total_results: 1,
@@ -212,7 +216,7 @@ export const monarch: NormalizedTaxon = {
   iconic_taxon_name: "Insecta",
   id: 48662,
   name: "Danaus plexippus",
-  photos: [monarchTaxaApiResponse.results[0].default_photo],
+  photos: [monarchTaxaApiResponse.results[0].default_photo as DefaultPhoto],
   preferred_common_name: "Monarch",
   rank: "species",
   subtitle: "Danaus plexippus",
@@ -224,7 +228,7 @@ export const milkweed: NormalizedTaxon = {
   iconic_taxon_name: "Plantae",
   id: 56851,
   name: "Asclepias fascicularis",
-  photos: [milkweedTaxaApiResponse.results[0].default_photo],
+  photos: [milkweedTaxaApiResponse.results[0].default_photo as DefaultPhoto],
   preferred_common_name: "narrowleaf milkweed",
   rank: "species",
   subtitle: "Asclepias fascicularis",

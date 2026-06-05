@@ -1,16 +1,10 @@
-import type { AppStoreType, ObservationsApiParamsKeysType } from "../types/app";
 import { formatAppParams } from "./url_utils";
-
-let ignoreWebsiteSpecificParams = [
-  "per_page",
-  "page",
-  "colors",
-  "name_order",
-  "locale",
-];
 import { observationsApiNames } from "../data/app_data";
 import type {
+  AppStoreType,
   MapTilesAPIParamsType,
+  ObservationsApiParamsKeysType,
+  ObservationsApiParamsType,
   ObservationsMapTilesAPIParamsType,
 } from "../types/app";
 import { iNatOrange } from "./map_colors_utils";
@@ -32,7 +26,6 @@ function cleanupParams(params: URLSearchParams) {
   if (params.get("taxon_id") === "0") {
     params.delete("taxon_id");
   }
-
   if (params.get("place_id") === "0") {
     params.delete("place_id");
   }
@@ -49,6 +42,79 @@ function deleteParams(deleteParams: string[], params: URLSearchParams) {
     }
   });
 }
+
+// =============
+// taxa API
+// =============
+
+export function cleanupTaxaParamsForRecord(
+  inatParams: ObservationsApiParamsType,
+) {
+  let params = new URLSearchParams(inatParams as any);
+  cleanupParams(params);
+
+  return params.toString().replaceAll("%2C", ",");
+}
+
+// =============
+// observations API
+// =============
+
+export function cleanupObervationsParamsForRecord(
+  inatParams: ObservationsApiParamsType,
+) {
+  let params = new URLSearchParams(inatParams as any);
+  cleanupParams(params);
+
+  return params.toString();
+}
+
+export function cleanupObervationsParamsObject(appStore: AppStoreType) {
+  let params = cleanupParamsStore(appStore);
+  return params;
+}
+
+export function cleanupObervationsParams(appStore: AppStoreType) {
+  let params = cleanupObervationsParamsObject(appStore);
+
+  return params.toString();
+}
+
+export function cleanupObervationsSpeciesParams(appStore: AppStoreType) {
+  let params = cleanupParamsStore(appStore);
+
+  return params.toString();
+}
+
+// =============
+// tiles API
+// =============
+
+export let identificationOnlyParams = [
+  "d1",
+  "d2",
+  "iconic_taxon_id",
+  "hrank",
+  "lrank",
+  "rank",
+  "without_taxon_id",
+  "category",
+];
+
+export const processedIdentificationsToObservationsParams = [
+  "observation_taxon_active",
+  "observation_created_d2",
+  "observation_created_d1",
+  "observation_rank",
+  "observation_hrank",
+  "observation_lrank",
+  "observation_taxon_id",
+  "observed_d2",
+  "observed_d1",
+  "observation_iconic_taxon_id",
+  "user_id",
+  "without_observation_taxon_id",
+];
 
 export const ignoreMapParams: ObservationsApiParamsKeysType[] = [
   "page",
@@ -99,6 +165,14 @@ export function cleanupObservationsMapParams(
 // iNaturalist site
 // =============
 
+let ignoreWebsiteSpecificParams = [
+  "per_page",
+  "page",
+  "colors",
+  "name_order",
+  "locale",
+];
+
 function cleaniNatSiteParams(params: URLSearchParams) {
   deleteParams(ignoreWebsiteSpecificParams, params);
 
@@ -109,13 +183,55 @@ function cleaniNatSiteParams(params: URLSearchParams) {
   }
 }
 
+export function formatInatExportParams(appStore: AppStoreType) {
+  let params = formatAppParams(appStore, "object") as URLSearchParams;
+
+  cleaniNatSiteParams(params);
+  deleteParams(["view", "subview"], params);
+
+  if (!params.get("spam")) {
+    params.append("spam", "false");
+  }
+
+  return params.toString();
+}
+
+export function formatInatExploreParams(appStore: AppStoreType) {
+  let params = formatAppParams(appStore, "object") as URLSearchParams;
+
+  cleaniNatSiteParams(params);
+  deleteParams(["spam"], params);
+
+  if (params.get("verifiable") === "true") {
+    params.delete("verifiable");
+  }
+
+  return params.toString();
+}
+
+export function formatInatIdentifyParams(appStore: AppStoreType) {
+  let params = formatAppParams(appStore, "object") as URLSearchParams;
+
+  cleaniNatSiteParams(params);
+  deleteParams(["view", "subview", "spam"], params);
+
+  return params.toString();
+}
+
+export function formatInatApiParams(appStore: AppStoreType) {
+  let params = formatAppParams(appStore, "object") as URLSearchParams;
+
+  deleteParams(ignoreWebsiteSpecificParams, params);
+  deleteParams(["view", "subview", "spam"], params);
+
+  return params.toString();
+}
+
 export function formatSpeciesToInatExploreParams(
   taxonId: number,
   appStore: AppStoreType,
 ) {
-  let params = new URLSearchParams(
-    appStore.observationsApiParams as any,
-  ) as URLSearchParams;
+  let params = formatAppParams(appStore, "object") as URLSearchParams;
 
   cleaniNatSiteParams(params);
   deleteParams(["spam", "view", "subview"], params);
@@ -127,38 +243,6 @@ export function formatSpeciesToInatExploreParams(
   if (params.get("taxon_ids")) {
     params.set("taxon_ids", taxonId.toString());
   }
-
-  return params.toString();
-}
-
-// =============
-// observations API
-// =============
-
-export function cleanupObervationsParamsObject(appStore: AppStoreType) {
-  let params = cleanupParamsStore(appStore);
-  return params;
-}
-
-export function cleanupObervationsParams(appStore: AppStoreType) {
-  let params = cleanupObervationsParamsObject(appStore);
-
-  return params.toString();
-}
-
-export function cleanupGraphs(appStore: AppStoreType) {
-  let params = cleanupObervationsParamsObject(appStore);
-  if (params.get("graphs_category")) {
-    params.delete("graphs_category");
-  }
-  if (params.get("graphs_group_by")) {
-    params.delete("graphs_group_by");
-  }
-  return params;
-}
-
-export function cleanupObervationsSpeciesParams(appStore: AppStoreType) {
-  let params = cleanupParamsStore(appStore);
 
   return params.toString();
 }

@@ -2,7 +2,9 @@ import { geoprivacyValues, obscurationValues } from "../../data/inat_data";
 import { html } from "../../lib/component_utils";
 import { capitalizeFirstLetter, range } from "../../lib/utils";
 
-export const iNatObservationsYears = [...range(2000, new Date().getFullYear()).reverse()];
+export const iNatObservationsYears = [
+  ...range(2000, new Date().getFullYear()).reverse(),
+];
 
 export function renderYearsOptions(defaultValue: string) {
   let content = `<option value="">${defaultValue}</option>`;
@@ -28,7 +30,11 @@ export function renderDaysOptions(defaultValue: string) {
   return content;
 }
 
-export function renderTrueFalseSelect(name: string, id: string, defaultText = "") {
+export function renderTrueFalseSelect(
+  name: string,
+  id: string,
+  defaultText = "",
+) {
   return html`<select id="${id}" name="${name}">
     <option value="">${defaultText}</option>
     <option value="true">True</option>

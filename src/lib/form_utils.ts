@@ -30,6 +30,12 @@ export function populateFormFields(
     if (field_type[field] === undefined) {
       continue;
     }
+    if (field === "taxon_id" && value === "0") {
+      continue;
+    }
+    if (field === "place_id" && value === "0") {
+      continue;
+    }
 
     let fieldType = field_type[field];
     if (fieldType === "skip") {

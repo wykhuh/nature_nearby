@@ -7,7 +7,9 @@ export async function getObservationsData(appStore: AppStoreType) {
     return globalObs;
   }
 
-  let paramsString = new URLSearchParams(appStore.observationsApiParams as any).toString();
+  let paramsString = new URLSearchParams(
+    appStore.observationsApiParams as any,
+  ).toString();
 
   let data = await getObservations(paramsString);
   return data;
@@ -18,8 +20,11 @@ export async function getObservationsSpeciesData(appStore: AppStoreType) {
     return globalObsSpecies;
   }
 
-  let paramsString = new URLSearchParams(appStore.observationsApiParams as any).toString();
+  let paramsString = new URLSearchParams(
+    appStore.observationsApiParams as any,
+  ).toString();
 
   let data = await getObservationsSpecies(paramsString);
+
   return data;
 }

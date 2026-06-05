@@ -5,6 +5,8 @@ import type {
 } from "../types/app";
 import type {
   iNatAPIError,
+  iNatAutocompletePlaceAPI,
+  iNatAutocompleteTaxaAPI,
   iNatObservationsAPI,
   iNatObservationsSpeciesAPI,
   iNatPlacesAPI,
@@ -13,10 +15,11 @@ import type {
 import { loggerUrl } from "./logger.ts";
 
 const search_api = "https://api.inaturalist.org/v2/search";
-export const autocomplete_places_api = `${search_api}?fields=all&sources=places`;
-export const autocomplete_projects_api = `${search_api}?fields=all&sources=projects`;
+export const autocomplete_places_api = `${search_api}?sources=places`;
 const observations_api = "https://api.inaturalist.org/v2/observations";
 const places_api = "https://api.inaturalist.org/v2/places";
+export const autocomplete_taxa_api =
+  "https://api.inaturalist.org/v2/taxa/autocomplete?";
 const taxa_api = "https://api.inaturalist.org/v2/taxa";
 
 export async function inatFetch(url: string, funcName: string) {
@@ -58,7 +61,9 @@ export async function getObservations(appParams: string) {
     "taxon:(name:!t,preferred_common_name:!t,rank:!t)," +
     "photos:(id:!t,url:!t,attribution:!t,license_code:!t))";
   let url = `${observations_api}?${appParams}` + `&fields=${fields}`;
-  let data = (await inatFetch(url, "getObservationPhoto")) as iNatObservationsAPI | iNatAPIError;
+  let data = (await inatFetch(url, "getObservationPhoto")) as
+    | iNatObservationsAPI
+    | iNatAPIError;
   if ("results" in data) {
     loggerUrl(url.split("&fields")[0] + "&fields...", data.total_results);
   }
@@ -77,7 +82,9 @@ export async function getObservationsSpecies(appParams: string) {
     "name:!t," +
     "preferred_common_name:!t," +
     "rank:!t))";
-  let url = `${observations_api}/species_counts?${appParams}&ttl=3600` + `&fields=${fields}`;
+  let url =
+    `${observations_api}/species_counts?${appParams}&ttl=3600` +
+    `&fields=${fields}`;
   let data = (await inatFetch(url, "getObservationsSpeciesBasic")) as
     | iNatObservationsSpeciesAPI
     | iNatAPIError;
@@ -88,17 +95,37 @@ export async function getObservationsSpecies(appParams: string) {
 }
 
 export async function getAutocompletePlaces(query: string) {
-  let url = `${autocomplete_places_api}&per_page=50&q=${query}`;
-  let data = await inatFetch(url, "getAutocompletePlaces");
-  if (data) {
+  let fields =
+    "(place:(bounding_box_geojson:!t,display_name:!t,geometry_geojson:!t,name:!t,place_type:!t,matched_term:!t))";
+
+  let url = `${autocomplete_places_api}&fields=${fields}&per_page=50&q=${query}`;
+  let data = (await inatFetch(
+    url,
+    "getAutocompletePlaces",
+  )) as iNatAutocompletePlaceAPI;
+  if ("results" in data) {
     loggerUrl(url, data.total_results);
   }
   return data;
 }
 
-export async function getAutocompleteProjects(query: string) {
-  let url = `${autocomplete_projects_api}&per_page=50&q=${query}`;
-  let data = await inatFetch(url, "getAutocompleteProjects");
+export async function getAutocompleteTaxa(query: string, locale?: string) {
+  let fields =
+    `(preferred_common_name:!t,` +
+    `name:!t,` +
+    `iconic_taxon_name:!t,` +
+    "default_photo:(attribution:!t,license_code:!t,medium_url:!t,square_url:!t,url:!t)," +
+    `rank:!t` +
+    `)`;
+
+  let url = `${autocomplete_taxa_api}&fields=${fields}&per_page=50&q=${query}`;
+  if (locale) {
+    url += `&locale=${locale}`;
+  }
+  let data = (await inatFetch(
+    url,
+    "getAutocompleteTaxa",
+  )) as iNatAutocompleteTaxaAPI;
   if ("results" in data) {
     loggerUrl(url, data.total_results);
   }

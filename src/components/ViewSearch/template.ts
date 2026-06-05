@@ -14,30 +14,61 @@ export const basicFields = html`
     </div>
 
     <fieldset>
-      <legend>Search</legend>
+      <legend>Species</legend>
 
       <div class="form-group">
         <label
           >Species
           <input id="search-taxa" type="text" autocomplete="off" />
+          <input id="taxon_id" type="text" disable />
         </label>
       </div>
+    </fieldset>
+    <fieldset>
+      <legend>Location</legend>
 
       <div class="form-group">
         <label
           >Places
           <input id="search-places" type="text" autocomplete="off" />
+          <input id="place_id" type="text" disable />
         </label>
       </div>
 
-      <button type="button" class="btn-primary" name="nearby_observations" id="nearby_observations">
+      <button
+        type="button"
+        class="btn-primary"
+        name="nearby_observations"
+        id="nearby_observations"
+      >
         Current location</button
       ><app-tooltip
         data-content="?"
         data-tooltip="Sets latitude and longitude using your current location."
       ></app-tooltip>
 
-      <div class="form-check">
+      <div class="form-group">
+        <label for="lat"
+          >Latitude
+          <app-tooltip
+            data-content="?"
+            data-tooltip="lat: Observation latitude"
+          ></app-tooltip>
+        </label>
+        <input id="lat" name="lat" type="text" />
+      </div>
+      <div class="form-group">
+        <label for="lng"
+          >Longitude
+          <app-tooltip
+            data-content="?"
+            data-tooltip="lng: Observation longitude"
+          ></app-tooltip
+        ></label>
+        <input id="lng" name="lng" type="text" />
+      </div>
+
+      <div class="form-group">
         <label for="radius"
           >Radius
           <app-tooltip
@@ -52,6 +83,7 @@ export const basicFields = html`
           <option value="1.6">1 mi (1.6 km)</option>
           <option value="4">2.5 mi (4.0 km)</option>
           <option value="8">5 mi (8.0 km)</option>
+          <option value="10">6.2 mi (10.0 km)</option>
           <option value="16.1">10 mi (16.1 km)</option>
         </select>
       </div>
@@ -184,6 +216,32 @@ let observationPane = html`
           <option value="needs_id">Needs Id</option>
           <option value="casual">Casual</option>
         </select>
+      </div>
+      <div class="form-group">
+        <label for="verifiable">
+          Verifiable
+          <app-tooltip
+            data-content="?"
+            data-tooltip="verifiable: Observations with a quality_grade of either needs_id or research.
+            Equivalent to quality_grade=needs_id,research."
+          ></app-tooltip>
+        </label>
+        <!--do not use renderTrueFalseSelect since we want to set true as selected -->
+        <select id="verifiable" name="verifiable">
+          <option value="any"></option>
+          <option value="true" selected>True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
+      <div class="form-group ">
+        <label for="spam"
+          >Spam
+          <app-tooltip
+            data-content="?"
+            data-tooltip="spam: Observations marked as spam."
+          ></app-tooltip
+        ></label>
+        <input id="spam" disabled />
       </div>
     </fieldset>
   </div>
