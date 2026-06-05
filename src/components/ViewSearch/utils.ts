@@ -8,6 +8,7 @@ import {
   observationsFilterableImplementedArrays,
 } from "../../data/app_data";
 import {
+  addDefaultTaxonToStoreAndMap,
   resetPageNumber,
 } from "../../lib/data_utils";
 import {
@@ -21,6 +22,16 @@ import type {
   ObservationsApiParamsKeysType,
   ObservationsApiParamsType,
 } from "../../types/app";
+import {
+  removeOnePlaceFromMap,
+  removeOnePlaceFromStore,
+} from "../../lib/search_places";
+import {
+  removeOneTaxonFromMap,
+  removeOneTaxonFromStore,
+} from "../../lib/search_taxa";
+import { defaultStore } from "../../lib/store";
+import { updateAppUrl } from "../../lib/url_utils";
 
 export function initFilters(appStore: AppStoreType) {
   populateFormFields(
@@ -193,4 +204,30 @@ export function setPlaceId(appStore: AppStoreType) {
   if (appStore.observationsApiParams.place_id) {
     inputEl.value = appStore.observationsApiParams.place_id;
   }
+}
+
+export async function resetFormHandler(appStore: AppStoreType) {
+  // HACK: use setTimeout to add new event to event queue so the code
+  // has access to resetted form
+  setTimeout(async () => {
+    // update store
+    for (let place of appStore.selectedPlaces) {
+      removeOnePlaceFromMap(appStore, place.id);
+      removeOnePlaceFromStore(appStore, place.id);
+    }
+    for (let taxon of appStore.selectedTaxa) {
+      removeOneTaxonFromMap(appStore, taxon.id);
+      removeOneTaxonFromStore(appStore, taxon.id);
+    }
+    appStore.observationsApiParams = defaultStore.observationsApiParams;
+
+    // update form
+    initFilters(appStore);
+    // update header counts
+    window.dispatchEvent(new Event("observationsChange"));
+    // update map and store
+    await addDefaultTaxonToStoreAndMap(appStore);
+
+    updateAppUrl(window.location, appStore);
+  }, 0);
 }

@@ -10,6 +10,7 @@ import type { AppStoreType } from "../../types/app";
 import { template } from "./template";
 import {
   initFilters,
+  resetFormHandler,
   setPlaceId,
   setTaxonId,
   updateAppWithFilters,
@@ -76,6 +77,9 @@ class ViewSearch extends HTMLElement {
       }
     }
 
+    if (event.type === "reset") {
+      resetFormHandler(appStore);
+    }
 
     // when search item is selected
     if (event.type === "selection") {
