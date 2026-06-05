@@ -37,10 +37,13 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
 
   let params = new URLSearchParams();
 
-  if (appStore.selectedTaxa.length > 0) {
+  if (appStore.selectedTaxa.length > 0 && appStore.selectedTaxa[0].id !== 0) {
     params.set("taxon_id", appStore.selectedTaxa.map((t) => t.id).join(","));
   }
-  if (appStore.selectedPlaces.length > 0) {
+  if (
+    appStore.selectedPlaces.length > 0 &&
+    appStore.selectedPlaces[0].id !== 0
+  ) {
     params.set("place_id", appStore.selectedPlaces.map((p) => p.id).join(","));
   }
 

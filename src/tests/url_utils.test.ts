@@ -6,6 +6,7 @@ import { defaultStore } from "../lib/store";
 import { milkweed, monarch, placeCity, placeCountry } from "./fixtures/data";
 import { defaultParamsString } from "./fixtures/test_helpers";
 import { observationsApiNames } from "../data/app_data";
+import { allTaxaRecord } from "../data/inat_data";
 
 describe("decodeAppUrl", () => {
   test("returns empty object if no search params", () => {
@@ -80,13 +81,22 @@ describe("formatAppParams", () => {
     expect(result).toBe(`place_id=${placeCity.id}&${defaultParamsString}`);
   });
 
-  test("returns taxon_id if store has place", () => {
+  test("returns taxon_id if store has taxon", () => {
     let store = structuredClone(defaultStore);
     store.selectedTaxa = [monarch];
 
     let result = formatAppParams(store);
 
     expect(result).toBe(`taxon_id=${monarch.id}&${defaultParamsString}`);
+  });
+
+  test("does not return taxon_id if store has default taxon", () => {
+    let store = structuredClone(defaultStore);
+    store.selectedTaxa = [allTaxaRecord];
+
+    let result = formatAppParams(store);
+
+    expect(result).toBe(`${defaultParamsString}`);
   });
 
   test("returns place_id and taxon_id if store has places and taxa", () => {
