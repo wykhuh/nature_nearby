@@ -10,10 +10,18 @@ export function updateCountsHeader(appStore: AppStoreType) {
   updateHeaderCount("observations_observations", getObservations, params);
 
   let speciesParams = cleanupObervationsSpeciesParams(appStore);
-  updateHeaderCount("observations_species", getObservationsSpecies, speciesParams);
+  updateHeaderCount(
+    "observations_species",
+    getObservationsSpecies,
+    speciesParams,
+  );
 }
 
-export async function updateHeaderCount(selector: string, dataFn: any, searchParams: string) {
+export async function updateHeaderCount(
+  selector: string,
+  dataFn: any,
+  searchParams: string,
+) {
   let count = 0;
   searchParams = searchParams.replace(/per_page=[0-9]+/, `per_page=${0}`);
   count = (await fetchHeaderCounts(dataFn, searchParams)) || "--";
@@ -21,8 +29,9 @@ export async function updateHeaderCount(selector: string, dataFn: any, searchPar
 }
 
 function renderHeaderCounts(selector: string, count: number) {
-  // use querySelectorAll because there are header and filter counts
-  let countEls = document.querySelectorAll(`[data-count-label="${selector}"] .header-count`);
+  let countEls = document.querySelectorAll(
+    `[data-count-label="${selector}"] .header-count`,
+  );
   if (countEls.length === 0) return;
 
   Array.from(countEls).forEach((countEl) => {

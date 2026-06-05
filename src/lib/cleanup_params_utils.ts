@@ -69,13 +69,9 @@ export function cleanupObervationsParamsForRecord(
   return params.toString();
 }
 
-export function cleanupObervationsParamsObject(appStore: AppStoreType) {
-  let params = cleanupParamsStore(appStore);
-  return params;
-}
 
 export function cleanupObervationsParams(appStore: AppStoreType) {
-  let params = cleanupObervationsParamsObject(appStore);
+  let params = cleanupParamsStore(appStore);
 
   return params.toString();
 }
