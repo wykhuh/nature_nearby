@@ -1,4 +1,5 @@
 import { setupComponent } from "../../lib/component_utils";
+import { createSpinner } from "../../lib/spinner";
 import type { AppStoreType } from "../../types/app";
 import { getObservationsSpeciesData } from "../PageHome/data_utils";
 import { template } from "./template";
@@ -22,7 +23,10 @@ class ViewObservationsSpecies extends HTMLElement {
   }
 
   async render(appStore: AppStoreType) {
+    let spinner = createSpinner(".obs-loader");
+    spinner.start();
     let data = await getObservationsSpeciesData(appStore);
+    spinner.stop();
 
     renderObservations(data, appStore);
   }
