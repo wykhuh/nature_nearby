@@ -93,23 +93,27 @@ export function renderSelectedFiltersBasicList(appStore: AppStoreType) {
 
   listBasicEl.innerHTML = "";
 
-  appStore.selectedTaxa.forEach((taxon) => {
-    let templateEl = document.createElement(
-      "selected-filters-item",
-    ) as DataComponentType;
-    templateEl.data = taxon;
-    templateEl.type = "taxon";
-    listBasicEl.appendChild(templateEl);
-  });
+  appStore.selectedTaxa
+    .filter((t) => t.id !== 0)
+    .forEach((taxon) => {
+      let templateEl = document.createElement(
+        "selected-filters-item",
+      ) as DataComponentType;
+      templateEl.data = taxon;
+      templateEl.type = "taxon";
+      listBasicEl.appendChild(templateEl);
+    });
 
-  appStore.selectedPlaces.forEach((place) => {
-    let templateEl = document.createElement(
-      "selected-filters-item",
-    ) as DataComponentType;
-    templateEl.data = place;
-    templateEl.type = "place";
-    listBasicEl.appendChild(templateEl);
-  });
+  appStore.selectedPlaces
+    .filter((p) => p.id !== 0)
+    .forEach((place) => {
+      let templateEl = document.createElement(
+        "selected-filters-item",
+      ) as DataComponentType;
+      templateEl.data = place;
+      templateEl.type = "place";
+      listBasicEl.appendChild(templateEl);
+    });
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
     if (
@@ -171,5 +175,3 @@ export function renderPresetDates() {
 
   return content;
 }
-
-
