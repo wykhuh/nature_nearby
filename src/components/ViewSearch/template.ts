@@ -5,6 +5,7 @@ import {
   renderYearsOptions,
   renderTrueFalseSelect,
   renderObscurationOptions,
+  renderPresetDates,
 } from "./render_utils";
 
 export const basicFields = html`
@@ -14,12 +15,22 @@ export const basicFields = html`
     </div>
 
     <fieldset>
-      <legend>Species</legend>
+      <legend>Observations</legend>
 
       <div class="form-group">
         <label
           >Species
           <input id="search-taxa" type="text" autocomplete="off" />
+        </label>
+      </div>
+      <div class="form-group">
+        <label
+          >Observed Dates
+          <app-tooltip
+            data-content="?"
+            data-tooltip="Sets month and year for when the observations were observed. If you want more date options, use 'Advance Settings > Date Observed'"
+          ></app-tooltip>
+          ${renderPresetDates()}
         </label>
       </div>
     </fieldset>

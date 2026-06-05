@@ -14,7 +14,7 @@ import {
 } from "./render_utils";
 import { updateAppWithFormData } from "./shared_utils";
 import { template } from "./template";
-import { initFilters, resetFormHandler } from "./utils";
+import { initFilters, presetDatesHandler, resetFormHandler } from "./utils";
 
 class ViewSearch extends HTMLElement {
   constructor() {
@@ -71,7 +71,12 @@ class ViewSearch extends HTMLElement {
         if (target.value === "") {
           this.formChangeHandlerDebounced(event, this.formEl);
         }
-        // use formChangeHandler to add and clear non-search fields
+      } else if (target.id === "presetDates") {
+        presetDatesHandler(
+          target as unknown as HTMLSelectElement,
+          this.formEl,
+          appStore,
+        );
       } else {
         this.formChangeHandlerDebounced(event, this.formEl);
       }
@@ -100,6 +105,7 @@ class ViewSearch extends HTMLElement {
 
   async render(appStore: AppStoreType) {
     initFilters(appStore);
+
     setupPlacesSearch("#search-places");
     setupTaxaSearch("#search-taxa", appStore);
     renderSelectedFiltersList(appStore);

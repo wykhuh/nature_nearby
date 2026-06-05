@@ -48,7 +48,6 @@ class SelectedFiltersItem extends HTMLElement {
 
   handleEvent(event: Event) {
     if (event.type === "click") {
-      debugger;
       if (this.type === "taxon") {
         removeTaxon(
           Number((this.data as NormalizedTaxon).id),

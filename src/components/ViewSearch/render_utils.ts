@@ -1,4 +1,5 @@
 import { observationsApiNonFilterableNames } from "../../data/app_data";
+import { MONTHS } from "../../data/constants";
 import { geoprivacyValues, obscurationValues } from "../../data/inat_data";
 import { html } from "../../lib/component_utils";
 import { capitalizeFirstLetter, range } from "../../lib/utils";
@@ -124,3 +125,51 @@ export function renderSelectedFiltersBasicList(appStore: AppStoreType) {
     }
   }
 }
+
+export function renderPresetDates() {
+  let now = new Date();
+  let month = now.getMonth() + 1;
+  let lastMonth = month === 1 ? 12 : month - 1;
+  let nextMonth = month === 12 ? 1 : month + 1;
+  let year = now.getFullYear();
+  let lastYear = year - 1;
+  let lastTwoYears = lastYear - 1;
+
+  let displayMonth = (month: number) => MONTHS[month - 1];
+
+  let content = `<select id="presetDates">
+    <option value="">All</option>
+    <option value="1" data-month="${month}" data-year="${year}">
+    ${displayMonth(month)} ${year}
+    </option>
+    <option value="2" data-month="${month}" data-year="${lastYear},${year}">
+    ${displayMonth(month)} ${year}, ${displayMonth(month)} ${lastYear}
+    </option>
+    <option value="3" data-month="${month}" data-year="${lastTwoYears},${lastYear},${year}">
+    ${displayMonth(month)} ${year}, ${displayMonth(month)} ${lastYear}, ${displayMonth(month)} ${lastTwoYears}
+    </option>
+    <hr>
+
+    <option value="4" data-month="${lastMonth},${month}" data-year="${year}">
+    ${displayMonth(lastMonth)}-${displayMonth(month)} ${year}
+    </option>
+    <option value="5" data-month="${lastMonth},${month}" data-year="${lastYear},${year}">
+    ${displayMonth(lastMonth)}-${displayMonth(month)} ${year},  ${displayMonth(lastMonth)}-${displayMonth(month)} ${lastYear}
+    </option>
+    <option value="6" data-month="${lastMonth},${month}" data-year="${lastTwoYears},${lastYear},${year}">
+    ${displayMonth(lastMonth)}-${displayMonth(month)} ${year},  ${displayMonth(lastMonth)}-${displayMonth(month)} ${lastYear},  ${displayMonth(lastMonth)}-${displayMonth(month)} ${lastTwoYears}
+    </option>
+    <hr>
+
+    <option value="7" data-month="${lastMonth},${month},${nextMonth}" data-year="${lastYear},${year}">
+    ${displayMonth(lastMonth)}-${displayMonth(month)} ${year},  ${displayMonth(lastMonth)}-${displayMonth(nextMonth)} ${lastYear}
+    </option>
+    <option value="8" data-month="${lastMonth},${month},${nextMonth}" data-year="${lastTwoYears},${lastYear},${year}">
+    ${displayMonth(lastMonth)}-${displayMonth(month)} ${year},  ${displayMonth(lastMonth)}-${displayMonth(nextMonth)} ${lastYear}, ${displayMonth(lastMonth)}-${displayMonth(nextMonth)} ${lastTwoYears}
+    </option>
+  </select>`;
+
+  return content;
+}
+
+
