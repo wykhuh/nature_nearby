@@ -5,16 +5,16 @@ import {
   setupPlacesSearch,
 } from "../../lib/search_places";
 import { setupTaxaSearch, taxonSelectedHandler } from "../../lib/search_taxa";
+import { updateAppUrl } from "../../lib/url_utils";
 import { debounce } from "../../lib/utils";
 import type { AppStoreType } from "../../types/app";
-import { template } from "./template";
 import {
-  initFilters,
-  resetFormHandler,
-  setPlaceId,
-  setTaxonId,
-  updateAppWithFilters,
-} from "./utils";
+  renderSelectedFiltersBasicList,
+  renderSelectedFiltersList,
+} from "./render_utils";
+import { updateAppWithFormData } from "./shared_utils";
+import { template } from "./template";
+import { initFilters, resetFormHandler } from "./utils";
 
 class ViewSearch extends HTMLElement {
   constructor() {
@@ -65,8 +65,8 @@ class ViewSearch extends HTMLElement {
     }
 
     if (event.type === "input") {
-      // use formChangeHandler to clear search input; use autocomplete to select record
       let searches = ["search-places", "search-taxa"];
+      // use formChangeHandler to clear search input; use autocomplete to select record
       if (searches.includes(target.id)) {
         if (target.value === "") {
           this.formChangeHandlerDebounced(event, this.formEl);
@@ -86,11 +86,13 @@ class ViewSearch extends HTMLElement {
       let record = event.detail.selection.value;
       if (target.id === "search-places") {
         placeSelectedHandler(record, appStore).then(() => {
-          setPlaceId(appStore);
+          renderSelectedFiltersBasicList(appStore);
+          updateAppUrl(window.location, appStore);
         });
       } else if (target.id === "search-taxa") {
         taxonSelectedHandler(record, appStore).then(() => {
-          setTaxonId(appStore);
+          renderSelectedFiltersBasicList(appStore);
+          updateAppUrl(window.location, appStore);
         });
       }
     }
@@ -100,6 +102,8 @@ class ViewSearch extends HTMLElement {
     initFilters(appStore);
     setupPlacesSearch("#search-places");
     setupTaxaSearch("#search-taxa", appStore);
+    renderSelectedFiltersList(appStore);
+    renderSelectedFiltersBasicList(appStore);
   }
 
   formChangeHandlerDebounced = debounce(this.formChangeHandler);
@@ -109,7 +113,7 @@ class ViewSearch extends HTMLElement {
 
     const data = new FormData(form);
 
-    await updateAppWithFilters(data, window.app.store);
+    await updateAppWithFormData(data, window.app.store);
   }
 
   async setNearbyObservations(event: Event) {

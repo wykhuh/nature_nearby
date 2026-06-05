@@ -1,5 +1,3 @@
-import { renderPlacesList } from "../lib/search_places";
-import { renderTaxaList } from "../lib/search_taxa";
 import type {
   NameOrderType,
   ObservationsApiParamsKeysType,
@@ -29,6 +27,8 @@ export const observationsApiNonFilterableNames: ObservationsApiParamsKeysType[] 
     "per_page",
     "swlat",
     "swlng",
+    "place_id",
+    "taxon_id",
   ];
 
 export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] =
@@ -58,8 +58,6 @@ export const observationsFilterableImplementedArrays: ObservationsApiParamsKeysT
     "quality_grade",
     "photo_license",
     "year",
-    "place_id",
-    "taxon_id",
   ];
 
 export const observationsApiNames = observationsFilterableImplemented
@@ -91,5 +89,3 @@ export const observationsFieldName_InputType = {
   verifiable: "select",
   year: "multiselect",
 };
-
-export let renderSelectResourcesLists = [renderPlacesList, renderTaxaList];

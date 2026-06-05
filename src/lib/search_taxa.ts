@@ -4,7 +4,6 @@ import type {
   NormalizedTaxon,
   AutoCompleteEventType,
   AppStoreType,
-  DataComponentType,
 } from "../types/app.d.ts";
 import { getAutocompleteTaxa } from "../lib/inat_api.ts";
 import type { iNatAutocompleteTaxaAPI } from "../types/inat_api";
@@ -20,11 +19,7 @@ import {
 
 import { renderTaxonNames } from "./render_utils";
 import { getColor, appColorSchemes } from "./map_colors_utils.ts";
-import {
-  renderSelectedResources,
-  showHideHeader,
-  updateTilesForSelectedTaxa,
-} from "./search_utils.ts";
+import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
 
 export function setupTaxaSearch(selector: string, appStore: AppStoreType) {
   const autoCompleteTaxaJS = new autoComplete({
@@ -153,28 +148,10 @@ export async function taxonSelectedHandler(
 
   appStore.color = color;
 
-  await updateTilesForSelectedTaxa(appStore);
-  renderSelectedResources(appStore, true);
+  updateAppState(appStore);
 }
 
-export function showHideTaxaHeader() {
-  showHideHeader("#sidebar-menu .taxa-heading", "selectedTaxa");
-}
-
-export function renderTaxaList(appStore: AppStoreType) {
-  let listEl = document.querySelector("#selected-species-list");
-  if (!listEl) return;
-
-  let element = "species-list-item";
-
-  listEl.innerHTML = "";
-  appStore.selectedTaxa.forEach((taxon) => {
-    let templateEl = document.createElement(element) as DataComponentType;
-    templateEl.data = taxon;
-    templateEl.type = "taxon";
-    listEl.appendChild(templateEl);
-  });
-}
+ 
 
 // called when user deletes a taxon.
 // use debounce so if people quickly remove multiple items, app only calls API once
@@ -186,8 +163,6 @@ export async function removeTaxon(taxonId: number, appStore: AppStoreType) {
   if (appStore.selectedTaxa.length === 0) {
     await addDefaultTaxonToStoreAndMap(appStore);
   }
-
-  renderSelectedResources(appStore, true);
 }
 
 export function removeOneTaxonFromStore(

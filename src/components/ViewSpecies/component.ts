@@ -19,8 +19,6 @@ class ViewObservationsSpecies extends HTMLElement {
   handleEvent(event: CustomEvent) {
     let target = event.target as HTMLInputElement;
     if (!target) return;
-    let appStore = window.app.store;
-    console.log(appStore);
   }
 
   async render(appStore: AppStoreType) {

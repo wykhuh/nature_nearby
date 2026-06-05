@@ -5,7 +5,6 @@ import type {
   NormalizedPlace,
   AppStoreType,
   CustomGeoJSONType,
-  DataComponentType,
 } from "../types/app.d.ts";
 import { getAutocompletePlaces } from "../lib/inat_api.ts";
 import type { iNatAutocompletePlaceAPI } from "../types/inat_api";
@@ -19,11 +18,9 @@ import {
 } from "./data_utils.ts";
 import { fitBoundsPlaces } from "./map_utils.ts";
 import {
-  renderSelectedResources,
-  showHideHeader,
-  updateTilesForSelectedTaxa,
-  updateTilesForSelectedTaxaDebounced,
-} from "./search_utils.ts";
+   updateTilesForSelectedTaxa,
+ } from "./search_utils.ts";
+import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
 
 export function setupPlacesSearch(selector: string) {
   const autoCompletePlacesJS = new autoComplete({
@@ -145,28 +142,8 @@ export async function placeSelectedHandler(
   if (map) {
     fitBoundsPlaces(appStore);
   }
-  renderSelectedResources(appStore, true);
 }
-
-export function showHidePlacesHeader() {
-  showHideHeader("#sidebar-menu .places-heading", "selectedPlaces");
-}
-
-export function renderPlacesList(appStore: AppStoreType) {
-  let listEl = document.querySelector("#selected-places-list");
-  if (!listEl) return;
-
-  listEl.innerHTML = "";
-  appStore.selectedPlaces.forEach((place) => {
-    let templateEl = document.createElement(
-      "places-list-item",
-    ) as DataComponentType;
-    templateEl.data = place;
-    templateEl.type = "place";
-
-    listEl.appendChild(templateEl);
-  });
-}
+ 
 
 // called when user deletes a place
 export async function removePlace(placeId: number, appStore: AppStoreType) {
@@ -176,10 +153,7 @@ export async function removePlace(placeId: number, appStore: AppStoreType) {
   removeOnePlaceFromMap(appStore, placeId);
   await removeOnePlaceFromStore(appStore, placeId);
 
-  // remove existing taxa tiles, and refetch taxa tiles
-  await updateTilesForSelectedTaxaDebounced(appStore);
-
-  renderSelectedResources(appStore, true);
+  updateAppState(appStore)
 }
 
 export function removeOnePlaceFromStore(

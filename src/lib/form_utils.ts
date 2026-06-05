@@ -7,6 +7,13 @@ export function setSelectedOption(selector: string) {
   }
 }
 
+export function unsetSelectedOption(selector: string) {
+  let el = document.querySelector(selector) as HTMLOptionElement;
+  if (el) {
+    el.selected = false;
+  }
+}
+
 export function setInputValue(selector: string, value: any) {
   let el = document.querySelector(selector) as HTMLOptionElement;
   if (el) {

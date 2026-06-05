@@ -73,7 +73,7 @@ type ObservationsApiParamsType = {
   swlat?: number;
   swlng?: number;
   taxon_id?: string;
-  verifiable?: boolean | "any";
+  verifiable?: boolean;
   year?: string;
 };
 

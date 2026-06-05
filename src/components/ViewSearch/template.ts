@@ -20,7 +20,6 @@ export const basicFields = html`
         <label
           >Species
           <input id="search-taxa" type="text" autocomplete="off" />
-          <input id="taxon_id" type="text" disable />
         </label>
       </div>
     </fieldset>
@@ -31,7 +30,6 @@ export const basicFields = html`
         <label
           >Places
           <input id="search-places" type="text" autocomplete="off" />
-          <input id="place_id" type="text" disable />
         </label>
       </div>
 
@@ -228,7 +226,7 @@ let observationPane = html`
         </label>
         <!--do not use renderTrueFalseSelect since we want to set true as selected -->
         <select id="verifiable" name="verifiable">
-          <option value="any"></option>
+          <option value=""></option>
           <option value="true" selected>True</option>
           <option value="false">False</option>
         </select>
@@ -331,12 +329,14 @@ const speciesPane = html`
 
 export const template = html`
   <div class="modal-body">
-    <ol class="filters-list"></ol>
+    <ol class="filters-basic-list"></ol>
 
     <form id="observations-form">
       <div class="fields">
         ${basicFields}
         <h2>advance</h2>
+        <ol class="filters-list"></ol>
+
         ${observationPane}${datePane}${speciesPane}
       </div>
       <div class="controls">
