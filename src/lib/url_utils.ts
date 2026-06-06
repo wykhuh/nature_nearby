@@ -56,6 +56,13 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
   Object.entries(appStore.observationsApiParams).forEach(([key, value]) => {
     // @ts-ignore
     if (processedKeys.includes(key)) {
+      // ignore default values
+    } else if (
+      key in defaultStore.observationsApiParams &&
+      defaultStore.observationsApiParams[
+        key as ObservationsApiParamsKeysType
+      ] === value
+    ) {
     } else if (params) {
       // @ts-ignore
       if (observationsApiNames.includes(key)) {

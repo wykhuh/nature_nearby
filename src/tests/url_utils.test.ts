@@ -62,14 +62,12 @@ describe("decodeAppUrl", () => {
 });
 
 describe("formatAppParams", () => {
-  test("return key/value string for default store", () => {
+  test("return empty string for default store", () => {
     let store = structuredClone(defaultStore);
 
     let result = formatAppParams(store);
 
-    expect(result).toBe(
-      "spam=false&verifiable=true&per_page=24&obscuration=none&photos=true",
-    );
+    expect(result).toBe("");
   });
 
   test("returns place_id if store has place", () => {
@@ -78,7 +76,7 @@ describe("formatAppParams", () => {
 
     let result = formatAppParams(store);
 
-    expect(result).toBe(`place_id=${placeCity.id}&${defaultParamsString}`);
+    expect(result).toBe(`place_id=${placeCity.id}`);
   });
 
   test("returns taxon_id if store has taxon", () => {
@@ -87,7 +85,7 @@ describe("formatAppParams", () => {
 
     let result = formatAppParams(store);
 
-    expect(result).toBe(`taxon_id=${monarch.id}&${defaultParamsString}`);
+    expect(result).toBe(`taxon_id=${monarch.id}`);
   });
 
   test("does not return taxon_id if store has default taxon", () => {
@@ -96,7 +94,7 @@ describe("formatAppParams", () => {
 
     let result = formatAppParams(store);
 
-    expect(result).toBe(`${defaultParamsString}`);
+    expect(result).toBe(``);
   });
 
   test("returns place_id and taxon_id if store has places and taxa", () => {
@@ -108,8 +106,7 @@ describe("formatAppParams", () => {
 
     expect(result).toBe(
       `taxon_id=${monarch.id},${milkweed.id}` +
-        `&place_id=${placeCity.id},${placeCountry.id}` +
-        `&${defaultParamsString}`,
+        `&place_id=${placeCity.id},${placeCountry.id}`,
     );
   });
 
