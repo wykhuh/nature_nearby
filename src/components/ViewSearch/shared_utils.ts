@@ -12,9 +12,15 @@ import type {
   ObservationsApiParamsKeysType,
   ObservationsApiParamsType,
 } from "../../types/app";
-import { renderSelectedFiltersBasicList, renderSelectedFiltersList } from "./render_utils";
+import {
+  renderSelectedMoreFiltersList,
+  renderSelectedFiltersList,
+} from "./render_utils";
 
-export async function updateAppWithFormData(data: FormData, appStore: AppStoreType) {
+export async function updateAppWithFormData(
+  data: FormData,
+  appStore: AppStoreType,
+) {
   // get values from form data
   let results = processFormObservationsData(data);
 
@@ -64,11 +70,16 @@ function processFormObservationsData(data: FormData): {
 
   return {
     params: values,
-    string: new URLSearchParams(values as any).toString().replaceAll("%2C", ","),
+    string: new URLSearchParams(values as any)
+      .toString()
+      .replaceAll("%2C", ","),
   };
 }
 
-function updateStoreUsingFormData(appStore: AppStoreType, filtersResults: FiltersResults) {
+function updateStoreUsingFormData(
+  appStore: AppStoreType,
+  filtersResults: FiltersResults,
+) {
   handleObservationsFilters(filtersResults, appStore);
 
   appStore.observationsApiParams = {
@@ -77,7 +88,10 @@ function updateStoreUsingFormData(appStore: AppStoreType, filtersResults: Filter
   };
 }
 
-function handleObservationsFilters(filtersResults: FiltersResults, appStore: AppStoreType) {
+function handleObservationsFilters(
+  filtersResults: FiltersResults,
+  appStore: AppStoreType,
+) {
   for (let [k, _value] of Object.entries(appStore.observationsApiParams)) {
     let key = k as ObservationsApiParamsKeysType;
 
@@ -99,7 +113,7 @@ export async function updateAppState(appStore: AppStoreType) {
   resetPageNumber(appStore);
   // update UI
   renderSelectedFiltersList(appStore);
-  renderSelectedFiltersBasicList(appStore);
+  renderSelectedMoreFiltersList(appStore);
   // update url
   updateAppUrl(window.location, appStore);
   // update header count

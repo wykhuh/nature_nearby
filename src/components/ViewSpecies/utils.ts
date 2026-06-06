@@ -1,13 +1,16 @@
 import { updateAppUrl } from "../../lib/url_utils";
 import type { AppStoreType, DataComponentType } from "../../types/app";
-import type { iNatAPIError, iNatObservationsSpeciesAPI } from "../../types/inat_api";
+import type {
+  iNatAPIError,
+  iNatObservationsSpeciesAPI,
+} from "../../types/inat_api";
 import { getObservationsSpeciesData } from "../PageHome/data_utils";
 
 export function renderObservations(
   data: iNatObservationsSpeciesAPI | iNatAPIError | undefined,
   appStore: AppStoreType,
 ) {
-  const containerEl = document.querySelector("#observations-species-grid");
+  const containerEl = document.querySelector("#observations-species-container");
   if (!containerEl) return;
   containerEl.innerHTML = "";
 
@@ -24,7 +27,9 @@ export function renderObservations(
     return;
   }
 
-  let pagination1 = document.createElement("app-pagination") as DataComponentType;
+  let pagination1 = document.createElement(
+    "app-pagination",
+  ) as DataComponentType;
   pagination1.data = {
     perPage: data.per_page,
     currentPage: data.page,
@@ -33,13 +38,20 @@ export function renderObservations(
   };
   containerEl.appendChild(pagination1);
 
+  const gridContainerEl = document.createElement("div");
+  gridContainerEl.className = "grid-auto-fill";
+  gridContainerEl.id = "observations-species-grid";
+
   data.results.forEach((result) => {
     let component = document.createElement("card-species") as DataComponentType;
     component.data = result;
-    containerEl.appendChild(component);
+    gridContainerEl.appendChild(component);
   });
+  containerEl.append(gridContainerEl);
 
-  let pagination2 = document.createElement("app-pagination") as DataComponentType;
+  let pagination2 = document.createElement(
+    "app-pagination",
+  ) as DataComponentType;
   pagination2.data = {
     perPage: data.per_page,
     currentPage: data.page,

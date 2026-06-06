@@ -8,15 +8,9 @@ import {
   renderPresetDates,
 } from "./render_utils";
 
-export const basicFields = html`
-  <div>
-    <div class="form-group">
-      <button>Track location</button>
-    </div>
-
-    <fieldset>
-      <legend>Observations</legend>
-
+const basicFields = html`
+  <fieldset class="fields-basic">
+    <section>
       <div class="form-group">
         <label
           >Species
@@ -28,15 +22,13 @@ export const basicFields = html`
           >Observed Dates
           <app-tooltip
             data-content="?"
-            data-tooltip="Sets month and year for when the observations were observed. If you want more date options, use 'Advance Settings > Date Observed'"
+            data-tooltip="Sets month and year for when the observations were observed. If you want more date options, use 'More Options > Date Observed'"
           ></app-tooltip>
           ${renderPresetDates()}
         </label>
       </div>
-    </fieldset>
-    <fieldset>
-      <legend>Location</legend>
-
+    </section>
+    <section>
       <div class="form-group">
         <label
           >Places
@@ -44,12 +36,7 @@ export const basicFields = html`
         </label>
       </div>
 
-      <button
-        type="button"
-        class="btn-primary"
-        name="nearby_observations"
-        id="nearby_observations"
-      >
+      <button type="button" class="btn-primary" name="nearby-observations" id="nearby-observations">
         Current location</button
       ><app-tooltip
         data-content="?"
@@ -57,47 +44,10 @@ export const basicFields = html`
       ></app-tooltip>
 
       <div class="form-group">
-        <label for="lat"
-          >Latitude
-          <app-tooltip
-            data-content="?"
-            data-tooltip="lat: Observation latitude"
-          ></app-tooltip>
-        </label>
-        <input id="lat" name="lat" type="text" />
+        <button type="button">Track location</button>
       </div>
-      <div class="form-group">
-        <label for="lng"
-          >Longitude
-          <app-tooltip
-            data-content="?"
-            data-tooltip="lng: Observation longitude"
-          ></app-tooltip
-        ></label>
-        <input id="lng" name="lng" type="text" />
-      </div>
-
-      <div class="form-group">
-        <label for="radius"
-          >Radius
-          <app-tooltip
-            data-content="?"
-            data-tooltip="radius: Draws a circle with a certain radius from your current location."
-          ></app-tooltip
-        ></label>
-        <select name="radius" id="radius">
-          <option></option>
-          <option value=".4">0.25 mi (0.4 km)</option>
-          <option value=".8">0.5 mi (0.8 km)</option>
-          <option value="1.6">1 mi (1.6 km)</option>
-          <option value="4">2.5 mi (4.0 km)</option>
-          <option value="8">5 mi (8.0 km)</option>
-          <option value="10">6.2 mi (10.0 km)</option>
-          <option value="16.1">10 mi (16.1 km)</option>
-        </select>
-      </div>
-    </fieldset>
-  </div>
+    </section>
+  </fieldset>
 `;
 
 let datePane = html`
@@ -260,6 +210,41 @@ let observationPane = html`
       <legend>Geospatial</legend>
 
       <div class="form-group">
+        <label for="lat"
+          >Latitude
+          <app-tooltip data-content="?" data-tooltip="lat: Observation latitude"></app-tooltip>
+        </label>
+        <input id="lat" name="lat" type="text" />
+      </div>
+      <div class="form-group">
+        <label for="lng"
+          >Longitude
+          <app-tooltip data-content="?" data-tooltip="lng: Observation longitude"></app-tooltip
+        ></label>
+        <input id="lng" name="lng" type="text" />
+      </div>
+
+      <div class="form-group">
+        <label for="radius"
+          >Radius
+          <app-tooltip
+            data-content="?"
+            data-tooltip="radius: Draws a circle with a certain radius from your current location."
+          ></app-tooltip
+        ></label>
+        <select name="radius" id="radius">
+          <option></option>
+          <option value=".4">0.25 mi (0.4 km)</option>
+          <option value=".8">0.5 mi (0.8 km)</option>
+          <option value="1.6">1 mi (1.6 km)</option>
+          <option value="4">2.5 mi (4.0 km)</option>
+          <option value="8">5 mi (8.0 km)</option>
+          <option value="10">6.2 mi (10.0 km)</option>
+          <option value="16.1">10 mi (16.1 km)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="obscuration"
           >Obscuration<app-tooltip
             data-content="?"
@@ -339,20 +324,20 @@ const speciesPane = html`
 `;
 
 export const template = html`
-  <div class="modal-body">
-    <ol class="filters-basic-list"></ol>
+  <ol class="filters-list"></ol>
+  <ol class="more-filters-list hidden"></ol>
 
-    <form id="observations-form">
-      <div class="fields">
-        ${basicFields}
-        <h2>advance</h2>
-        <ol class="filters-list"></ol>
-
-        ${observationPane}${datePane}${speciesPane}
-      </div>
+  <form id="observations-form">
+    <section class="options-container">
+      ${basicFields}
       <div class="controls">
+        <button type="button" class="btn-primary" id="more-options">More Options</button>
         <button class="btn-danger" type="reset">Reset</button>
       </div>
-    </form>
-  </div>
+    </section>
+    <section id="more-options-container" class="hidden">
+      <div>${observationPane}</div>
+      <div>${datePane}${speciesPane}</div>
+    </section>
+  </form>
 `;

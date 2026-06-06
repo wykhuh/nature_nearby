@@ -31,3 +31,8 @@ Router.init();
 window.addEventListener("popstate", (event) => {
   Router.go(event.state.pathname);
 });
+
+// TODO: add view to url
+// TODO: switch media when multiple media
+// TODO: add draw rectangle
+// TODO: switch pagination to get all pages

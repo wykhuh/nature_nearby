@@ -63,15 +63,15 @@ export function renderObscurationOptions(defaultValue: string) {
   return content;
 }
 
-export function renderSelectedFiltersList(appStore: AppStoreType) {
-  let listEl = document.querySelector(".filters-list");
+export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
+  let listEl = document.querySelector(".more-filters-list");
   if (!listEl) return;
 
   listEl.innerHTML = "";
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
     if (
-      ["taxon_id", "place_id", "spam", "license", "lat", "lng", "radius"]
+      ["taxon_id", "place_id", "spam", "license", "month", "year", "lat", "lng"]
         .concat(observationsApiNonFilterableNames)
         .includes(key)
     ) {
@@ -87,8 +87,8 @@ export function renderSelectedFiltersList(appStore: AppStoreType) {
   }
 }
 
-export function renderSelectedFiltersBasicList(appStore: AppStoreType) {
-  let listBasicEl = document.querySelector(".filters-basic-list");
+export function renderSelectedFiltersList(appStore: AppStoreType) {
+  let listBasicEl = document.querySelector(".filters-list");
   if (!listBasicEl) return;
 
   listBasicEl.innerHTML = "";
@@ -116,10 +116,7 @@ export function renderSelectedFiltersBasicList(appStore: AppStoreType) {
     });
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
-    if (
-      ["lat", "lng", "radius", "month", "year"].includes(key) &&
-      value !== ""
-    ) {
+    if (["month", "year", "lat", "lng"].includes(key) && value !== "") {
       let itemEl = document.createElement(
         "selected-filters-item",
       ) as DataComponentType;

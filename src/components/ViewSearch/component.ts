@@ -9,7 +9,7 @@ import { updateAppUrl } from "../../lib/url_utils";
 import { debounce } from "../../lib/utils";
 import type { AppStoreType } from "../../types/app";
 import {
-  renderSelectedFiltersBasicList,
+  renderSelectedMoreFiltersList,
   renderSelectedFiltersList,
 } from "./render_utils";
 import { updateAppWithFormData } from "./shared_utils";
@@ -20,17 +20,27 @@ class ViewSearch extends HTMLElement {
   constructor() {
     super();
   }
+
   formEl: null | HTMLFormElement = null;
   nearbyObservationsEl: null | HTMLButtonElement = null;
   searchPlacesInputEl: HTMLInputElement | null = null;
   searchSpeciesInputEl: HTMLInputElement | null = null;
+  moreOptionsButton: HTMLButtonElement | null = null;
+  moreOptionsContainer: HTMLDivElement | null = null;
+  showMoreOptions = false;
+  moreFilterContainer: HTMLDivElement | null = null;
 
   connectedCallback() {
     setupComponent(template, this);
     this.formEl = this.querySelector("#observations-form") as HTMLFormElement;
     this.searchPlacesInputEl = document.querySelector("#search-places");
     this.searchSpeciesInputEl = document.querySelector("#search-taxa");
-    this.nearbyObservationsEl = document.querySelector("#nearby_observations");
+    this.nearbyObservationsEl = document.querySelector("#nearby-observations");
+    this.moreOptionsButton = document.querySelector("#more-options");
+    this.moreOptionsContainer = document.querySelector(
+      "#more-options-container",
+    );
+    this.moreFilterContainer = document.querySelector(".more-filters-list");
 
     this.render(window.app.store);
 
@@ -39,6 +49,7 @@ class ViewSearch extends HTMLElement {
     this.searchPlacesInputEl?.addEventListener("selection", this);
     this.searchSpeciesInputEl?.addEventListener("selection", this);
     this.nearbyObservationsEl?.addEventListener("click", this);
+    this.moreOptionsButton?.addEventListener("click", this);
   }
 
   disconnectedCallback() {
@@ -47,6 +58,7 @@ class ViewSearch extends HTMLElement {
     this.searchPlacesInputEl?.removeEventListener("selection", this);
     this.searchSpeciesInputEl?.removeEventListener("selection", this);
     this.nearbyObservationsEl?.removeEventListener("click", this);
+    this.moreOptionsButton?.removeEventListener("click", this);
   }
 
   handleEvent(event: CustomEvent) {
@@ -54,13 +66,26 @@ class ViewSearch extends HTMLElement {
     if (!target) return;
     if (!this.formEl) return;
     if (!this.nearbyObservationsEl) return;
+    if (!this.moreOptionsContainer) return;
+    if (!this.moreOptionsButton) return;
+    if (!this.moreFilterContainer) return;
 
     let appStore = window.app.store;
-
     if (event.type === "click") {
-      if (target.name === "nearby_observations") {
+      if (target.name === "nearby-observations") {
         event.preventDefault();
         this.setNearbyObservations(event);
+      } else if (target.id === "more-options") {
+        this.showMoreOptions = !this.showMoreOptions;
+        if (this.showMoreOptions) {
+          this.moreOptionsButton.textContent = "Less Options";
+          this.moreOptionsContainer.classList.remove("hidden");
+          this.moreFilterContainer.classList.remove("hidden");
+        } else {
+          this.moreOptionsButton.textContent = "More Options";
+          this.moreOptionsContainer.classList.add("hidden");
+          this.moreFilterContainer.classList.add("hidden");
+        }
       }
     }
 
@@ -91,12 +116,12 @@ class ViewSearch extends HTMLElement {
       let record = event.detail.selection.value;
       if (target.id === "search-places") {
         placeSelectedHandler(record, appStore).then(() => {
-          renderSelectedFiltersBasicList(appStore);
+          renderSelectedFiltersList(appStore);
           updateAppUrl(window.location, appStore);
         });
       } else if (target.id === "search-taxa") {
         taxonSelectedHandler(record, appStore).then(() => {
-          renderSelectedFiltersBasicList(appStore);
+          renderSelectedFiltersList(appStore);
           updateAppUrl(window.location, appStore);
         });
       }
@@ -109,7 +134,7 @@ class ViewSearch extends HTMLElement {
     setupPlacesSearch("#search-places");
     setupTaxaSearch("#search-taxa", appStore);
     renderSelectedFiltersList(appStore);
-    renderSelectedFiltersBasicList(appStore);
+    renderSelectedMoreFiltersList(appStore);
   }
 
   formChangeHandlerDebounced = debounce(this.formChangeHandler);

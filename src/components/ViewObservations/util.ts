@@ -7,7 +7,7 @@ export function renderObservations(
   data: iNatObservationsAPI | iNatAPIError | undefined,
   appStore: AppStoreType,
 ) {
-  const containerEl = document.querySelector("#observations-grid");
+  const containerEl = document.querySelector("#observations-container");
   if (!containerEl) return;
   containerEl.innerHTML = "";
 
@@ -24,7 +24,9 @@ export function renderObservations(
     return;
   }
 
-  let pagination1 = document.createElement("app-pagination") as DataComponentType;
+  let pagination1 = document.createElement(
+    "app-pagination",
+  ) as DataComponentType;
   pagination1.data = {
     perPage: data.per_page,
     currentPage: data.page,
@@ -33,13 +35,22 @@ export function renderObservations(
   };
   containerEl.appendChild(pagination1);
 
-  data.results.forEach((result) => {
-    let component = document.createElement("card-observation") as DataComponentType;
-    component.data = result;
-    containerEl.appendChild(component);
-  });
+  const gridContainerEl = document.createElement("div");
+  gridContainerEl.className = "grid-auto-fill";
+  gridContainerEl.id = "observations-grid";
 
-  let pagination2 = document.createElement("app-pagination") as DataComponentType;
+  data.results.forEach((result) => {
+    let component = document.createElement(
+      "card-observation",
+    ) as DataComponentType;
+    component.data = result;
+    gridContainerEl.appendChild(component);
+  });
+  containerEl.append(gridContainerEl);
+
+  let pagination2 = document.createElement(
+    "app-pagination",
+  ) as DataComponentType;
   pagination2.data = {
     perPage: data.per_page,
     currentPage: data.page,
