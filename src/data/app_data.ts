@@ -60,9 +60,12 @@ export const observationsFilterableImplementedArrays: ObservationsApiParamsKeysT
     "year",
   ];
 
+const appParams: ObservationsApiParamsKeysType[] = ["view"];
+
 export const observationsApiNames = observationsFilterableImplemented
   .concat(observationsFilterableImplementedArrays)
-  .concat(observationsApiNonFilterableNames);
+  .concat(observationsApiNonFilterableNames)
+  .concat(appParams);
 
 export const observationsFieldName_InputType = {
   captive: "select",

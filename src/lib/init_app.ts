@@ -3,6 +3,7 @@ import type {
   AppPage,
   AppStoreType,
   ObservationsApiParamsKeysType,
+  ValidViews,
 } from "../types/app";
 import { normalizePlaceResult, normalizeTaxonResult } from "./data_utils";
 import {
@@ -33,8 +34,12 @@ export async function initApp(
   for await (let [k, value] of Object.entries(urlData)) {
     let key = k as ObservationsApiParamsKeysType;
 
-    // populate observationsApiParams
-    appStore.observationsApiParams[key] = value as any;
+    if (key === "view") {
+      appStore.currentView = value as ValidViews;
+    } else {
+      // populate observationsApiParams
+      appStore.observationsApiParams[key] = value as any;
+    }
 
     // populate selectedPlaces
     if (key === "place_id") {

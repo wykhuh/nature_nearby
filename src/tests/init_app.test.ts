@@ -4,7 +4,7 @@ import { expect, test, describe, beforeAll, afterEach, afterAll } from "vitest";
 import { defaultStore } from "../lib/store";
 import { placeCountry, placeCity, monarch, milkweed } from "./fixtures/data";
 import { createMockServer, defaultParams } from "./fixtures/test_helpers";
-import { observationsApiNames } from "../data/app_data";
+import { observationsApiNames, validView } from "../data/app_data";
 import { initApp } from "../lib/init_app";
 import { allTaxaRecord } from "../data/inat_data";
 
@@ -28,6 +28,18 @@ describe("initApp", () => {
     expect(store.observationsApiParams).toStrictEqual(defaultParams);
     expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
     expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
+  });
+
+  test("if invalid param, set observationsApiParams to default params ", async () => {
+    let store = structuredClone(defaultStore);
+
+    await initApp("?foo=bad", "/", store);
+
+    expect(store.observationsApiParams).toStrictEqual(defaultParams);
+    expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
+    expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
   });
 
   test.each(observationsApiNames)(
@@ -36,7 +48,7 @@ describe("initApp", () => {
       let store = structuredClone(defaultStore);
       let value: string | number = "abc";
       let paramStr = `?${field}=${value}`;
-      if (["colors", "taxon_id", "place_id"].includes(field)) {
+      if (["colors", "taxon_id", "place_id", "view"].includes(field)) {
         return;
       }
 
@@ -44,6 +56,8 @@ describe("initApp", () => {
 
       let expected = { ...defaultParams, [field]: value };
       expect(store.observationsApiParams).toStrictEqual(expected);
+      expect(store.color).toBe(allTaxaRecord.color);
+      expect(store.currentView).toBe("search");
     },
   );
 
@@ -56,6 +70,7 @@ describe("initApp", () => {
     expect(store.observationsApiParams).toStrictEqual(expected);
     expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
     expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
   });
 
   test("if one place_id, add place to observationsApiParams and selectedPlaces", async () => {
@@ -68,6 +83,7 @@ describe("initApp", () => {
     expect(store.selectedPlaces).toStrictEqual([placeCity]);
     expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
     expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
   });
 
   test("if multiple place_id, add place to observationsApiParams and selectedPlaces", async () => {
@@ -83,6 +99,7 @@ describe("initApp", () => {
     expect(store.selectedPlaces).toStrictEqual([placeCity, placeCountry]);
     expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
     expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
   });
 
   test("if one taxon_id, add taxon to observationsApiParams and selectedTaxa", async () => {
@@ -98,6 +115,7 @@ describe("initApp", () => {
     expect(store.observationsApiParams).toStrictEqual(expected);
     expect(store.selectedTaxa).toStrictEqual([monarch]);
     expect(store.color).toBe(monarch.color);
+    expect(store.currentView).toBe("search");
   });
 
   test("if multiple taxon_id, add taxa to observationsApiParams and selectedTaxa", async () => {
@@ -113,5 +131,29 @@ describe("initApp", () => {
     expect(store.observationsApiParams).toStrictEqual(expected);
     expect(store.selectedTaxa).toStrictEqual([monarch, milkweed]);
     expect(store.color).toBe(milkweed.color);
+    expect(store.currentView).toBe("search");
+  });
+
+  test.each(validView)(
+    "sets currentView based on valid view param",
+    async (view) => {
+      let store = structuredClone(defaultStore);
+
+      await initApp(`?view=${view}`, "/", store);
+
+      expect(store.observationsApiParams).toStrictEqual(defaultParams);
+      expect(store.color).toBe(allTaxaRecord.color);
+      expect(store.currentView).toBe(view);
+    },
+  );
+
+  test("ignores invalid", async () => {
+    let store = structuredClone(defaultStore);
+
+    await initApp(`?view=bad`, "/", store);
+
+    expect(store.observationsApiParams).toStrictEqual(defaultParams);
+    expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
   });
 });

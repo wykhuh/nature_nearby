@@ -4,8 +4,7 @@ import { expect, test, describe } from "vitest";
 import { decodeAppUrl, formatAppParams } from "../lib/url_utils";
 import { defaultStore } from "../lib/store";
 import { milkweed, monarch, placeCity, placeCountry } from "./fixtures/data";
-import { defaultParamsString } from "./fixtures/test_helpers";
-import { observationsApiNames } from "../data/app_data";
+import { observationsApiNames, validView } from "../data/app_data";
 import { allTaxaRecord } from "../data/inat_data";
 
 describe("decodeAppUrl", () => {
@@ -19,6 +18,9 @@ describe("decodeAppUrl", () => {
     "add key and value to object for valid params",
     (field) => {
       let results = decodeAppUrl(`?${field}=abc`, "/");
+      if (field === "view") {
+        return;
+      }
 
       expect(results).toStrictEqual({ [field]: "abc" });
     },
@@ -59,6 +61,18 @@ describe("decodeAppUrl", () => {
 
     expect(results).toStrictEqual({});
   });
+
+  test.each(validView)("returns valid views", (view) => {
+    let results = decodeAppUrl(`?view=${view}`, "/");
+
+    expect(results).toStrictEqual({ view: view });
+  });
+
+  test("ignore invalid views", () => {
+    let results = decodeAppUrl(`?view=bad`, "/");
+
+    expect(results).toStrictEqual({});
+  });
 });
 
 describe("formatAppParams", () => {
@@ -69,6 +83,23 @@ describe("formatAppParams", () => {
 
     expect(result).toBe("");
   });
+
+  test.each(observationsApiNames)(
+    "returns valid observation params",
+    (param) => {
+      if (["view", "taxon_id", "place_id", "colors"].includes(param)) {
+        return;
+      }
+
+      let store = structuredClone(defaultStore);
+      // @ts-ignore
+      store.observationsApiParams[param] = "abc";
+
+      let result = formatAppParams(store);
+
+      expect(result).toStrictEqual(`${param}=abc`);
+    },
+  );
 
   test("returns place_id if store has place", () => {
     let store = structuredClone(defaultStore);
@@ -118,5 +149,36 @@ describe("formatAppParams", () => {
     let result = formatAppParams(store);
 
     expect(result).toBe(undefined);
+  });
+
+  test("does not add view if currentView is search", () => {
+    let store = structuredClone(defaultStore);
+    store.currentView = "search";
+
+    let result = formatAppParams(store);
+
+    expect(result).toStrictEqual(``);
+  });
+
+  test.each(validView.filter((v) => v !== "search"))(
+    "returns views if currentView is not search",
+    (view) => {
+      let store = structuredClone(defaultStore);
+      store.currentView = view;
+
+      let result = formatAppParams(store);
+
+      expect(result).toStrictEqual(`view=${view}`);
+    },
+  );
+
+  test("ignore invalid valid views", () => {
+    let store = structuredClone(defaultStore);
+    // @ts-ignore
+    store.currentView = "bad";
+
+    let result = formatAppParams(store);
+
+    expect(result).toStrictEqual("");
   });
 });

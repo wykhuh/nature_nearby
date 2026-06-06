@@ -1,10 +1,11 @@
-import { observationsApiNames } from "../data/app_data";
+import { observationsApiNames, validView } from "../data/app_data";
 import type {
   AppStoreType,
   ObservationsApiParamsKeysType,
   ValidAppParams,
   ValidAppParamsKeys,
 } from "../types/app";
+import { defaultStore } from "./store";
 
 export function decodeAppUrl(searchParams: string, path: string) {
   if (path !== "/") return {};
@@ -13,7 +14,11 @@ export function decodeAppUrl(searchParams: string, path: string) {
   let params: ValidAppParams = {};
 
   for (let [key, value] of urlParams.entries()) {
-    if (observationsApiNames.includes(key as ValidAppParamsKeys)) {
+    if (key === "view") {
+      if (validView.includes(value as any)) {
+        params[key] = value;
+      }
+    } else if (observationsApiNames.includes(key as ValidAppParamsKeys)) {
       let cleanedValue;
       if (value === "true") {
         cleanedValue = true;
@@ -47,12 +52,17 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
     params.set("place_id", appStore.selectedPlaces.map((p) => p.id).join(","));
   }
 
+  let view = appStore.currentView;
+  if (view && validView.includes(view as any) && view !== "search") {
+    params.set("view", view);
+  }
+
   let processedKeys: ObservationsApiParamsKeysType[] = [
     "taxon_id",
     "place_id",
     "colors",
+    "view",
   ];
-
   Object.entries(appStore.observationsApiParams).forEach(([key, value]) => {
     // @ts-ignore
     if (processedKeys.includes(key)) {

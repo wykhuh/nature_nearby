@@ -75,6 +75,9 @@ type ObservationsApiParamsType = {
   taxon_id?: string;
   verifiable?: boolean;
   year?: string;
+
+  // app params
+  view?: string;
 };
 
 export type ObservationsApiParamsKeysType = keyof ObservationsApiParamsType;

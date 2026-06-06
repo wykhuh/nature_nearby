@@ -377,6 +377,10 @@
     }
   }
 
+  .current-view {
+    background-color: var(--clr-gray-300);
+  }
+
   .taxa-ac-option {
     display: grid;
     grid-template-columns: 40px 1fr;

@@ -6,7 +6,7 @@ import { setupComponent } from "../../lib/component_utils";
 import type { AppStoreType, ValidViews } from "../../types/app";
 import { template } from "./template";
 import { removeMap, renderMap } from "../../lib/map_utils.ts";
-import { setView } from "./utils.ts";
+import { initFilters, setView } from "./utils.ts";
 import { viewComponentObj } from "../../data/app_data.ts";
 import { initRenderMap } from "../../lib/init_app.ts";
 
@@ -74,6 +74,7 @@ class PageHome extends HTMLElement {
       viewComponentObj[appStore.currentView],
     );
     this.viewContainerEl.appendChild(component);
+    initFilters(appStore);
   }
 }
 
