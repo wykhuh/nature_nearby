@@ -23,17 +23,17 @@ export const defaultParams = {
 
 export function createMockServer() {
   const handlers = [
-    http.get("https://api.inaturalist.org/v2/places/1?*", async (_args) => {
+    http.get("https://api.inaturalist.org/v2/places/1", async (_args) => {
       return HttpResponse.json(places1APIResponse);
     }),
-    http.get("https://api.inaturalist.org/v2/places/1,2?*", async (_args) => {
+    http.get("https://api.inaturalist.org/v2/places/1,2", async (_args) => {
       return HttpResponse.json(places2APIResponse);
     }),
-    http.get("https://api.inaturalist.org/v2/taxa/48662?*", async (_args) => {
+    http.get("https://api.inaturalist.org/v2/taxa/48662", async (_args) => {
       return HttpResponse.json(monarchTaxaApiResponse);
     }),
     http.get(
-      "https://api.inaturalist.org/v2/taxa/48662,56851?*",
+      "https://api.inaturalist.org/v2/taxa/48662,56851",
       async (_args) => {
         return HttpResponse.json(monarchMilkweedTaxaApiResponse);
       },
