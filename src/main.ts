@@ -9,6 +9,7 @@ import "./components/CardSpecies/component.ts";
 import "./components/ObservationsHeader/component.ts";
 import "./components/Pagination/component.ts";
 import "./components/SelectedFiltersItem/component.ts";
+import "./components/AppStoreViewer/component.ts";
 
 import store from "./lib/store.ts";
 import { initApp, registerServiceWorker } from "./lib/init_app.ts";

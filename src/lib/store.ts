@@ -1,3 +1,4 @@
+import { displayAppstoreData } from "../components/AppStoreViewer/utils";
 import type { AppStoreType } from "../types/app";
 import { primaryColorSchemeName } from "./map_colors_utils";
 
@@ -27,6 +28,8 @@ export const defaultStore: AppStoreType = {
 const proxiedStore = new Proxy(structuredClone(defaultStore), {
   set(target, property, value) {
     (target as any)[property] = value;
+    
+    displayAppstoreData(proxiedStore, `proxiedStore ${property.toString()}`);
 
     return true;
   },

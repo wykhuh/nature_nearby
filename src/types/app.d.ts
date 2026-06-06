@@ -41,6 +41,8 @@ export type AppStoreType = {
   primaryColorScheme: keyof typeof appColorSchemes;
 };
 
+export type AppStoreKeysType = keyof AppStoreType;
+
 type ObservationsApiParamsType = {
   captive?: boolean;
   colors?: string;
