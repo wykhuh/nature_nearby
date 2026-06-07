@@ -35,15 +35,18 @@ export function renderMap() {
   L.Icon.Default.imagePath = "";
 
   // add basemaps
-  let { OpenStreetMap, OpenTopo } = getMapTiles();
+  let { OpenStreetMap, USGSTopo, USGSImagery } = getMapTiles();
   L.tileLayer(OpenStreetMap.url, OpenStreetMap.options).addTo(map);
+  L.tileLayer(USGSTopo.url, USGSTopo.options).addTo(map);
+  L.tileLayer(USGSImagery.url, USGSImagery.options).addTo(map);
 
   const layerControl = L.control
     .layers(undefined, undefined, { collapsed: true })
     .addTo(map);
 
   addLayerToMap(OpenStreetMap, map, layerControl, true);
-  addLayerToMap(OpenTopo, map, layerControl);
+  addLayerToMap(USGSTopo, map, layerControl);
+  addLayerToMap(USGSImagery, map, layerControl);
 
   const terraDraw = setupTerraDraw(map);
   terraDraw.start();
