@@ -36,7 +36,12 @@ const basicFields = html`
         </label>
       </div>
 
-      <button type="button" class="btn-primary" name="nearby-observations" id="nearby-observations">
+      <button
+        type="button"
+        class="btn-primary"
+        name="nearby-observations"
+        id="nearby-observations"
+      >
         Current location</button
       ><app-tooltip
         data-content="?"
@@ -212,14 +217,20 @@ let observationPane = html`
       <div class="form-group">
         <label for="lat"
           >Latitude
-          <app-tooltip data-content="?" data-tooltip="lat: Observation latitude"></app-tooltip>
+          <app-tooltip
+            data-content="?"
+            data-tooltip="lat: Observation latitude"
+          ></app-tooltip>
         </label>
         <input id="lat" name="lat" type="text" />
       </div>
       <div class="form-group">
         <label for="lng"
           >Longitude
-          <app-tooltip data-content="?" data-tooltip="lng: Observation longitude"></app-tooltip
+          <app-tooltip
+            data-content="?"
+            data-tooltip="lng: Observation longitude"
+          ></app-tooltip
         ></label>
         <input id="lng" name="lng" type="text" />
       </div>
@@ -331,7 +342,9 @@ export const template = html`
     <section class="options-container">
       ${basicFields}
       <div class="controls">
-        <button type="button" class="btn-primary" id="more-options">More Options</button>
+        <button type="button" class="btn-primary" id="more-options">
+          More Options
+        </button>
         <button class="btn-danger" type="reset">Reset</button>
       </div>
     </section>

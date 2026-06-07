@@ -1,5 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import L from "leaflet";
+
 import {
   monarchMilkweedTaxaApiResponse,
   monarchTaxaApiResponse,
@@ -7,6 +9,9 @@ import {
   places2APIResponse,
 } from "./data";
 import { allTaxaRecord } from "../../data/inat_data";
+import { addLayerToMap, getMapTiles } from "../../lib/map_utils";
+import { defaultStore } from "../../lib/store";
+import type { AppStoreType } from "../../types/app";
 
 export const defaultParamsString =
   "spam=false&verifiable=true&per_page=24&obscuration=none&photos=true";
@@ -48,4 +53,27 @@ export function createMockServer() {
   const server = setupServer(...handlers);
 
   return server;
+}
+
+export function setupMapAndStore() {
+  let map = L.map("map", {
+    center: [0, 0],
+    zoom: 2,
+    maxZoom: 19,
+  });
+  var layerControl = L.control.layers().addTo(map);
+  let { OpenStreetMap } = getMapTiles();
+  addLayerToMap(OpenStreetMap, map, layerControl, true);
+
+  let dup = structuredClone(defaultStore);
+  let store: AppStoreType = {
+    ...dup,
+    map: {
+      map: map,
+      layerControl: layerControl,
+      terraDraw: null,
+    },
+  };
+
+  return { map, layerControl, store };
 }

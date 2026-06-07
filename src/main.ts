@@ -34,6 +34,5 @@ window.addEventListener("popstate", (event) => {
 });
 
 // TODO: switch media when multiple media
-// TODO: add draw rectangle
 // TODO: switch pagination to get all pages
 // TODO: track user movement

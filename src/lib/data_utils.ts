@@ -4,6 +4,7 @@ import L from "leaflet";
 import type {
   AppStoreSelectedResourcesKeysType,
   AppStoreType,
+  CustomLayerOptionsType,
   MapTilesAPIParamsType,
   NormalizedPlace,
   NormalizedTaxon,
@@ -440,4 +441,21 @@ export function normalizeTaxonResult(
   }
 
   return data;
+}
+
+export function leafletMapLayers(
+  appStore: AppStoreType,
+  field = "layer_description" as keyof CustomLayerOptionsType,
+) {
+  let items: any[] = [];
+  if (appStore.map.map) {
+    appStore.map.map.eachLayer((layer) => {
+      let options = layer.options as CustomLayerOptionsType;
+      if (options[field]) {
+        items.push(options[field]);
+      }
+    });
+  }
+
+  return items;
 }

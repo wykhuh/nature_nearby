@@ -1,4 +1,5 @@
 import type { GeoJSON, GeoJSONOptions, Map, TileLayer } from "leaflet";
+import type { TerraDraw } from "terra-draw";
 
 import type {
   ObservationPhoto,
@@ -30,6 +31,7 @@ export type AppStoreType = {
   map: {
     map: Map | null;
     layerControl: Control.Layers | null;
+    terraDraw: TerraDraw | null;
   };
   selectedPlaces: NormalizedPlace[];
   selectedTaxa: NormalizedTaxon[];
@@ -245,9 +247,22 @@ export type PlaceTypesKey = keyof PlaceTypes;
 
 export interface CustomGeoJSONType extends GeoJSON {
   options: CustomGeoJSONTypeOptions;
+  getLatLngs: () => {};
 }
 
 export interface CustomGeoJSONTypeOptions extends GeoJSONOptions {
   layer_description: string;
   layer_type: string;
+}
+
+type Lng = number;
+type Lat = number;
+export type LngLatType = [Lng, Lat];
+export type LatLngType = [Lat, Lng];
+export type CoordinatesType = LngLatType | LatLngType;
+
+export interface CustomLayerOptionsType extends LayerOptions {
+  layer_description: string;
+  layer_type: string;
+  control_name: string;
 }

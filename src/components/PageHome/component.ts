@@ -62,11 +62,10 @@ class PageHome extends HTMLElement {
 
   async render(appStore: AppStoreType) {
     if (!appStore.map.map) {
-      let { map, layerControl } = renderMap();
-      appStore.map.map = map;
-      appStore.map.layerControl = layerControl;
-      await initRenderMap(map, appStore);
+      let { map, terraDraw, layerControl } = renderMap();
+      await initRenderMap(map, terraDraw, layerControl, appStore);
     }
+
     if (!this.viewContainerEl) return;
     if (!appStore.currentView) return;
 

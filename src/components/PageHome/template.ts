@@ -8,8 +8,11 @@ export const template = html`
 
   <div id="view-controls">
     <button id="view-search" data-view="search">search</button>
-    <button id="view-observations" data-view="observations">observations</button>
+    <button id="view-observations" data-view="observations">
+      observations
+    </button>
     <button id="view-species" data-view="species">species</button>
   </div>
+
   <div id="view-container"></div>
 `;

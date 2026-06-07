@@ -2,6 +2,7 @@ import type { Map } from "leaflet";
 import type {
   AppPage,
   AppStoreType,
+  LngLatType,
   ObservationsApiParamsKeysType,
   ValidViews,
 } from "../types/app";
@@ -11,9 +12,16 @@ import {
   addDefaultTaxaRecordToStore,
 } from "./data_utils";
 import { getPlaceById, getTaxonById } from "./inat_api";
-import { fitBoundsPlaces, renderSelectedPlacesBoundaries } from "./map_utils";
+import {
+  addiNatBBoxToMap,
+  createDrawRectButton,
+  fitBoundsPlaces,
+  renderSelectedPlacesBoundaries,
+} from "./map_utils";
 import { updateTilesForSelectedTaxa } from "./search_utils";
 import { decodeAppUrl } from "./url_utils";
+import { processTerraDrawBBox } from "./search_bounding_box";
+import type { TerraDraw } from "terra-draw";
 
 const pathPage = {
   "/about/": "about",
@@ -91,11 +99,38 @@ async function fetchAndSaveTaxa(
 // create map.
 // need to create new map instance whenever div for map changes.
 // used on inital app load, changing views, changing pages.
-export async function initRenderMap(map: Map, appStore: AppStoreType) {
+export async function initRenderMap(
+  map: Map,
+  terraDraw: TerraDraw,
+  layerControl: L.Control,
+  appStore: AppStoreType,
+) {
   if (!document.querySelector("#map")) return;
+  if (!terraDraw) return;
+  if (!map) return;
+  if (!layerControl) return;
+
+  terraDraw.on("finish", () => {
+    // add bounding box
+    const snapshot = terraDraw.getSnapshot();
+    let coors = snapshot[0].geometry.coordinates[0] as LngLatType[];
+    processTerraDrawBBox(coors, appStore);
+  });
+
+  // add map to store
+  appStore.map.map = map;
+  appStore.map.layerControl = layerControl;
+  appStore.map.terraDraw = terraDraw;
+
+  createDrawRectButton(appStore);
 
   // add places layers
   renderSelectedPlacesBoundaries(appStore);
+
+  // add bounding box layer
+  if (appStore.observationsApiParams.nelat !== undefined) {
+    addiNatBBoxToMap(appStore);
+  }
 
   // load default or selected taxa map layer
   if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {

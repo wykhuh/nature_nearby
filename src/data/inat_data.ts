@@ -1,5 +1,10 @@
 import { iNatOrange } from "../lib/map_colors_utils";
-import type { PlaceTypes, NormalizedTaxon } from "../types/app";
+import type {
+  PlaceTypes,
+  NormalizedTaxon,
+  LngLatType,
+  NormalizedPlace,
+} from "../types/app";
 
 export const iNatTaxaUrl = "https://www.inaturalist.org/taxa";
 export const iNatPlacesUrl = "https://www.inaturalist.org/places";
@@ -90,3 +95,11 @@ export const placeTypes: PlaceTypes = {
   "1019": "Poblacion",
   "1020": "Delegation",
 };
+
+export function bboxPlaceRecord(bbox: LngLatType[]): NormalizedPlace {
+  return {
+    id: 0,
+    name: "Custom Boundary",
+    bounding_box: { type: "Polygon", coordinates: [bbox] },
+  };
+}

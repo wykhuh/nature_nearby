@@ -3,17 +3,24 @@ import type { GeoJSON, Map } from "leaflet";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import { TerraDraw, TerraDrawRectangleMode } from "terra-draw";
+import { TerraDrawLeafletAdapter } from "terra-draw-leaflet-adapter";
 
 import { loggerUrl } from "./logger";
 import type {
   AppStoreType,
   CircleSettings,
+  CoordinatesType,
   CustomGeoJSONType,
   GeoJSONSettings,
+  LatLngType,
+  LngLatType,
   MarkerSettings,
+  ObservationsApiParamsType,
   ObservationTilesSettingType,
 } from "../types/app";
 import type { MultiPolygonJson } from "../types/inat_api";
+import { square } from "../assets/icons.ts";
 
 export function renderMap() {
   let map = L.map("map", {
@@ -38,7 +45,10 @@ export function renderMap() {
   addLayerToMap(OpenStreetMap, map, layerControl, true);
   addLayerToMap(OpenTopo, map, layerControl);
 
-  return { map, layerControl };
+  const terraDraw = setupTerraDraw(map);
+  terraDraw.start();
+
+  return { map, layerControl, terraDraw };
 }
 
 export function getMapTiles(): {
@@ -231,4 +241,124 @@ export function removeMap(appStore: AppStoreType) {
     appStore.map.map.remove();
     appStore.map.map = null;
   }
+
+  if (appStore.map.layerControl) {
+    appStore.map.layerControl.remove();
+    appStore.map.layerControl = null;
+  }
+
+  if (appStore.map.terraDraw) {
+    appStore.map.terraDraw.stop();
+  }
+}
+
+export function setupTerraDraw(map: Map) {
+  return new TerraDraw({
+    adapter: new TerraDrawLeafletAdapter({
+      lib: L,
+      map,
+    }),
+    modes: [new TerraDrawRectangleMode()],
+  });
+}
+
+export function convertLnLatToiNatBBox(coordinates: LngLatType[]) {
+  let nelng = coordinates[2][0];
+  let swlng = coordinates[0][0];
+  let nelat = coordinates[0][1];
+  let swlat = coordinates[1][1];
+
+  return { nelng, swlng, nelat, swlat };
+}
+
+export function renderBoundingBoxLayer(
+  map: Map,
+  latLngCoors: LatLngType[],
+  options = {
+    fillColor: "none",
+    weight: 1,
+    layer_description: "bounding box",
+  },
+) {
+  let layer = L.polygon(latLngCoors, options);
+  layer.addTo(map);
+  return layer;
+}
+
+export function flipLatLng(coordinates: CoordinatesType): CoordinatesType {
+  return [coordinates[1], coordinates[0]];
+}
+
+export function createDrawRectButton(
+  appStore: AppStoreType,
+): HTMLButtonElement | null {
+  let buttonEl: HTMLButtonElement = null as unknown as HTMLButtonElement;
+  let map = appStore.map.map;
+  if (!map) return null;
+
+  const DrawRect = L.Control.extend({
+    onAdd: function (_map: Map) {
+      buttonEl = L.DomUtil.create(
+        "button",
+        "leaflet-bar leaflet-control leaflet-control-draw-rect",
+      );
+
+      buttonEl.innerHTML = square;
+
+      buttonEl.onclick = async function () {
+        let terraDraw = appStore.map.terraDraw;
+        if (!terraDraw) return;
+        let mode = terraDraw.getMode();
+        if (mode === "static") {
+          buttonEl.classList.add("active");
+          terraDraw.setMode("rectangle");
+        } else {
+          buttonEl.classList.remove("active");
+          terraDraw.setMode("static");
+        }
+      };
+
+      return buttonEl;
+    },
+    onRemove: function (_map: Map) {},
+  });
+
+  function drawRect(opts: any) {
+    return new DrawRect(opts);
+  }
+  drawRect({ position: "topleft" }).addTo(map);
+
+  return buttonEl;
+}
+
+// turn iNat nelng,nelat,swlng,swlat into geometry that leaflet understands
+export function convertiNatBBoxToLatLng(
+  params: ObservationsApiParamsType,
+): LatLngType[] | undefined {
+  const { nelng, nelat, swlng, swlat } = params;
+  if (nelng === undefined) return;
+  if (nelat === undefined) return;
+  if (swlng === undefined) return;
+  if (swlat === undefined) return;
+
+  return [
+    [nelat, nelng],
+    [swlat, nelng],
+    [swlat, swlng],
+    [nelat, swlng],
+  ];
+}
+
+export function addiNatBBoxToMap(appStore: AppStoreType) {
+  let map = appStore.map.map;
+  if (!map) return;
+
+  // convert bounding box
+  let latLngCoors = convertiNatBBoxToLatLng(appStore.observationsApiParams);
+  if (!latLngCoors) return;
+
+  console.log(latLngCoors);
+
+  let layer = renderBoundingBoxLayer(map, latLngCoors) as any;
+  appStore.placesMapLayers["0"] = [layer as unknown as CustomGeoJSONType];
 }

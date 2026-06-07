@@ -4,7 +4,7 @@ import { primaryColorSchemeName } from "./map_colors_utils";
 
 export const defaultStore: AppStoreType = {
   currentPage: "home",
-  map: { map: null, layerControl: null },
+  map: { map: null, layerControl: null, terraDraw: null },
   selectedPlaces: [],
   selectedTaxa: [],
   observationsApiParams: {
