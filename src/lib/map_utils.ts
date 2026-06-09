@@ -36,6 +36,9 @@ export function renderMap() {
   let map = L.map("map", {
     center: [0, 0],
     zoom: 0,
+    // NOTE: set worldCopyJump to true so that rectangles from rectangles
+    // have -180 to 180 longitudes that iNat API requires
+    worldCopyJump: true,
   });
   map.zoomControl.setPosition("bottomright");
   L.Icon.Default.prototype.options.iconUrl = markerIconUrl;
