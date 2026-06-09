@@ -1,0 +1,32 @@
+nelng=-170&nelat=5&swlat=0&swlng=170 - no
+ [||]
+
+nelat=4&nelng=170&subview=map&swlat=0&swlng=-164 - ok
+[__]||  [____]
+
+nelat=5&nelng=-175&subview=map&swlat=0&swlng=-165 - no
+[__||]  [____]
+
+nelat=5&nelng=-165&subview=map&swlat=0&swlng=-175 - ok
+    ||[]
+
+nelng=180&nelat=5&swlat=0&swlng=170 - ok
+nelng=-180&nelat=5&swlat=0&swlng=170 - no
+  []||
+
+
+nelng=-170&nelat=5&swlat=0&swlng=-180 - ok
+nelng=-170&nelat=5&swlat=0&swlng=180 -no
+    ||[]
+
+
+nelng=180&nelat=5&swlat=0&swlng=-170 - ok
+nelng=-180&nelat=5&swlat=0&swlng=-170 - no
+[__]||  [____]
+
+
+nelng=170&nelat=5&swlat=0&swlng=-180 - ok
+nelng=170&nelat=5&swlat=0&swlng=180 - no
+[]  ||[____]
+
+

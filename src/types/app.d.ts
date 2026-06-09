@@ -1,4 +1,10 @@
-import type { GeoJSON, GeoJSONOptions, Map, TileLayer } from "leaflet";
+import type {
+  GeoJSON,
+  GeoJSONOptions,
+  LatLngBounds,
+  Map,
+  TileLayer,
+} from "leaflet";
 import type { TerraDraw } from "terra-draw";
 
 import type {
@@ -266,3 +272,15 @@ export interface CustomLayerOptionsType extends LayerOptions {
   layer_type: string;
   control_name: string;
 }
+
+interface LeafletBoundsType extends LatLngBounds {
+  _northEast: { lat: number; lng: number };
+  _southWest: { lat: number; lng: number };
+}
+
+type iNatBBox = {
+  nelat: number;
+  nelng: number;
+  swlat: number;
+  swlng: number;
+};

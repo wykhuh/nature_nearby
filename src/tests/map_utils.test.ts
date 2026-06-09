@@ -2,9 +2,18 @@
 
 import jsdom from "jsdom";
 import { expect, test, describe, beforeEach } from "vitest";
-
-import { addiNatBBoxToMap } from "../lib/map_utils";
-import { setupMapAndStore } from "./fixtures/test_helpers";
+import {
+  addiNatBBoxToMapAndStore,
+  convertLnLatToiNatBBox,
+  crossesAntimerdian,
+  flipLatLng,
+  normalizeTerraDrawLngLat,
+} from "../lib/map_utils";
+import { defaultParams, setupMapAndStore } from "./fixtures/test_helpers";
+import { leafletMapLayers } from "../lib/data_utils";
+import type { LngLatType } from "../types/app";
+import { terraDrawBBoxHandler } from "../lib/map_utils";
+import { allTaxaRecord } from "../data/inat_data";
 
 beforeEach(() => {
   const { JSDOM } = jsdom;
@@ -21,27 +30,531 @@ beforeEach(() => {
   global.document = dom.window.document;
 });
 
-describe("addiNatBBoxToMap", () => {
-  test("takes iNat NE SW number, and adds bounding box to store and map", () => {
+//    ||[___]||
+// different coordinates within -180/180
+let lonLatValid: LngLatType[][][] = [
+  [
+    [
+      [-180, 5],
+      [-180, -5],
+      [-170, -5],
+      [-170, 5],
+      [-180, 5],
+    ],
+  ],
+  [
+    [
+      [-95, -5],
+      [-85, -5],
+      [-85, 5],
+      [-95, 5],
+      [-95, -5],
+    ],
+  ],
+  [
+    [
+      [-5, 5],
+      [-5, -5],
+      [5, -5],
+      [5, 5],
+      [-5, 5],
+    ],
+  ],
+  [
+    [
+      [85, 5],
+      [85, -5],
+      [95, -5],
+      [95, 5],
+      [85, 5],
+    ],
+  ],
+  [
+    [
+      [175, 5],
+      [175, -5],
+      [180, -5],
+      [180, 5],
+      [175, 5],
+    ],
+  ],
+];
+
+//    ||[___]||
+// same coordinates within -180/180, but listed in different order to simulate drawing
+// rectangles starting from different corners
+let lonLatValidSame: LngLatType[][][] = [
+  [
+    [
+      [-180, 5],
+      [-180, 0],
+      [-170, 0],
+      [-170, 5],
+      [-180, 5],
+    ],
+  ],
+  [
+    [
+      [-170, 5],
+      [-180, 5],
+      [-180, 0],
+      [-170, 0],
+      [-170, 5],
+    ],
+  ],
+  [
+    [
+      [-170, 0],
+      [-170, 5],
+      [-180, 5],
+      [-180, 0],
+      [-170, 0],
+    ],
+  ],
+  [
+    [
+      [-180, 0],
+      [-170, 0],
+      [-170, 5],
+      [-180, 5],
+      [-180, 0],
+    ],
+  ],
+];
+
+//    [___]||  ||
+// same coordinates less than -180
+let lonLatLessSame: LngLatType[][][] = [
+  [
+    [
+      [-190, 5],
+      [-190, 0],
+      [-180, 0],
+      [-180, 5],
+      [-190, 5],
+    ],
+  ],
+  [
+    [
+      [-180, 5],
+      [-190, 5],
+      [-190, 0],
+      [-180, 0],
+      [-180, 5],
+    ],
+  ],
+  [
+    [
+      [-180, 0],
+      [-180, 5],
+      [-190, 5],
+      [-190, 0],
+      [-180, 0],
+    ],
+  ],
+  [
+    [
+      [-190, 0],
+      [-180, 0],
+      [-180, 5],
+      [-190, 5],
+      [-190, 0],
+    ],
+  ],
+];
+
+//    ||  ||[___]
+// same coordinates greater than 180
+let lonLatGreaterSame: LngLatType[][][] = [
+  [
+    [
+      [180, 5],
+      [180, 0],
+      [190, 0],
+      [190, 5],
+      [180, 5],
+    ],
+    [
+      [190, 5],
+      [180, 5],
+      [180, 0],
+      [190, 0],
+      [190, 5],
+    ],
+    [
+      [190, 0],
+      [190, 5],
+      [180, 5],
+      [180, 0],
+      [190, 0],
+    ],
+    [
+      [180, 0],
+      [190, 0],
+      [190, 5],
+      [180, 5],
+      [180, 0],
+    ],
+  ],
+];
+
+//    [||]  [||]
+let antimerdianCoorsNegative: LngLatType[][][] = [
+  [
+    [
+      [-190, 5],
+      [-190, -0],
+      [-170, -0],
+      [-170, 5],
+      [-190, 5],
+    ],
+  ],
+
+  [
+    [
+      [-170, 5],
+      [-190, 5],
+      [-190, -0],
+      [-170, -0],
+      [-170, 5],
+    ],
+  ],
+
+  [
+    [
+      [-170, 0],
+      [-170, 5],
+      [-190, 5],
+      [-190, 0],
+      [-170, 0],
+    ],
+  ],
+
+  [
+    [
+      [-190, 0],
+      [-170, 0],
+      [-170, 5],
+      [-190, 5],
+      [-190, 0],
+    ],
+  ],
+];
+
+let antimerdianCoorsPostive: LngLatType[][][] = [
+  [
+    [
+      [170, 5],
+      [170, 0],
+      [190, 0],
+      [190, 5],
+      [170, 5],
+    ],
+  ],
+  [
+    [
+      [190, 5],
+      [170, 5],
+      [170, 0],
+      [190, 0],
+      [190, 5],
+    ],
+  ],
+  [
+    [
+      [190, 0],
+      [190, 5],
+      [170, 5],
+      [170, 0],
+      [190, 0],
+    ],
+  ],
+  [
+    [
+      [170, 0],
+      [190, 0],
+      [190, 5],
+      [170, 5],
+      [170, 0],
+    ],
+  ],
+];
+
+function createPlace(coors: LngLatType[]) {
+  return [
+    {
+      bounding_box: {
+        coordinates: [coors.map((c) => flipLatLng(c))],
+        type: "Polygon",
+      },
+      id: 0,
+      name: "Custom Boundary",
+    },
+  ];
+}
+
+let expectedMapLayers = [
+  "basemap: Open Street Map",
+  "basemap: USGS Topo",
+  "basemap: USGS Imagery",
+  "basemap: Open Street Map",
+  "bounding box",
+];
+
+describe("normalizeTerraDrawLngLat", () => {
+  test.each(lonLatValid)(
+    "normalizedLngLat same as original coordinates if coordinates are between -180/180",
+    (coors) => {
+      let { map } = setupMapAndStore();
+
+      let results = normalizeTerraDrawLngLat(coors, map);
+
+      expect(results.normalizedLngLat).toStrictEqual(coors);
+    },
+  );
+
+  test("normalizedLngLat is between -180/180 if coordinates are less than -180", () => {
+    let { map } = setupMapAndStore();
+    let coors: LngLatType[] = [
+      [-190, 5],
+      [-190, 0],
+      [-180, 0],
+      [-180, 5],
+      [-190, 5],
+    ];
+
+    let results = normalizeTerraDrawLngLat(coors, map);
+
+    // BUG: leaflet map.wrapLatLng works differently in live site and tests.
+    // live site returns [[170,5],[170,0],[180,0],[180,5],[170,5]]
+    expect(results.normalizedLngLat).toStrictEqual([
+      [170, 5],
+      [170, 0],
+      [-180, 0],
+      [-180, 5],
+      [170, 5],
+    ]);
+  });
+
+  test("normalizedLngLat is between -180/180 if coordinates are greater 180", () => {
+    let { map } = setupMapAndStore();
+    let coors: LngLatType[] = [
+      [180, 5],
+      [180, 0],
+      [190, 0],
+      [190, 5],
+      [180, 5],
+    ];
+
+    let results = normalizeTerraDrawLngLat(coors, map);
+
+    // BUG: leaflet map.wrapLatLng works differently in live site and tests.
+    // live site returns [[-180,5],[-180,0],[-170,0],[-170,5],[-180,5]]
+    expect(results.normalizedLngLat).toStrictEqual([
+      [180, 5],
+      [180, 0],
+      [-170, 0],
+      [-170, 5],
+      [180, 5],
+    ]);
+  });
+});
+
+describe("convertLnLatToiNatBBox", () => {
+  test.each(lonLatValidSame)(
+    "returns same iNat bounding box regardless of order of coordinates",
+    (coors) => {
+      let { map } = setupMapAndStore();
+
+      let { normalizedLngLat } = normalizeTerraDrawLngLat(coors, map);
+      let result = convertLnLatToiNatBBox(normalizedLngLat, coors);
+
+      expect(result).toStrictEqual({
+        nelat: 5,
+        nelng: -170,
+        swlat: 0,
+        swlng: -180,
+      });
+    },
+  );
+
+  test.each(lonLatLessSame)(
+    "returns same iNat bounding box regardless of order of coordinates",
+    (coors) => {
+      let { map } = setupMapAndStore();
+
+      let { normalizedLngLat } = normalizeTerraDrawLngLat(coors, map);
+      let result = convertLnLatToiNatBBox(normalizedLngLat, coors);
+
+      expect(result).toStrictEqual({
+        nelat: 5,
+        nelng: 170,
+        swlat: 0,
+        swlng: -180,
+      });
+    },
+  );
+
+  test.each(lonLatGreaterSame)(
+    "returns same iNat bounding box regardless of order of coordinates",
+    (coors) => {
+      let { map } = setupMapAndStore();
+
+      let { normalizedLngLat } = normalizeTerraDrawLngLat(coors, map);
+      let result = convertLnLatToiNatBBox(normalizedLngLat, coors);
+
+      expect(result).toStrictEqual({
+        nelat: 5,
+        nelng: 180,
+        swlat: 0,
+        swlng: -170,
+      });
+    },
+  );
+
+  test.each(antimerdianCoorsNegative)(
+    "returns same iNat bounding box regardless of order of coordinates",
+    (coors) => {
+      let { map } = setupMapAndStore();
+
+      let { normalizedLngLat } = normalizeTerraDrawLngLat(coors, map);
+      let result = convertLnLatToiNatBBox(normalizedLngLat, coors);
+
+      expect(result).toStrictEqual({
+        nelat: 5,
+        nelng: -170,
+        swlat: 0,
+        swlng: 170,
+      });
+    },
+  );
+
+  test.each(antimerdianCoorsPostive)(
+    "returns same iNat bounding box regardless of order of coordinates",
+    (coors) => {
+      let { map } = setupMapAndStore();
+
+      let { normalizedLngLat } = normalizeTerraDrawLngLat(coors, map);
+      let result = convertLnLatToiNatBBox(normalizedLngLat, coors);
+
+      expect(result).toStrictEqual({
+        nelat: 5,
+        nelng: -170,
+        swlat: 0,
+        swlng: 170,
+      });
+    },
+  );
+});
+
+describe("terraDrawBBoxHandler", () => {
+  test.each(lonLatValidSame)(
+    "adds NE/SW, selectedPlaces,placesMapLayers to store; add layer to map",
+    (coors) => {
+      let { store } = setupMapAndStore();
+      store.selectedTaxa = [allTaxaRecord];
+      store.observationsApiParams.taxon_id = allTaxaRecord.id.toString();
+      store.observationsApiParams.colors = allTaxaRecord.color;
+
+      terraDrawBBoxHandler(structuredClone(coors), store);
+
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        nelat: 5,
+        nelng: -170,
+        swlat: 0,
+        swlng: -180,
+      });
+      expect(store.placesMapLayers[0][0].getBounds()).toStrictEqual({
+        _northEast: { lat: 5, lng: -170 },
+        _southWest: { lat: 0, lng: -180 },
+      });
+      expect(store.placesMapLayers[0].length).toStrictEqual(1);
+      expect(store.selectedPlaces).toStrictEqual(createPlace(coors));
+      expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
+    },
+  );
+});
+
+describe("addiNatBBoxToMapAndStore", () => {
+  test("takes iNat NE SW values, and adds bounding box to store and map", () => {
     let { store } = setupMapAndStore();
-    store.observationsApiParams.nelat = 0;
-    store.observationsApiParams.nelng = 5;
-    store.observationsApiParams.swlat = -20;
-    store.observationsApiParams.swlng = -5;
+    store.selectedTaxa = [allTaxaRecord];
+    store.observationsApiParams.taxon_id = allTaxaRecord.id.toString();
+    store.observationsApiParams.colors = allTaxaRecord.color;
+    store.observationsApiParams.nelat = 5;
+    store.observationsApiParams.nelng = -170;
+    store.observationsApiParams.swlat = 0;
+    store.observationsApiParams.swlng = -180;
 
-    addiNatBBoxToMap(store);
+    addiNatBBoxToMapAndStore(store);
 
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      nelat: 5,
+      nelng: -170,
+      swlat: 0,
+      swlng: -180,
+    });
     expect(store.placesMapLayers[0][0].getBounds()).toStrictEqual({
-      _northEast: { lat: 0, lng: 5 },
-      _southWest: { lat: -20, lng: -5 },
+      _northEast: { lat: 5, lng: -170 },
+      _southWest: { lat: 0, lng: -180 },
     });
     expect(store.placesMapLayers[0][0].getLatLngs()).toStrictEqual([
       [
-        { lat: 0, lng: 5 },
-        { lat: -20, lng: 5 },
-        { lat: -20, lng: -5 },
-        { lat: 0, lng: -5 },
+        { lat: 0, lng: -180 },
+        { lat: 0, lng: -170 },
+        { lat: 5, lng: -170 },
+        { lat: 5, lng: -180 },
       ],
     ]);
+    expect(store.selectedPlaces).toStrictEqual([
+      {
+        bounding_box: {
+          coordinates: [
+            [
+              [-180, 0],
+              [-170, 0],
+              [-170, 5],
+              [-180, 5],
+              [-180, 0],
+            ],
+          ],
+          type: "Polygon",
+        },
+        id: 0,
+        name: "Custom Boundary",
+      },
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
   });
+});
+
+describe("crossesAntimerdian", () => {
+  test.each(antimerdianCoorsNegative)(
+    "returns true if coordinates crosses antimerdian",
+    (coors) => {
+      let results = crossesAntimerdian(coors);
+
+      expect(results).toBe(true);
+    },
+  );
+
+  test.each(antimerdianCoorsPostive)(
+    "returns true if coordinates crosses antimerdian",
+    (coors) => {
+      let results = crossesAntimerdian(coors);
+
+      expect(results).toBe(true);
+    },
+  );
+
+  test.each(lonLatValid)(
+    "returns false if coordinates does not cross antimerdian",
+    (coors) => {
+      let results = crossesAntimerdian(coors);
+
+      expect(results).toBe(false);
+    },
+  );
 });

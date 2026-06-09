@@ -13,14 +13,13 @@ import {
 } from "./data_utils";
 import { getPlaceById, getTaxonById } from "./inat_api";
 import {
-  addiNatBBoxToMap,
-  createDrawRectButton,
+  addiNatBBoxToMapAndStore,
   fitBoundsPlaces,
   renderSelectedPlacesBoundaries,
 } from "./map_utils";
 import { updateTilesForSelectedTaxa } from "./search_utils";
 import { decodeAppUrl } from "./url_utils";
-import { processTerraDrawBBox } from "./search_bounding_box";
+import { terraDrawBBoxHandler } from "./map_utils";
 import type { TerraDraw } from "terra-draw";
 
 const pathPage = {
@@ -96,10 +95,8 @@ async function fetchAndSaveTaxa(
   }
 }
 
-// create map.
-// need to create new map instance whenever div for map changes.
-// used on inital app load, changing views, changing pages.
-export async function initRenderMap(
+// add store data to map and  add map to store
+export async function initPopulateMap(
   map: Map,
   terraDraw: TerraDraw,
   layerControl: L.Control,
@@ -114,7 +111,7 @@ export async function initRenderMap(
     // add bounding box
     const snapshot = terraDraw.getSnapshot();
     let coors = snapshot[0].geometry.coordinates[0] as LngLatType[];
-    processTerraDrawBBox(coors, appStore);
+    terraDrawBBoxHandler(coors, appStore);
   });
 
   // add map to store
@@ -122,14 +119,12 @@ export async function initRenderMap(
   appStore.map.layerControl = layerControl;
   appStore.map.terraDraw = terraDraw;
 
-  createDrawRectButton(appStore);
-
   // add places layers
   renderSelectedPlacesBoundaries(appStore);
 
   // add bounding box layer
   if (appStore.observationsApiParams.nelat !== undefined) {
-    addiNatBBoxToMap(appStore);
+    addiNatBBoxToMapAndStore(appStore);
   }
 
   // load default or selected taxa map layer

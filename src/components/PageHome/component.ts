@@ -8,7 +8,9 @@ import { template } from "./template";
 import { removeMap, renderMap } from "../../lib/map_utils.ts";
 import { initFilters, setView } from "./utils.ts";
 import { viewComponentObj } from "../../data/app_data.ts";
-import { initRenderMap } from "../../lib/init_app.ts";
+import { initPopulateMap } from "../../lib/init_app.ts";
+import { renderDemoLayers } from "../../lib/dev_utils.ts";
+
 
 class PageHome extends HTMLElement {
   constructor() {
@@ -63,7 +65,11 @@ class PageHome extends HTMLElement {
   async render(appStore: AppStoreType) {
     if (!appStore.map.map) {
       let { map, terraDraw, layerControl } = renderMap();
-      await initRenderMap(map, terraDraw, layerControl, appStore);
+      await initPopulateMap(map, terraDraw, layerControl, appStore);
+
+      if (import.meta.env?.VITE_MAP_DEBUG === "true") {
+        renderDemoLayers(map);
+      }
     }
 
     if (!this.viewContainerEl) return;
