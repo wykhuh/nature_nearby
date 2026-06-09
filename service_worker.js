@@ -42,10 +42,13 @@ self.addEventListener("fetch", (ev) => {
 
   if (url.startsWith("https://api.inaturalist.org/v2")) {
     ev.respondWith(fetchHandler(ev));
+  } else if (url.startsWith("https://api.inaturalist.org/v1")) {
+    // ev.respondWith(fetchHandler(ev));
   } else if (url.startsWith("https://inaturalist-open-data.s3.amazonaws.com")) {
   } else if (url.startsWith("https://static.inaturalist.org")) {
   } else if (url.includes("tile.openstreetmap.org")) {
   } else if (url.startsWith("http://localhost")) {
+  } else if (url.startsWith("https://basemap.nationalmap.gov")) {
   } else {
     logger("++ sw url not handled", url);
   }
