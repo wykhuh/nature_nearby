@@ -30,3 +30,10 @@ nelng=170&nelat=5&swlat=0&swlng=180 - no
 []  ||[____]
 
 
+===
+my site
+nelng=175&nelat=0&swlat=-10&swlng=-160
+[[-185,0],[-185,-10],[-160,-10],[-160,0],[-185,0]]
+
+inat
+nelat=0&nelng=-160&subview=map&swlat=-10&swlng=175

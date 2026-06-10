@@ -21,7 +21,7 @@ export function createGeojsonDemo(coors: LngLatType[], map: Map) {
     weight: 1,
     style: { interactive: false },
   };
-  L.geoJSON(geojson, options).addTo(map);
+  return L.geoJSON(geojson, options).addTo(map);
 }
 
 function addmarkerDemo(point: CoordinatesType, map: Map) {

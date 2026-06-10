@@ -182,8 +182,6 @@ export async function terraDrawBBoxHandler(
 
   if (import.meta.env?.VITE_MAP_DEBUG === "true") {
     let lngLatCoors = convertiNatBBoxToLngLat(appStore.observationsApiParams);
-    console.log("bbox", JSON.stringify(lngLatCoors));
-
     if (lngLatCoors) {
       createGeojsonDemo(lngLatCoors, map);
     }
@@ -330,18 +328,21 @@ export function convertLnLatToiNatBBox(
 
   let bounds = L.geoJSON(json).getBounds() as LeafletBoundsType;
   let bbox = {
-    nelat: bounds._northEast.lat,
-    nelng: bounds._northEast.lng,
-    swlat: bounds._southWest.lat,
-    swlng: bounds._southWest.lng,
+    nelat: cleanBoundsCoordinate(bounds._northEast.lat),
+    nelng: cleanBoundsCoordinate(bounds._northEast.lng),
+    swlat: cleanBoundsCoordinate(bounds._southWest.lat),
+    swlng: cleanBoundsCoordinate(bounds._southWest.lng),
   };
 
-  // TODO: fix antimerdian
   if (crossesAntimerdian(originalCoordinates)) {
-    console.log("bounding box crosses antimerdian");
+    fixBBoxThatCrossesAntimerdian(bbox);
   }
 
   return bbox;
+}
+
+function cleanBoundsCoordinate(value: number) {
+  return value === -0 ? 0 : value;
 }
 
 // turn iNat nelng,nelat,swlng,swlat into geometry that leaflet understands
@@ -349,12 +350,26 @@ export function convertiNatBBoxToLatLng(
   params: ObservationsApiParamsType,
   map: Map,
 ): LatLngType[] | undefined {
-  const { nelng, nelat, swlng, swlat } = params;
+  let { nelng, nelat, swlng, swlat } = params;
   if (nelng === undefined) return;
   if (nelat === undefined) return;
   if (swlng === undefined) return;
   if (swlat === undefined) return;
 
+  // handle bounding boxes that cross the antimerdian
+  if (nelng < swlng) {
+    let coors: LatLngType[] = [
+      [swlat, swlng - 360],
+      [swlat, nelng],
+      [nelat, nelng],
+      [nelat, swlng - 360],
+      [swlat, swlng - 360],
+    ];
+
+    return coors;
+  }
+
+  // handle normal bounding boxes
   return [
     [swlat, swlng],
     [swlat, nelng],
@@ -376,6 +391,19 @@ export function convertiNatBBoxToLngLat(
   if (nelat === undefined) return;
   if (swlng === undefined) return;
   if (swlat === undefined) return;
+
+  // handle bounding boxes that cross the antimerdian
+  if (nelng < swlng) {
+    let coors: LatLngType[] = [
+      [swlng - 360, swlat],
+      [nelng, swlat],
+      [nelng, nelat],
+      [swlng - 360, nelat],
+      [swlng - 360, swlat],
+    ];
+
+    return coors;
+  }
 
   return [
     [swlng, swlat],
@@ -418,24 +446,11 @@ export function crossesAntimerdian(coors: LngLatType[]) {
   }
 }
 
-// TODO: this code does not work. Need to figure out a fix.
 export function fixBBoxThatCrossesAntimerdian(bbox: iNatBBox) {
-  bbox.nelng = bbox.nelng * -1;
-  bbox.swlng = bbox.swlng * -1;
-
-  if (bbox.nelng === -0) {
-    bbox.nelng = 0;
-  }
-  if (bbox.swlng === -0) {
-    bbox.swlng = 0;
-  }
-  if (bbox.nelat === -0) {
-    bbox.nelat = 0;
-  }
-  if (bbox.swlat === -0) {
-    bbox.swlat = 0;
-  }
-
+  let nelng = bbox.nelng;
+  let swlng = bbox.swlng;
+  bbox.swlng = nelng;
+  bbox.nelng = swlng;
   return bbox;
 }
 

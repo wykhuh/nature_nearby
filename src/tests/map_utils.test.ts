@@ -4,9 +4,10 @@ import jsdom from "jsdom";
 import { expect, test, describe, beforeEach } from "vitest";
 import {
   addiNatBBoxToMapAndStore,
+  convertiNatBBoxToLatLng,
+  convertiNatBBoxToLngLat,
   convertLnLatToiNatBBox,
   crossesAntimerdian,
-  flipLatLng,
   normalizeTerraDrawLngLat,
 } from "../lib/map_utils";
 import { defaultParams, setupMapAndStore } from "./fixtures/test_helpers";
@@ -280,19 +281,6 @@ let antimerdianCoorsPostive: LngLatType[][][] = [
   ],
 ];
 
-function createPlace(coors: LngLatType[]) {
-  return [
-    {
-      bounding_box: {
-        coordinates: [coors.map((c) => flipLatLng(c))],
-        type: "Polygon",
-      },
-      id: 0,
-      name: "Custom Boundary",
-    },
-  ];
-}
-
 let expectedMapLayers = [
   "basemap: Open Street Map",
   "basemap: USGS Topo",
@@ -313,7 +301,7 @@ describe("normalizeTerraDrawLngLat", () => {
     },
   );
 
-  test("normalizedLngLat is between -180/180 if coordinates are less than -180", () => {
+  test("returns coordinates between -180/180 if coordinates are less than -180", () => {
     let { map } = setupMapAndStore();
     let coors: LngLatType[] = [
       [-190, 5],
@@ -336,7 +324,7 @@ describe("normalizeTerraDrawLngLat", () => {
     ]);
   });
 
-  test("normalizedLngLat is between -180/180 if coordinates are greater 180", () => {
+  test("returns coordinates is between -180/180 if coordinates are greater 180", () => {
     let { map } = setupMapAndStore();
     let coors: LngLatType[] = [
       [180, 5],
@@ -470,7 +458,9 @@ describe("terraDrawBBoxHandler", () => {
         _southWest: { lat: 0, lng: -180 },
       });
       expect(store.placesMapLayers[0].length).toStrictEqual(1);
-      expect(store.selectedPlaces).toStrictEqual(createPlace(coors));
+      expect(store.selectedPlaces[0].bounding_box?.coordinates).toStrictEqual([
+        coors,
+      ]);
       expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
     },
   );
@@ -528,6 +518,58 @@ describe("addiNatBBoxToMapAndStore", () => {
     ]);
     expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
   });
+
+  test("works with bounding box that cross anitmerdian", () => {
+    let { store } = setupMapAndStore();
+    store.selectedTaxa = [allTaxaRecord];
+    store.observationsApiParams.taxon_id = allTaxaRecord.id.toString();
+    store.observationsApiParams.colors = allTaxaRecord.color;
+    store.observationsApiParams.nelat = 5;
+    store.observationsApiParams.nelng = -170;
+    store.observationsApiParams.swlat = 0;
+    store.observationsApiParams.swlng = 170;
+
+    addiNatBBoxToMapAndStore(store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      nelat: 5,
+      nelng: -170,
+      swlat: 0,
+      swlng: 170,
+    });
+    expect(store.placesMapLayers[0][0].getBounds()).toStrictEqual({
+      _northEast: { lat: 5, lng: -170 },
+      _southWest: { lat: 0, lng: -190 },
+    });
+    expect(store.placesMapLayers[0][0].getLatLngs()).toStrictEqual([
+      [
+        { lat: 0, lng: -190 },
+        { lat: 0, lng: -170 },
+        { lat: 5, lng: -170 },
+        { lat: 5, lng: -190 },
+      ],
+    ]);
+    expect(store.selectedPlaces).toStrictEqual([
+      {
+        bounding_box: {
+          coordinates: [
+            [
+              [-190, 0],
+              [-170, 0],
+              [-170, 5],
+              [-190, 5],
+              [-190, 0],
+            ],
+          ],
+          type: "Polygon",
+        },
+        id: 0,
+        name: "Custom Boundary",
+      },
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
+  });
 });
 
 describe("crossesAntimerdian", () => {
@@ -557,4 +599,64 @@ describe("crossesAntimerdian", () => {
       expect(results).toBe(false);
     },
   );
+});
+
+describe("convertiNatBBoxToLatLng", () => {
+  test("takes iNat NE/SE and returns array of lat/long coordinates", () => {
+    let { map } = setupMapAndStore();
+
+    let bbox = { nelat: 5, nelng: -170, swlat: 0, swlng: -180 };
+    let result = convertiNatBBoxToLatLng(bbox, map);
+
+    expect(result).toStrictEqual([
+      [0, -180],
+      [0, -170],
+      [5, -170],
+      [5, -180],
+      [0, -180],
+    ]);
+  });
+
+  test("works with iNat NE/SE data that crosses the antimerdian", () => {
+    let { map } = setupMapAndStore();
+
+    let bbox = { nelat: 5, nelng: -170, swlat: 0, swlng: 170 };
+    let result = convertiNatBBoxToLatLng(bbox, map);
+
+    expect(result).toStrictEqual([
+      [0, -190],
+      [0, -170],
+      [5, -170],
+      [5, -190],
+      [0, -190],
+    ]);
+  });
+});
+
+describe("convertiNatBBoxToLngLat", () => {
+  test("takes iNat NE/SE and returns array of long.lat coordinates", () => {
+    let bbox = { nelat: 5, nelng: -170, swlat: 0, swlng: -180 };
+    let result = convertiNatBBoxToLngLat(bbox);
+
+    expect(result).toStrictEqual([
+      [-180, 0],
+      [-170, 0],
+      [-170, 5],
+      [-180, 5],
+      [-180, 0],
+    ]);
+  });
+
+  test("works with iNat NE/SE data that crosses the antimerdian", () => {
+    let bbox = { nelat: 5, nelng: -170, swlat: 0, swlng: 170 };
+    let result = convertiNatBBoxToLngLat(bbox);
+
+    expect(result).toStrictEqual([
+      [-190, 0],
+      [-170, 0],
+      [-170, 5],
+      [-190, 5],
+      [-190, 0],
+    ]);
+  });
 });

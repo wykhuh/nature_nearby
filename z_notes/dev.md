@@ -112,3 +112,7 @@ function renderDemoLayers(map: Map) {
   // -354.763069811 -363.7668646 2.615585951 -2.823088996
 }
 ```
+==
+[Bug] Can't move or resize object across -180 or 180 longitude
+
+https://github.com/JamesLMilner/terra-draw/issues/485
