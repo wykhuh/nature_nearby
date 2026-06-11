@@ -93,7 +93,7 @@ export function debounce(func: (...args: any[]) => any, interval = 520) {
 // https://stackoverflow.com/a/54265129
 export function debouncePromise(
   func: (...args: any[]) => Promise<any>,
-  interval: number,
+  interval = 520,
 ) {
   let timer: ReturnType<typeof setTimeout>;
   return (...args: any[]) => {

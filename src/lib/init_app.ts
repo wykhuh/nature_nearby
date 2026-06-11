@@ -127,6 +127,19 @@ export async function initPopulateMap(
     addiNatBBoxToMapAndStore(appStore);
   }
 
+  if (
+    appStore.observationsApiParams.lat &&
+    appStore.observationsApiParams.lng
+  ) {
+    renderMarker(
+      {
+        latitude: appStore.observationsApiParams.lat,
+        longitude: appStore.observationsApiParams.lng,
+      },
+      appStore.map.map,
+    );
+  }
+
   // load default or selected taxa map layer
   if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {
     // load default Taxa map tiles

@@ -1,12 +1,11 @@
 import { setupComponent } from "../../lib/component_utils";
-import { getLatLong } from "../../lib/geolocation";
 import {
   placeSelectedHandler,
   setupPlacesSearch,
 } from "../../lib/search_places";
 import { setupTaxaSearch, taxonSelectedHandler } from "../../lib/search_taxa";
 import { updateAppUrl } from "../../lib/url_utils";
-import { debounce } from "../../lib/utils";
+import { debouncePromise } from "../../lib/utils";
 import type { AppStoreType } from "../../types/app";
 import {
   renderSelectedMoreFiltersList,
@@ -14,33 +13,43 @@ import {
 } from "./render_utils";
 import { updateAppWithFormData } from "./shared_utils";
 import { template } from "./template";
-import { initFilters, presetDatesHandler, resetFormHandler } from "./utils";
+import {
+  currentLocationHandler,
+  initFilters,
+  presetDatesHandler,
+  resetFormHandler,
+  showMoreOptionsHandler,
+} from "./utils";
 
-class ViewSearch extends HTMLElement {
+export class ViewSearch extends HTMLElement {
   constructor() {
     super();
   }
 
   formEl: null | HTMLFormElement = null;
-  nearbyObservationsEl: null | HTMLButtonElement = null;
+  currentLocationEl: null | HTMLButtonElement = null;
   searchPlacesInputEl: HTMLInputElement | null = null;
   searchSpeciesInputEl: HTMLInputElement | null = null;
   moreOptionsButton: HTMLButtonElement | null = null;
   moreOptionsContainer: HTMLDivElement | null = null;
   showMoreOptions = false;
   moreFilterContainer: HTMLDivElement | null = null;
+  latitudeEl: HTMLInputElement | null = null;
+  longitudeEl: HTMLInputElement | null = null;
 
   connectedCallback() {
     setupComponent(template, this);
     this.formEl = this.querySelector("#observations-form") as HTMLFormElement;
     this.searchPlacesInputEl = document.querySelector("#search-places");
     this.searchSpeciesInputEl = document.querySelector("#search-taxa");
-    this.nearbyObservationsEl = document.querySelector("#nearby-observations");
+    this.currentLocationEl = document.querySelector("#current-location");
     this.moreOptionsButton = document.querySelector("#more-options");
     this.moreOptionsContainer = document.querySelector(
       "#more-options-container",
     );
     this.moreFilterContainer = document.querySelector(".more-filters-list");
+    this.latitudeEl = this.querySelector<HTMLInputElement>("#lat");
+    this.longitudeEl = this.querySelector<HTMLInputElement>("#lng");
 
     this.render(window.app.store);
 
@@ -48,7 +57,7 @@ class ViewSearch extends HTMLElement {
     this.formEl?.addEventListener("reset", this);
     this.searchPlacesInputEl?.addEventListener("selection", this);
     this.searchSpeciesInputEl?.addEventListener("selection", this);
-    this.nearbyObservationsEl?.addEventListener("click", this);
+    this.currentLocationEl?.addEventListener("click", this);
     this.moreOptionsButton?.addEventListener("click", this);
   }
 
@@ -57,7 +66,7 @@ class ViewSearch extends HTMLElement {
     this.formEl?.removeEventListener("reset", this);
     this.searchPlacesInputEl?.removeEventListener("selection", this);
     this.searchSpeciesInputEl?.removeEventListener("selection", this);
-    this.nearbyObservationsEl?.removeEventListener("click", this);
+    this.currentLocationEl?.removeEventListener("click", this);
     this.moreOptionsButton?.removeEventListener("click", this);
   }
 
@@ -65,27 +74,19 @@ class ViewSearch extends HTMLElement {
     let target = event.target as HTMLInputElement;
     if (!target) return;
     if (!this.formEl) return;
-    if (!this.nearbyObservationsEl) return;
+    if (!this.currentLocationEl) return;
     if (!this.moreOptionsContainer) return;
     if (!this.moreOptionsButton) return;
     if (!this.moreFilterContainer) return;
 
     let appStore = window.app.store;
     if (event.type === "click") {
-      if (target.name === "nearby-observations") {
-        event.preventDefault();
-        this.setNearbyObservations(event);
+      event.preventDefault();
+
+      if (target.name === "current-location") {
+        currentLocationHandler(appStore, this);
       } else if (target.id === "more-options") {
-        this.showMoreOptions = !this.showMoreOptions;
-        if (this.showMoreOptions) {
-          this.moreOptionsButton.textContent = "Less Options";
-          this.moreOptionsContainer.classList.remove("hidden");
-          this.moreFilterContainer.classList.remove("hidden");
-        } else {
-          this.moreOptionsButton.textContent = "More Options";
-          this.moreOptionsContainer.classList.add("hidden");
-          this.moreFilterContainer.classList.add("hidden");
-        }
+        showMoreOptionsHandler(this);
       }
     }
 
@@ -94,7 +95,7 @@ class ViewSearch extends HTMLElement {
       // use formChangeHandler to clear search input; use autocomplete to select record
       if (searches.includes(target.id)) {
         if (target.value === "") {
-          this.formChangeHandlerDebounced(event, this.formEl);
+          this.formChangeHandlerDebounced(this.formEl);
         }
       } else if (target.id === "presetDates") {
         presetDatesHandler(
@@ -103,7 +104,7 @@ class ViewSearch extends HTMLElement {
           appStore,
         );
       } else {
-        this.formChangeHandlerDebounced(event, this.formEl);
+        this.formChangeHandlerDebounced(this.formEl);
       }
     }
 
@@ -137,31 +138,12 @@ class ViewSearch extends HTMLElement {
     renderSelectedMoreFiltersList(appStore);
   }
 
-  formChangeHandlerDebounced = debounce(this.formChangeHandler);
+  formChangeHandlerDebounced = debouncePromise(this.formChangeHandler);
 
-  async formChangeHandler(event: Event, form: HTMLFormElement) {
-    event.preventDefault();
-
+  async formChangeHandler(form: HTMLFormElement) {
     const data = new FormData(form);
 
     await updateAppWithFormData(data, window.app.store);
-  }
-
-  async setNearbyObservations(event: Event) {
-    let data = await getLatLong();
-
-    if (data) {
-      let latitudeEl = this.querySelector<HTMLInputElement>("#lat");
-      if (latitudeEl) {
-        latitudeEl.value = data.coords.latitude.toString();
-      }
-      let longitudeEl = this.querySelector<HTMLInputElement>("#lng");
-      if (longitudeEl) {
-        longitudeEl.value = data.coords.longitude.toString();
-      }
-
-      this.formChangeHandlerDebounced(event, this.formEl);
-    }
   }
 }
 

@@ -39,8 +39,8 @@ const basicFields = html`
       <button
         type="button"
         class="btn-primary"
-        name="nearby-observations"
-        id="nearby-observations"
+        name="current-location"
+        id="current-location"
       >
         Current location</button
       ><app-tooltip

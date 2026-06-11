@@ -16,6 +16,10 @@ import {
 } from "../../lib/search_taxa";
 import { defaultStore } from "../../lib/store";
 import { updateAppState, updateAppWithFormData } from "./shared_utils";
+import { renderMarker } from "../../lib/map_utils";
+import { currentLocationPlaceRecord } from "../../data/inat_data";
+import { getLatLong } from "../../lib/geolocation";
+import type { ViewSearch } from "./component";
 
 export function initFilters(appStore: AppStoreType) {
   populateFormFields(
@@ -135,5 +139,47 @@ export function setPresetDates(appStore: AppStoreType) {
     ) {
       optionEl.selected = true;
     }
+  }
+}
+
+export async function currentLocationHandler(
+  appStore: AppStoreType,
+  componentCtx: ViewSearch,
+) {
+  let map = appStore.map.map;
+  if (!componentCtx.latitudeEl) return;
+  if (!componentCtx.longitudeEl) return;
+  if (!map) return;
+
+  let data = await getLatLong();
+  if (!data) {
+    return;
+  }
+
+  let latitude = data.coords.latitude;
+  let longitude = data.coords.longitude;
+  componentCtx.latitudeEl.value = latitude.toString();
+  componentCtx.longitudeEl.value = longitude.toString();
+  renderMarker({ latitude: latitude, longitude: longitude }, map);
+
+  currentLocationPlaceRecord([longitude, latitude]);
+
+  await componentCtx.formChangeHandlerDebounced(componentCtx.formEl);
+}
+
+export function showMoreOptionsHandler(componentCtx: ViewSearch) {
+  if (!componentCtx.moreOptionsButton) return;
+  if (!componentCtx.moreOptionsContainer) return;
+  if (!componentCtx.moreFilterContainer) return;
+
+  componentCtx.showMoreOptions = !componentCtx.showMoreOptions;
+  if (componentCtx.showMoreOptions) {
+    componentCtx.moreOptionsButton.textContent = "Less Options";
+    componentCtx.moreOptionsContainer.classList.remove("hidden");
+    componentCtx.moreFilterContainer.classList.remove("hidden");
+  } else {
+    componentCtx.moreOptionsButton.textContent = "More Options";
+    componentCtx.moreOptionsContainer.classList.add("hidden");
+    componentCtx.moreFilterContainer.classList.add("hidden");
   }
 }
