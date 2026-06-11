@@ -17,9 +17,7 @@ import {
   resetPageNumber,
 } from "./data_utils.ts";
 import { fitBoundsPlaces } from "./map_utils.ts";
-import {
-   updateTilesForSelectedTaxa,
- } from "./search_utils.ts";
+import { updateTilesForSelectedTaxa } from "./search_utils.ts";
 import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
 
 export function setupPlacesSearch(selector: string) {
@@ -143,7 +141,6 @@ export async function placeSelectedHandler(
     fitBoundsPlaces(appStore);
   }
 }
- 
 
 // called when user deletes a place
 export async function removePlace(placeId: number, appStore: AppStoreType) {
@@ -153,7 +150,7 @@ export async function removePlace(placeId: number, appStore: AppStoreType) {
   removeOnePlaceFromMap(appStore, placeId);
   await removeOnePlaceFromStore(appStore, placeId);
 
-  updateAppState(appStore)
+  updateAppState(appStore);
 }
 
 export function removeOnePlaceFromStore(

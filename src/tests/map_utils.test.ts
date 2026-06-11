@@ -13,7 +13,7 @@ import {
 import { defaultParams, setupMapAndStore } from "./fixtures/test_helpers";
 import { leafletMapLayers } from "../lib/data_utils";
 import type { LngLatType } from "../types/app";
-import { terraDrawBBoxHandler } from "../lib/map_utils";
+import { drawBBoxHandler } from "../lib/search_bounding_box";
 import { allTaxaRecord } from "../data/inat_data";
 
 beforeEach(() => {
@@ -435,7 +435,7 @@ describe("convertLnLatToiNatBBox", () => {
   );
 });
 
-describe("terraDrawBBoxHandler", () => {
+describe("drawBBoxHandler", () => {
   test.each(lonLatValidSame)(
     "adds NE/SW, selectedPlaces,placesMapLayers to store; add layer to map",
     (coors) => {
@@ -444,7 +444,7 @@ describe("terraDrawBBoxHandler", () => {
       store.observationsApiParams.taxon_id = allTaxaRecord.id.toString();
       store.observationsApiParams.colors = allTaxaRecord.color;
 
-      terraDrawBBoxHandler(structuredClone(coors), store);
+      drawBBoxHandler(structuredClone(coors), store);
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,

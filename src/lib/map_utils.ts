@@ -128,6 +128,7 @@ export function addiNatBBoxToMapAndStore(appStore: AppStoreType) {
     appStore.observationsApiParams,
     map,
   );
+
   if (!latLngCoors) return;
   let lngLatCoors = convertiNatBBoxToLngLat(appStore.observationsApiParams);
   if (!lngLatCoors) return;
@@ -135,60 +136,6 @@ export function addiNatBBoxToMapAndStore(appStore: AppStoreType) {
   appStore.selectedPlaces = [bboxPlaceRecord(lngLatCoors)];
   let layer = renderBoundingBoxLayer(map, latLngCoors) as any;
   appStore.placesMapLayers["0"] = [layer as unknown as CustomGeoJSONType];
-}
-
-// called when user clicks draw rectangle icon.
-// terradraw coordinates is array of 5 sets of long, lat [[-105, 46]].
-// terradraw and geojson use long,lat. Leaflet uses lat,long.
-export async function terraDrawBBoxHandler(
-  coordinates: LngLatType[],
-  appStore: AppStoreType,
-) {
-  if (import.meta.env?.VITE_MAP_DEBUG === "true") {
-    console.log("terraDrawBBoxHandler", JSON.stringify(coordinates));
-  }
-
-  let map = appStore.map.map;
-  let layerControl = appStore.map.layerControl;
-  if (map === null) return;
-  if (layerControl === null) return;
-
-  // remove old places
-  removePlacesFromStoreAndMap(appStore);
-
-  // delete terradraw layer; replace with renderBoundingBoxLayer
-  appStore.map.terraDraw?.clear();
-
-  let { normalizedLngLat, latLng } = normalizeTerraDrawLngLat(coordinates, map);
-
-  let { nelat, nelng, swlat, swlng } = convertLnLatToiNatBBox(
-    normalizedLngLat,
-    coordinates,
-  );
-
-  // render leaflet layer
-  let layer = renderBoundingBoxLayer(map, latLng) as any;
-
-  // update store
-  let place = bboxPlaceRecord(coordinates);
-  appStore.selectedPlaces = [place];
-  appStore.placesMapLayers = { "0": [layer as unknown as CustomGeoJSONType] };
-  appStore.observationsApiParams = {
-    ...appStore.observationsApiParams,
-    nelng,
-    nelat,
-    swlat,
-    swlng,
-  };
-
-  if (import.meta.env?.VITE_MAP_DEBUG === "true") {
-    let lngLatCoors = convertiNatBBoxToLngLat(appStore.observationsApiParams);
-    if (lngLatCoors) {
-      createGeojsonDemo(lngLatCoors, map);
-    }
-  }
-
-  await updateAppState(appStore);
 }
 
 // ====================

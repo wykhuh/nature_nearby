@@ -21,7 +21,7 @@ import {
 } from "./map_utils";
 import { updateTilesForSelectedTaxa } from "./search_utils";
 import { decodeAppUrl } from "./url_utils";
-import { terraDrawBBoxHandler } from "./map_utils";
+import { drawBBoxHandler } from "./search_bounding_box";
 import type { TerraDraw } from "terra-draw";
 import { bboxPlaceRecord, currentLocationPlaceRecord } from "../data/inat_data";
 
@@ -80,6 +80,7 @@ export async function initApp(
   }
 
   if (urlData.taxon_id === undefined) {
+    // add default taxon if no search params
     addDefaultTaxaRecordToStore(appStore);
   }
 }
@@ -133,7 +134,7 @@ export async function initPopulateMap(
     // add bounding box
     const snapshot = terraDraw.getSnapshot();
     let coors = snapshot[0].geometry.coordinates[0] as LngLatType[];
-    terraDrawBBoxHandler(coors, appStore);
+    drawBBoxHandler(coors, appStore);
   });
 
   // add map to store
