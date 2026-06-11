@@ -104,16 +104,14 @@ export function renderSelectedFiltersList(appStore: AppStoreType) {
       listBasicEl.appendChild(templateEl);
     });
 
-  appStore.selectedPlaces
-    .filter((p) => p.id !== 0)
-    .forEach((place) => {
-      let templateEl = document.createElement(
-        "selected-filters-item",
-      ) as DataComponentType;
-      templateEl.data = place;
-      templateEl.type = "place";
-      listBasicEl.appendChild(templateEl);
-    });
+  appStore.selectedPlaces.forEach((place) => {
+    let templateEl = document.createElement(
+      "selected-filters-item",
+    ) as DataComponentType;
+    templateEl.data = place;
+    templateEl.type = "place";
+    listBasicEl.appendChild(templateEl);
+  });
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
     if (["month", "year", "lat", "lng"].includes(key) && value !== "") {
