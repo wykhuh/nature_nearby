@@ -10,17 +10,21 @@ import {
   afterAll,
   beforeEach,
 } from "vitest";
-import { defaultStore } from "../lib/store";
-import { placeCountry, placeCity, monarch, milkweed } from "./fixtures/data";
+import { defaultStore } from "../../lib/store";
+import { placeCountry, placeCity, monarch, milkweed } from "../fixtures/data";
 import {
   createMockServer,
   defaultParams,
   setupMapAndStore,
-} from "./fixtures/test_helpers";
-import { observationsApiNames, validView } from "../data/app_data";
-import { initApp, initPopulateMap } from "../lib/init_app";
-import { allTaxaRecord, bboxPlaceRecord } from "../data/inat_data";
-import { leafletMapLayers } from "../lib/data_utils";
+} from "../fixtures/test_helpers";
+import { observationsApiNames, validView } from "../../data/app_data";
+import { initApp, initPopulateMap } from "../../lib/init_app";
+import {
+  allTaxaRecord,
+  bboxPlaceRecord,
+  currentLocationPlaceRecord,
+} from "../../data/inat_data";
+import { leafletMapLayers } from "../../lib/data_utils";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -102,6 +106,63 @@ describe("initApp", () => {
     expect(store.currentView).toBe("search");
   });
 
+  test.each(validView)(
+    "sets currentView based on valid view param",
+    async (view) => {
+      let store = structuredClone(defaultStore);
+
+      await initApp(`?view=${view}`, "/", store);
+
+      expect(store.observationsApiParams).toStrictEqual(defaultParams);
+      expect(store.color).toBe(allTaxaRecord.color);
+      expect(store.currentView).toBe(view);
+    },
+  );
+
+  test("ignores invalid", async () => {
+    let store = structuredClone(defaultStore);
+
+    await initApp(`?view=bad`, "/", store);
+
+    expect(store.observationsApiParams).toStrictEqual(defaultParams);
+    expect(store.color).toBe(allTaxaRecord.color);
+    expect(store.currentView).toBe("search");
+  });
+
+  test("if one taxon_id, add taxon to observationsApiParams and selectedTaxa", async () => {
+    let store = structuredClone(defaultStore);
+
+    await initApp(`?taxon_id=${monarch.id}`, "/", store);
+
+    let expected = {
+      ...defaultParams,
+      taxon_id: monarch.id,
+      colors: monarch.color,
+    };
+    expect(store.observationsApiParams).toStrictEqual(expected);
+    expect(store.selectedTaxa).toStrictEqual([monarch]);
+    expect(store.color).toBe(monarch.color);
+    expect(store.currentView).toBe("search");
+  });
+
+  test("if multiple taxon_id, add taxa to observationsApiParams and selectedTaxa", async () => {
+    let store = structuredClone(defaultStore);
+
+    await initApp(`?taxon_id=${monarch.id},${milkweed.id}`, "/", store);
+
+    let expected = {
+      ...defaultParams,
+      taxon_id: `${monarch.id},${milkweed.id}`,
+      colors: `${monarch.color},${milkweed.color}`,
+    };
+    expect(store.observationsApiParams).toStrictEqual(expected);
+    expect(store.selectedTaxa).toStrictEqual([monarch, milkweed]);
+    expect(store.color).toBe(milkweed.color);
+    expect(store.currentView).toBe("search");
+  });
+});
+
+describe("initApp and initPopulateMap", () => {
   test("if one place_id, add place to observationsApiParams and selectedPlaces", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
 
@@ -160,61 +221,6 @@ describe("initApp", () => {
     ]);
   });
 
-  test("if one taxon_id, add taxon to observationsApiParams and selectedTaxa", async () => {
-    let store = structuredClone(defaultStore);
-
-    await initApp(`?taxon_id=${monarch.id}`, "/", store);
-
-    let expected = {
-      ...defaultParams,
-      taxon_id: monarch.id,
-      colors: monarch.color,
-    };
-    expect(store.observationsApiParams).toStrictEqual(expected);
-    expect(store.selectedTaxa).toStrictEqual([monarch]);
-    expect(store.color).toBe(monarch.color);
-    expect(store.currentView).toBe("search");
-  });
-
-  test("if multiple taxon_id, add taxa to observationsApiParams and selectedTaxa", async () => {
-    let store = structuredClone(defaultStore);
-
-    await initApp(`?taxon_id=${monarch.id},${milkweed.id}`, "/", store);
-
-    let expected = {
-      ...defaultParams,
-      taxon_id: `${monarch.id},${milkweed.id}`,
-      colors: `${monarch.color},${milkweed.color}`,
-    };
-    expect(store.observationsApiParams).toStrictEqual(expected);
-    expect(store.selectedTaxa).toStrictEqual([monarch, milkweed]);
-    expect(store.color).toBe(milkweed.color);
-    expect(store.currentView).toBe("search");
-  });
-
-  test.each(validView)(
-    "sets currentView based on valid view param",
-    async (view) => {
-      let store = structuredClone(defaultStore);
-
-      await initApp(`?view=${view}`, "/", store);
-
-      expect(store.observationsApiParams).toStrictEqual(defaultParams);
-      expect(store.color).toBe(allTaxaRecord.color);
-      expect(store.currentView).toBe(view);
-    },
-  );
-
-  test("ignores invalid", async () => {
-    let store = structuredClone(defaultStore);
-
-    await initApp(`?view=bad`, "/", store);
-
-    expect(store.observationsApiParams).toStrictEqual(defaultParams);
-    expect(store.color).toBe(allTaxaRecord.color);
-    expect(store.currentView).toBe("search");
-  });
-
   test("if NE/SW, adds custom boundary to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
 
@@ -237,12 +243,112 @@ describe("initApp", () => {
         [0, 0],
       ]),
     ]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual(["0"]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+      `${allTaxaRecord.id}`,
+    ]);
     expect(leafletMapLayers(store)).toStrictEqual([
       "basemap: Open Street Map",
       "basemap: USGS Topo",
       "basemap: USGS Imagery",
       "basemap: Open Street Map",
+      "place layer: Custom Boundary, 0",
+      "bounding box",
+      "overlay: iNat grid, taxon_id 0",
+    ]);
+  });
+
+  test("if lat and lng, adds current place to store", async () => {
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
+    let currentPlace = currentLocationPlaceRecord([0, 0]);
+
+    await initApp(`?lat=0&lng=0`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      lat: 0,
+      lng: 0,
+    });
+    expect(store.selectedPlaces).toStrictEqual([currentPlace]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+      `${currentPlace.id}`,
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "place layer: Current Location, -1",
+      "overlay: iNat grid, taxon_id 0",
+    ]);
+  });
+
+  test("if lat, lng, and place_id, adds current place and place to store", async () => {
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
+    let currentPlace = currentLocationPlaceRecord([0, 0]);
+
+    await initApp(`?lat=0&lng=0&place_id=${placeCity.id}`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      lat: 0,
+      lng: 0,
+      place_id: placeCity.id,
+    });
+    expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+      `${placeCity.id}`,
+      `${currentPlace.id}`,
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "place layer: city, state, 1",
+      "place layer: city, state, 1",
+      "place layer: Current Location, -1",
+      "overlay: iNat grid, taxon_id 0, place_id 1",
+    ]);
+  });
+
+  test("if lat, lng, and NE/SW, adds current place and custom boundary to store", async () => {
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
+    let currentPlace = currentLocationPlaceRecord([0, 0]);
+
+    await initApp(`?lat=0&lng=0&nelat=0&nelng=0&swlat=0&swlng=0`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      lat: 0,
+      lng: 0,
+      nelat: 0,
+      nelng: 0,
+      swlat: 0,
+      swlng: 0,
+    });
+    expect(store.selectedPlaces).toStrictEqual([
+      currentPlace,
+      bboxPlaceRecord([
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+      ]),
+    ]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+      `${allTaxaRecord.id}`,
+      `${currentPlace.id}`,
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "place layer: Current Location, -1",
       "place layer: Custom Boundary, 0",
       "bounding box",
       "overlay: iNat grid, taxon_id 0",

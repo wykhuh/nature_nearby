@@ -1,6 +1,6 @@
 import { updateAppState } from "../components/ViewSearch/shared_utils";
 import { bboxPlaceRecord } from "../data/inat_data";
-import type { AppStoreType, LngLatType } from "../types/app";
+import type { AppStoreType, CustomGeoJSONType, LngLatType } from "../types/app";
 import { createGeojsonDemo } from "./dev_utils";
 import {
   convertiNatBBoxToLngLat,
@@ -26,7 +26,7 @@ export async function drawBBoxHandler(
   if (layerControl === null) return;
 
   // remove old places
-  removePlacesFromStoreAndMap(appStore);
+  removeAllPlacesFromStoreAndMap(appStore);
 
   // delete terradraw layer; replace with renderBoundingBoxLayer
   appStore.map.terraDraw?.clear();
@@ -43,8 +43,11 @@ export async function drawBBoxHandler(
 
   // update store
   let place = bboxPlaceRecord(coordinates);
-  appStore.selectedPlaces = [place];
-  appStore.placesMapLayers = { "0": [layer as unknown as CustomGeoJSONType] };
+  appStore.selectedPlaces.push(place);
+  appStore.placesMapLayers = {
+    ...appStore.placesMapLayers,
+    "0": [layer as unknown as CustomGeoJSONType],
+  };
   appStore.observationsApiParams = {
     ...appStore.observationsApiParams,
     nelng,
@@ -63,19 +66,19 @@ export async function drawBBoxHandler(
   await updateAppState(appStore);
 }
 
-export function removePlacesFromStoreAndMap(appStore: AppStoreType) {
+export function removeAllPlacesFromStoreAndMap(appStore: AppStoreType) {
   // remove from map
-  Object.values(appStore.placesMapLayers).forEach((layers) => {
+  for (let [id, layers] of Object.entries(appStore.placesMapLayers)) {
+    if (id === "-1") continue;
     layers.forEach((layer) => {
       // remove layer from map
       layer.remove();
     });
-  });
+    delete appStore.placesMapLayers[id];
+  }
 
   // remove from store
-  appStore.placesMapLayers = {};
-  appStore.selectedPlaces = [];
-
+  appStore.selectedPlaces = appStore.selectedPlaces.filter((p) => p.id === -1);
   delete appStore.observationsApiParams.place_id;
   delete appStore.observationsApiParams.nelat;
   delete appStore.observationsApiParams.nelng;

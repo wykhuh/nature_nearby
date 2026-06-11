@@ -111,7 +111,7 @@ export async function placeSelectedHandler(
     delete appStore.observationsApiParams.nelat;
     delete appStore.observationsApiParams.nelng;
 
-    appStore.selectedPlaces = appStore.selectedPlaces.filter((p) => p.id !== 0);
+    appStore.selectedPlaces = appStore.selectedPlaces.filter((p) => p.id > 0);
     delete appStore.placesMapLayers["0"];
   }
 
@@ -168,6 +168,12 @@ export function removeOnePlaceFromStore(
     delete appStore.observationsApiParams.nelng;
     delete appStore.observationsApiParams.swlat;
     delete appStore.observationsApiParams.swlng;
+    //  update observationsApiParams for current location
+  } else if (placeId === -1) {
+    delete appStore.observationsApiParams.lat;
+    delete appStore.observationsApiParams.lng;
+    appStore.placesMarkers = [];
+
     // update observationsApiParams for places
   } else {
     removeIdfromInatApiParams(appStore, "selectedPlaces", placeId);
@@ -175,14 +181,16 @@ export function removeOnePlaceFromStore(
 }
 
 export function removeOnePlaceFromMap(appStore: AppStoreType, placeId: number) {
-  if (!appStore.placesMapLayers) return;
-
   let mapLayers = appStore.placesMapLayers[placeId];
-  if (!mapLayers) return;
+  if (mapLayers) {
+    mapLayers.forEach((layer) => {
+      layer.remove();
+    });
+  }
 
-  mapLayers.forEach((layer) => {
-    layer.remove();
-  });
+  if (placeId === -1) {
+    appStore.placesMarkers.forEach((marker) => marker.remove());
+  }
 
   delete appStore.placesMapLayers[placeId];
 }

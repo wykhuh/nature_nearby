@@ -23,10 +23,6 @@ import type {
 } from "../types/app";
 import type { MultiPolygonJson } from "../types/inat_api";
 import { square } from "../assets/icons.ts";
-import { bboxPlaceRecord } from "../data/inat_data.ts";
-import { createGeojsonDemo } from "./dev_utils.ts";
-import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
-import { removePlacesFromStoreAndMap } from "./search_bounding_box.ts";
 
 // ====================
 // setup
@@ -119,7 +115,7 @@ export function createDrawRectButton(
   return buttonEl;
 }
 
-export function addiNatBBoxToMapAndStore(appStore: AppStoreType) {
+export function addiNatBBoxToMap(appStore: AppStoreType) {
   let map = appStore.map.map;
   if (!map) return;
 
@@ -133,7 +129,6 @@ export function addiNatBBoxToMapAndStore(appStore: AppStoreType) {
   let lngLatCoors = convertiNatBBoxToLngLat(appStore.observationsApiParams);
   if (!lngLatCoors) return;
 
-  appStore.selectedPlaces = [bboxPlaceRecord(lngLatCoors)];
   let layer = renderBoundingBoxLayer(map, latLngCoors) as any;
   appStore.placesMapLayers["0"] = [layer as unknown as CustomGeoJSONType];
 }

@@ -23,12 +23,13 @@ export const defaultStore: AppStoreType = {
   taxaMapLayers: {},
   placesMapLayers: {},
   primaryColorScheme: primaryColorSchemeName,
+  placesMarkers: [],
 };
 
 const proxiedStore = new Proxy(structuredClone(defaultStore), {
   set(target, property, value) {
     (target as any)[property] = value;
-    
+
     displayAppstoreData(proxiedStore, `proxiedStore ${property.toString()}`);
 
     return true;

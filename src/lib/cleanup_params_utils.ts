@@ -69,7 +69,6 @@ export function cleanupObervationsParamsForRecord(
   return params.toString();
 }
 
-
 export function cleanupObervationsParams(appStore: AppStoreType) {
   let params = cleanupParamsStore(appStore);
 
@@ -131,6 +130,9 @@ function cleanupMapParams(rawParams: MapTilesAPIParamsType) {
   }
 
   if (rawParams.place_id == "0") {
+    delete rawParams.place_id;
+  }
+  if (rawParams.place_id == "-1") {
     delete rawParams.place_id;
   }
   if (rawParams.colors) {

@@ -336,6 +336,12 @@ function removeResourceId(
     if (ids) {
       // @ts-ignore
       appStore.observationsApiParams[property] = ids;
+    } else {
+      // handle cases when there is a selected resource but the id is not in
+      // observationsApiParams
+      delete appStore.observationsApiParams[
+        property as ObservationsApiParamsKeysType
+      ];
     }
   }
 }
@@ -395,6 +401,7 @@ export function removeValueFromCommaSeparatedString(
   if (currentValue === undefined) return;
 
   let ids = currentValue
+    .toString()
     .split(",")
     .filter((id) => Number(id) !== newValue)
     .join(",");

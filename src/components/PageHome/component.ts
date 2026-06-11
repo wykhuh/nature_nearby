@@ -11,7 +11,6 @@ import { viewComponentObj } from "../../data/app_data.ts";
 import { initPopulateMap } from "../../lib/init_app.ts";
 import { renderDemoLayers } from "../../lib/dev_utils.ts";
 
-
 class PageHome extends HTMLElement {
   constructor() {
     super();
@@ -71,7 +70,6 @@ class PageHome extends HTMLElement {
         renderDemoLayers(map);
       }
     }
-
     if (!this.viewContainerEl) return;
     if (!appStore.currentView) return;
 

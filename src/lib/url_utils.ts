@@ -47,9 +47,7 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
   }
 
   if (appStore.selectedPlaces.length > 0) {
-    let ids = appStore.selectedPlaces
-      .filter((p) => p.id !== 0)
-      .map((p) => p.id);
+    let ids = appStore.selectedPlaces.filter((p) => p.id > 0).map((p) => p.id);
 
     if (ids.length > 0) {
       params.set("place_id", ids.join(","));

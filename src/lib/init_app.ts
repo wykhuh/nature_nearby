@@ -13,7 +13,7 @@ import {
 } from "./data_utils";
 import { getPlaceById, getTaxonById } from "./inat_api";
 import {
-  addiNatBBoxToMapAndStore,
+  addiNatBBoxToMap,
   convertiNatBBoxToLngLat,
   fitBoundsPlaces,
   renderMarker,
@@ -60,7 +60,7 @@ export async function initApp(
   }
 
   // add lat & lng to selected places as current location
-  if (urlData["lng"] && urlData["lat"]) {
+  if (urlData["lng"] !== undefined && urlData["lat"] !== undefined) {
     let place = currentLocationPlaceRecord([urlData["lng"], urlData["lat"]]);
     appStore.selectedPlaces.push(place);
   }
@@ -147,20 +147,21 @@ export async function initPopulateMap(
 
   // add bounding box layer
   if (appStore.observationsApiParams.nelat !== undefined) {
-    addiNatBBoxToMapAndStore(appStore);
+    addiNatBBoxToMap(appStore);
   }
 
   if (
     appStore.observationsApiParams.lat &&
     appStore.observationsApiParams.lng
   ) {
-    renderMarker(
+    let marker = renderMarker(
       {
         latitude: appStore.observationsApiParams.lat,
         longitude: appStore.observationsApiParams.lng,
       },
       appStore.map.map,
     );
+    appStore.placesMarkers.push(marker);
   }
 
   // load default or selected taxa map layer

@@ -1,4 +1,5 @@
 import { setupComponent } from "../../lib/component_utils";
+import { currentLocationHandler } from "../../lib/search_current_place";
 import {
   placeSelectedHandler,
   setupPlacesSearch,
@@ -14,7 +15,6 @@ import {
 import { updateAppWithFormData } from "./shared_utils";
 import { template } from "./template";
 import {
-  currentLocationHandler,
   initFilters,
   presetDatesHandler,
   resetFormHandler,

@@ -57,6 +57,11 @@ function formatPlacesMapLayers(appStore: AppStoreType) {
   });
   return temp;
 }
+function formatPlacesMarkers(appStore: AppStoreType) {
+  return appStore.placesMarkers.map((marker) => {
+    return (marker as any)._latlng;
+  });
+}
 
 export function displayAppstoreData(appStore: AppStoreType, _source: string) {
   const debug = import.meta.env?.VITE_DEBUG;
@@ -80,6 +85,8 @@ export function displayAppstoreData(appStore: AppStoreType, _source: string) {
       data.mapLayerDescriptions = leafletMapLayers(appStore);
     } else if (key === "selectedPlaces") {
       data.selectedPlaces = formatSelectedPlaces(appStore);
+    } else if (key === "placesMarkers") {
+      data.placesMarkers = formatPlacesMarkers(appStore);
     } else {
       data[key] = appStore[key];
     }

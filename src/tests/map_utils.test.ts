@@ -3,7 +3,7 @@
 import jsdom from "jsdom";
 import { expect, test, describe, beforeEach } from "vitest";
 import {
-  addiNatBBoxToMapAndStore,
+  addiNatBBoxToMap,
   convertiNatBBoxToLatLng,
   convertiNatBBoxToLngLat,
   convertLnLatToiNatBBox,
@@ -466,8 +466,8 @@ describe("drawBBoxHandler", () => {
   );
 });
 
-describe("addiNatBBoxToMapAndStore", () => {
-  test("takes iNat NE SW values, and adds bounding box to store and map", () => {
+describe("addiNatBBoxToMap", () => {
+  test("takes iNat NE SW values, and adds bounding box to map", () => {
     let { store } = setupMapAndStore();
     store.selectedTaxa = [allTaxaRecord];
     store.observationsApiParams.taxon_id = allTaxaRecord.id.toString();
@@ -477,15 +477,8 @@ describe("addiNatBBoxToMapAndStore", () => {
     store.observationsApiParams.swlat = 0;
     store.observationsApiParams.swlng = -180;
 
-    addiNatBBoxToMapAndStore(store);
+    addiNatBBoxToMap(store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      nelat: 5,
-      nelng: -170,
-      swlat: 0,
-      swlng: -180,
-    });
     expect(store.placesMapLayers[0][0].getBounds()).toStrictEqual({
       _northEast: { lat: 5, lng: -170 },
       _southWest: { lat: 0, lng: -180 },
@@ -497,24 +490,6 @@ describe("addiNatBBoxToMapAndStore", () => {
         { lat: 5, lng: -170 },
         { lat: 5, lng: -180 },
       ],
-    ]);
-    expect(store.selectedPlaces).toStrictEqual([
-      {
-        bounding_box: {
-          coordinates: [
-            [
-              [-180, 0],
-              [-170, 0],
-              [-170, 5],
-              [-180, 5],
-              [-180, 0],
-            ],
-          ],
-          type: "Polygon",
-        },
-        id: 0,
-        name: "Custom Boundary",
-      },
     ]);
     expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
   });
@@ -529,15 +504,8 @@ describe("addiNatBBoxToMapAndStore", () => {
     store.observationsApiParams.swlat = 0;
     store.observationsApiParams.swlng = 170;
 
-    addiNatBBoxToMapAndStore(store);
+    addiNatBBoxToMap(store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      nelat: 5,
-      nelng: -170,
-      swlat: 0,
-      swlng: 170,
-    });
     expect(store.placesMapLayers[0][0].getBounds()).toStrictEqual({
       _northEast: { lat: 5, lng: -170 },
       _southWest: { lat: 0, lng: -190 },
@@ -549,24 +517,6 @@ describe("addiNatBBoxToMapAndStore", () => {
         { lat: 5, lng: -170 },
         { lat: 5, lng: -190 },
       ],
-    ]);
-    expect(store.selectedPlaces).toStrictEqual([
-      {
-        bounding_box: {
-          coordinates: [
-            [
-              [-190, 0],
-              [-170, 0],
-              [-170, 5],
-              [-190, 5],
-              [-190, 0],
-            ],
-          ],
-          type: "Polygon",
-        },
-        id: 0,
-        name: "Custom Boundary",
-      },
     ]);
     expect(leafletMapLayers(store)).toStrictEqual(expectedMapLayers);
   });

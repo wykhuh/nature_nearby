@@ -71,7 +71,7 @@ export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
     if (
-      ["taxon_id", "place_id", "spam", "license", "month", "year", "lat", "lng"]
+      ["taxon_id", "place_id", "spam", "license", "month", "year"]
         .concat(observationsApiNonFilterableNames)
         .includes(key)
     ) {
@@ -114,7 +114,7 @@ export function renderSelectedFiltersList(appStore: AppStoreType) {
   });
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
-    if (["month", "year", "lat", "lng"].includes(key) && value !== "") {
+    if (["month", "year"].includes(key) && value !== "") {
       let itemEl = document.createElement(
         "selected-filters-item",
       ) as DataComponentType;

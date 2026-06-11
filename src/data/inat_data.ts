@@ -106,7 +106,7 @@ export function bboxPlaceRecord(bbox: LngLatType[]): NormalizedPlace {
 
 export function currentLocationPlaceRecord(point: LngLatType): NormalizedPlace {
   return {
-    id: 0,
+    id: -1,
     name: "Current Location",
     bounding_box: { type: "Point", coordinates: point },
   };

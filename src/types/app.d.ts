@@ -3,6 +3,7 @@ import type {
   GeoJSONOptions,
   LatLngBounds,
   Map,
+  Marker,
   TileLayer,
 } from "leaflet";
 import type { TerraDraw } from "terra-draw";
@@ -45,9 +46,14 @@ export type AppStoreType = {
   viewMetadata: { name_order };
   taxaMapLayers: { [index: string]: TileLayer[] };
   placesMapLayers: { [index: string]: CustomGeoJSONType[] };
+  placesMarkers: LeafletMarker[];
   color?: string;
   primaryColorScheme: keyof typeof appColorSchemes;
 };
+
+export interface LeafletMarker extends Marker {
+  _latlng?: { lat: number; lng: number };
+}
 
 export type AppStoreKeysType = keyof AppStoreType;
 
