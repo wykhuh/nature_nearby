@@ -36,6 +36,7 @@ export function renderMap() {
   let map = L.map("map", {
     center: [0, 0],
     zoom: 0,
+    maxZoom: 19,
     // NOTE: set worldCopyJump to true so that rectangles from rectangles
     // have -180 to 180 longitudes that iNat API requires
     worldCopyJump: true,

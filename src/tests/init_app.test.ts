@@ -1,12 +1,26 @@
 // @vitest-environment jsdom
 
-import { expect, test, describe, beforeAll, afterEach, afterAll } from "vitest";
+import jsdom from "jsdom";
+import {
+  expect,
+  test,
+  describe,
+  beforeAll,
+  afterEach,
+  afterAll,
+  beforeEach,
+} from "vitest";
 import { defaultStore } from "../lib/store";
 import { placeCountry, placeCity, monarch, milkweed } from "./fixtures/data";
-import { createMockServer, defaultParams } from "./fixtures/test_helpers";
+import {
+  createMockServer,
+  defaultParams,
+  setupMapAndStore,
+} from "./fixtures/test_helpers";
 import { observationsApiNames, validView } from "../data/app_data";
-import { initApp } from "../lib/init_app";
-import { allTaxaRecord } from "../data/inat_data";
+import { initApp, initPopulateMap } from "../lib/init_app";
+import { allTaxaRecord, bboxPlaceRecord } from "../data/inat_data";
+import { leafletMapLayers } from "../lib/data_utils";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -17,6 +31,21 @@ afterEach(() => {
 });
 afterAll(() => {
   server.close();
+});
+
+beforeEach(() => {
+  const { JSDOM } = jsdom;
+
+  let dom = new JSDOM(
+    `<!doctype html>
+<html lang="en">
+  <body>
+    <div id="map" style="width: 400px; height: 400px"></div>
+   </body>
+</html>`,
+  );
+  // @ts-ignore
+  global.document = dom.window.document;
 });
 
 describe("initApp", () => {
@@ -74,9 +103,10 @@ describe("initApp", () => {
   });
 
   test("if one place_id, add place to observationsApiParams and selectedPlaces", async () => {
-    let store = structuredClone(defaultStore);
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
 
     await initApp(`?place_id=${placeCity.id}`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
 
     let expected = { ...defaultParams, place_id: placeCity.id };
     expect(store.observationsApiParams).toStrictEqual(expected);
@@ -84,12 +114,25 @@ describe("initApp", () => {
     expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
     expect(store.color).toBe(allTaxaRecord.color);
     expect(store.currentView).toBe("search");
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+      `${placeCity.id}`,
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "place layer: city, state, 1",
+      "place layer: city, state, 1",
+      "overlay: iNat grid, taxon_id 0, place_id 1",
+    ]);
   });
 
   test("if multiple place_id, add place to observationsApiParams and selectedPlaces", async () => {
-    let store = structuredClone(defaultStore);
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
 
     await initApp(`?place_id=${placeCity.id},${placeCountry.id}`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
 
     let expected = {
       ...defaultParams,
@@ -100,6 +143,21 @@ describe("initApp", () => {
     expect(store.selectedTaxa).toStrictEqual([allTaxaRecord]);
     expect(store.color).toBe(allTaxaRecord.color);
     expect(store.currentView).toBe("search");
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+      `${placeCity.id}`,
+      `${placeCountry.id}`,
+    ]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "place layer: city, state, 1",
+      "place layer: city, state, 1",
+      "place layer: country, Asia, 2",
+      "place layer: country, Asia, 2",
+      "overlay: iNat grid, taxon_id 0, place_id 1,2",
+    ]);
   });
 
   test("if one taxon_id, add taxon to observationsApiParams and selectedTaxa", async () => {
@@ -155,5 +213,39 @@ describe("initApp", () => {
     expect(store.observationsApiParams).toStrictEqual(defaultParams);
     expect(store.color).toBe(allTaxaRecord.color);
     expect(store.currentView).toBe("search");
+  });
+
+  test("if NE/SW, adds custom boundary to store", async () => {
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
+
+    await initApp(`?nelat=0&nelng=0&swlat=0&swlng=0`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      nelat: 0,
+      nelng: 0,
+      swlat: 0,
+      swlng: 0,
+    });
+    expect(store.selectedPlaces).toStrictEqual([
+      bboxPlaceRecord([
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+      ]),
+    ]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual(["0"]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "place layer: Custom Boundary, 0",
+      "bounding box",
+      "overlay: iNat grid, taxon_id 0",
+    ]);
   });
 });

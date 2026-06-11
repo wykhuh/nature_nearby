@@ -103,3 +103,11 @@ export function bboxPlaceRecord(bbox: LngLatType[]): NormalizedPlace {
     bounding_box: { type: "Polygon", coordinates: [bbox] },
   };
 }
+
+export function currentLocationPlaceRecord(point: LngLatType): NormalizedPlace {
+  return {
+    id: 0,
+    name: "Current Location",
+    bounding_box: { type: "Point", coordinates: point },
+  };
+}

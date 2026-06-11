@@ -14,13 +14,16 @@ import {
 import { getPlaceById, getTaxonById } from "./inat_api";
 import {
   addiNatBBoxToMapAndStore,
+  convertiNatBBoxToLngLat,
   fitBoundsPlaces,
+  renderMarker,
   renderSelectedPlacesBoundaries,
 } from "./map_utils";
 import { updateTilesForSelectedTaxa } from "./search_utils";
 import { decodeAppUrl } from "./url_utils";
 import { terraDrawBBoxHandler } from "./map_utils";
 import type { TerraDraw } from "terra-draw";
+import { bboxPlaceRecord, currentLocationPlaceRecord } from "../data/inat_data";
 
 const pathPage = {
   "/about/": "about",
@@ -56,7 +59,26 @@ export async function initApp(
     }
   }
 
-  // add default taxon if no search params
+  // add lat & lng to selected places as current location
+  if (urlData["lng"] && urlData["lat"]) {
+    let place = currentLocationPlaceRecord([urlData["lng"], urlData["lat"]]);
+    appStore.selectedPlaces.push(place);
+  }
+
+  // add ne/sw  to selected places as custom boundary
+  if (
+    urlData["nelng"] !== undefined &&
+    urlData["nelat"] !== undefined &&
+    urlData["swlat"] !== undefined &&
+    urlData["swlng"] !== undefined
+  ) {
+    let lngLatCoors = convertiNatBBoxToLngLat(appStore.observationsApiParams);
+    if (lngLatCoors) {
+      let place = bboxPlaceRecord(lngLatCoors);
+      appStore.selectedPlaces.push(place);
+    }
+  }
+
   if (urlData.taxon_id === undefined) {
     addDefaultTaxaRecordToStore(appStore);
   }

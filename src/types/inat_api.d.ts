@@ -107,7 +107,7 @@ export interface PolygonJson {
   coordinates: LngLat[][];
 }
 
-interface Point {
+export interface Point {
   type: "Point";
   coordinates: LngLat;
 }

@@ -27,7 +27,18 @@ export const places1APIResponse: iNatPlacesAPI = {
           ],
         ],
       },
-      bounding_box_geojson: { type: "Polygon", coordinates: [] },
+      bounding_box_geojson: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-124, 32],
+            [-124, 42],
+            [-114, 42],
+            [-114, 32],
+            [-124, 32],
+          ],
+        ],
+      },
       place_type: 7,
     },
   ],
@@ -54,7 +65,18 @@ export const places2APIResponse: iNatPlacesAPI = {
           ],
         ],
       },
-      bounding_box_geojson: { type: "Polygon", coordinates: [] },
+      bounding_box_geojson: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-124, 32],
+            [-124, 42],
+            [-114, 42],
+            [-114, 32],
+            [-124, 32],
+          ],
+        ],
+      },
       place_type: 7,
     },
     {
@@ -73,7 +95,18 @@ export const places2APIResponse: iNatPlacesAPI = {
           ],
         ],
       },
-      bounding_box_geojson: { type: "Polygon", coordinates: [] },
+      bounding_box_geojson: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [-124, 32],
+            [-124, 42],
+            [-114, 42],
+            [-114, 32],
+            [-124, 32],
+          ],
+        ],
+      },
       place_type: 12,
     },
   ],
@@ -94,7 +127,18 @@ export const placeCity: NormalizedPlace = {
       ],
     ],
   },
-  bounding_box: { type: "Polygon", coordinates: [] },
+  bounding_box: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [-124, 32],
+        [-124, 42],
+        [-114, 42],
+        [-114, 32],
+        [-124, 32],
+      ],
+    ],
+  },
   place_type_name: "Town",
 };
 
@@ -113,7 +157,18 @@ export const placeCountry: NormalizedPlace = {
       ],
     ],
   },
-  bounding_box: { type: "Polygon", coordinates: [] },
+  bounding_box: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [-124, 32],
+        [-124, 42],
+        [-114, 42],
+        [-114, 32],
+        [-124, 32],
+      ],
+    ],
+  },
   place_type_name: "Country",
 };
 

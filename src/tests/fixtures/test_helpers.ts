@@ -66,5 +66,5 @@ export function setupMapAndStore() {
     },
   };
 
-  return { map, layerControl, store };
+  return { map, layerControl, store, terraDraw };
 }

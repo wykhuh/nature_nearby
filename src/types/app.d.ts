@@ -111,10 +111,8 @@ export type NormalizedTaxon = {
 };
 
 export type NormalizedPlace = {
-  name?: string;
-  geometry?: PolygonJson | MultiPolygonJson;
-  bounding_box?: PolygonJson;
-  geometry?: PolygonJson | MultiPolygonJson;
+  bounding_box?: PolygonJson | Point;
+  geometry?: PolygonJson | MultiPolygonJson | Point;
   id: number;
   name?: string;
   place_type_name?: string;
