@@ -5,7 +5,7 @@ import { decodeAppUrl, formatAppParams } from "../lib/url_utils";
 import { defaultStore } from "../lib/store";
 import { milkweed, monarch, placeCity, placeCountry } from "./fixtures/data";
 import { observationsApiNames, validView } from "../data/app_data";
-import { allTaxaRecord } from "../data/inat_data";
+import { allTaxaRecord, currentLocationPlaceRecord } from "../data/inat_data";
 
 describe("decodeAppUrl", () => {
   test("returns empty object if no search params", () => {
@@ -108,6 +108,28 @@ describe("formatAppParams", () => {
     let result = formatAppParams(store);
 
     expect(result).toBe(`place_id=${placeCity.id}`);
+  });
+
+  test("returns lat and lng, ignore place_id if store has current location", () => {
+    let store = structuredClone(defaultStore);
+    store.observationsApiParams.lat = 0;
+    store.observationsApiParams.lng = 10;
+    store.selectedPlaces = [currentLocationPlaceRecord([10, 0])];
+
+    let result = formatAppParams(store);
+
+    expect(result).toBe(`lat=0&lng=10`);
+  });
+
+  test("returns lat and lng, place_id if store has selected place and current location", () => {
+    let store = structuredClone(defaultStore);
+    store.observationsApiParams.lat = 0;
+    store.observationsApiParams.lng = 10;
+    store.selectedPlaces = [currentLocationPlaceRecord([10, 0]), placeCity];
+
+    let result = formatAppParams(store);
+
+    expect(result).toBe(`place_id=${placeCity.id}&lat=0&lng=10`);
   });
 
   test("returns taxon_id if store has taxon", () => {

@@ -45,11 +45,15 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
   if (appStore.selectedTaxa.length > 0 && appStore.selectedTaxa[0].id !== 0) {
     params.set("taxon_id", appStore.selectedTaxa.map((t) => t.id).join(","));
   }
-  if (
-    appStore.selectedPlaces.length > 0 &&
-    appStore.selectedPlaces[0].id !== 0
-  ) {
-    params.set("place_id", appStore.selectedPlaces.map((p) => p.id).join(","));
+
+  if (appStore.selectedPlaces.length > 0) {
+    let ids = appStore.selectedPlaces
+      .filter((p) => p.id !== 0)
+      .map((p) => p.id);
+
+    if (ids.length > 0) {
+      params.set("place_id", ids.join(","));
+    }
   }
 
   let view = appStore.currentView;
