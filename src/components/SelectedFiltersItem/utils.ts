@@ -1,6 +1,13 @@
 import { observationsFieldName_InputType } from "../../data/app_data";
-import { setInputChecked, setInputValue, unsetSelectedOption } from "../../lib/form_utils";
-import type { AppStoreType, ObservationsApiParamsKeysType } from "../../types/app";
+import {
+  setInputChecked,
+  setInputValue,
+  unsetSelectedOption,
+} from "../../lib/form_utils";
+import type {
+  AppStoreType,
+  ObservationsApiParamsKeysType,
+} from "../../types/app";
 import { updateAppWithFormData } from "../ViewSearch/shared_utils";
 
 export async function deleteFilter(
@@ -12,17 +19,27 @@ export async function deleteFilter(
   let field = fieldTemp as keyof typeof resourceFieldName_InputType;
   let inputType = resourceFieldName_InputType[field];
   if (inputType === "select") {
-    unsetSelectedOption(`#observations-form select#${field} option[value='${value}']`);
+    unsetSelectedOption(
+      `#observations-form select#${field} option[value='${value}']`,
+    );
   } else if (inputType === "multiselect") {
-    value.split(",").forEach((v) => {
-      unsetSelectedOption(`#observations-form select#${field} option[value='${v}']`);
-    });
+    value
+      .toString()
+      .split(",")
+      .forEach((v) => {
+        unsetSelectedOption(
+          `#observations-form select#${field} option[value='${v}']`,
+        );
+      });
   } else if (inputType === "checkbox") {
     value
       .toString()
       .split(",")
       .forEach((v) => {
-        setInputChecked(`#observations-form input[name='${field}'][value='${v}']`, false);
+        setInputChecked(
+          `#observations-form input[name='${field}'][value='${v}']`,
+          false,
+        );
       });
   } else if (inputType === "textInput") {
     setInputValue(`#observations-form input#${field}`, "");
@@ -31,7 +48,9 @@ export async function deleteFilter(
   } else if (inputType === "search") {
     setInputValue(`#observations-form [name='${field}']`, "");
   } else {
-    throw new Error(`need to add another option for SelectedFiltersItem: ${field} ${inputType}`);
+    throw new Error(
+      `need to add another option for SelectedFiltersItem: ${field} ${inputType}`,
+    );
   }
 
   await updateForm(appStore);

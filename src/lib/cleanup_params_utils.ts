@@ -10,9 +10,9 @@ import type {
 import { iNatOrange } from "./map_colors_utils";
 
 function cleanupParamsStore(appStore: AppStoreType) {
-  let string = formatAppParams(appStore);
-
-  let params = new URLSearchParams(string);
+  let params = new URLSearchParams(
+    appStore.observationsApiParams as Record<string, string>,
+  );
   cleanupParams(params);
   return params;
 }
@@ -69,16 +69,30 @@ export function cleanupObervationsParamsForRecord(
   return params.toString();
 }
 
-export function cleanupObervationsParams(appStore: AppStoreType) {
+export function cleanupObervationsParams(
+  appStore: AppStoreType,
+  format = "string",
+) {
   let params = cleanupParamsStore(appStore);
 
-  return params.toString();
+  if (format === "string") {
+    return params.toString();
+  } else {
+    return params;
+  }
 }
 
-export function cleanupObervationsSpeciesParams(appStore: AppStoreType) {
+export function cleanupObervationsSpeciesParams(
+  appStore: AppStoreType,
+  format = "string",
+) {
   let params = cleanupParamsStore(appStore);
 
-  return params.toString();
+  if (format === "string") {
+    return params.toString();
+  } else {
+    return params;
+  }
 }
 
 // =============

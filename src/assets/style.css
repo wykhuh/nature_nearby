@@ -378,7 +378,7 @@
   }
 
   .current-view {
-    background-color: var(--clr-gray-300);
+    background-color: var(--clr-iNat-green);
   }
 
   .taxa-ac-option {
@@ -684,6 +684,11 @@
     width: 20px;
     height: 20px;
   }
+
+  .search-icon {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 @layer components {
@@ -749,15 +754,10 @@
   }
 
   #observations-header {
-    padding: 0 1rem;
     background-color: var(--clr-iNat-dark-gray);
-    color: var(--clr-white);
   }
 
   #observations-nav {
-    display: flex;
-    align-items: center;
-
     ul {
       margin: 0;
       padding: 0;
@@ -768,10 +768,29 @@
 
     li {
       list-style: none;
-      margin: 0;
-      padding: 0.5rem 1rem;
+    }
+
+    button {
+      border-radius: 0;
       display: flex;
       flex-direction: column;
+      justify-content: end;
+      height: 100%;
+      background-color: inherit;
+      color: var(--clr-white);
+      border: 0;
+      align-items: center;
+    }
+
+    .search-icon {
+      g {
+        fill: var(--clr-white);
+      }
+    }
+
+    button:hover,
+    button:focus-visible {
+      background-color: var(--clr-gray-800);
     }
 
     .header-count {

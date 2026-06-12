@@ -11,7 +11,7 @@ export async function getObservationsData(appStore: AppStoreType) {
     return globalObs;
   }
 
-  let params = cleanupObervationsParams(appStore);
+  let params = cleanupObervationsParams(appStore) as string;
   return await getObservations(params);
 }
 
@@ -20,6 +20,6 @@ export async function getObservationsSpeciesData(appStore: AppStoreType) {
     return globalObsSpecies;
   }
 
-  let params = cleanupObervationsSpeciesParams(appStore);
+  let params = cleanupObervationsSpeciesParams(appStore) as string;
   return await getObservationsSpecies(params);
 }

@@ -1,12 +1,22 @@
+import { search } from "../../assets/icons";
 import { html } from "../../lib/component_utils";
 
 export const observationsHeaderLinks = html`
-  <ul class="observations-stats">
-    <li id="observations_observations" data-count-label="observations_observations">
-      <span class="header-count">&nbsp;</span><span>Observations</span>
+  <ul>
+    <li>
+      <button data-view="search">${search}Search</button>
     </li>
-    <li id="observations_species" data-count-label="observations_species">
-      <span class="header-count">&nbsp;</span><span id="observations_species_label">Species</span>
+    <li>
+      <button data-view="observations">
+        <span data-count-label="observations" class="header-count">&nbsp;</span
+        ><span>Observations</span>
+      </button>
+    </li>
+    <li>
+      <button data-view="species">
+        <span data-count-label="species" class="header-count">&nbsp;</span
+        ><span>Species</span>
+      </button>
     </li>
   </ul>
 `;
