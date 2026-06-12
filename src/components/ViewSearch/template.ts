@@ -47,10 +47,6 @@ const basicFields = html`
         data-content="?"
         data-tooltip="Sets latitude and longitude using your current location."
       ></app-tooltip>
-
-      <div class="form-group">
-        <button type="button">Track location</button>
-      </div>
     </section>
   </fieldset>
 `;
