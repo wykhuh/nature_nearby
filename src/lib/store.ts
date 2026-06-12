@@ -17,6 +17,7 @@ export const defaultStore: AppStoreType = {
     // license: siteCC.join(","),
     // photo_license: siteCC.join(","),
     photos: true,
+    radius: 1.6,
   },
   viewMetadata: { name_order: "cs" },
   currentView: "search",
