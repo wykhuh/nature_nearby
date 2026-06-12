@@ -130,11 +130,19 @@ export function setPresetDates(appStore: AppStoreType) {
     `#observations-form select#presetDates option`,
   );
   for (let optionEl of optionEls) {
-    if (
-      optionEl.dataset.month === month.toString() &&
-      optionEl.dataset.year === year.toString()
-    ) {
-      optionEl.selected = true;
+    if (optionEl.dataset.month && optionEl.dataset.year) {
+      let years = new Set(year.toString().split(","));
+      let optionYears = new Set(optionEl.dataset.year.split(","));
+      let months = new Set(month.toString().split(","));
+      let optionMonths = new Set(optionEl.dataset.month.split(","));
+      if (
+        years.difference(optionYears).size === 0 &&
+        optionYears.difference(years).size === 0 &&
+        months.difference(optionMonths).size === 0 &&
+        optionMonths.difference(months).size === 0
+      ) {
+        optionEl.selected = true;
+      }
     }
   }
 }
