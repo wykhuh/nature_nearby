@@ -116,3 +116,18 @@ function renderDemoLayers(map: Map) {
 [Bug] Can't move or resize object across -180 or 180 longitude
 
 https://github.com/JamesLMilner/terra-draw/issues/485
+
+==
+
+Links vs buttons vs other clicky things
+
+
+https://www.makethingsaccessible.com/guides/links-vs-buttons-vs-other-clicky-things/
+
+==
+
+leaflet circle radius
+
+https://github.com/Leaflet/Leaflet/issues/5357
+
+https://stackoverflow.com/questions/16942697/geojson-circles-supported-or-not

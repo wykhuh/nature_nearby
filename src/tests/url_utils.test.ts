@@ -11,7 +11,7 @@ import {
   placeCountry,
 } from "./fixtures/data";
 import { observationsApiNames, validView } from "../data/app_data";
-import { allTaxaRecord, currentLocationPlaceRecord } from "../data/inat_data";
+import { allTaxaRecord } from "../data/inat_data";
 
 describe("decodeAppUrl", () => {
   test("returns empty object if no search params", () => {

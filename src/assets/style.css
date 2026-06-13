@@ -958,3 +958,34 @@
     }
   }
 }
+
+.item-selector {
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    padding: 0 5px;
+    border-radius: 0;
+    border-left-width: 0;
+  }
+
+  button.prev-selector,
+  button.next-selector,
+  button:nth-child(1) {
+    border-left-width: 1px;
+  }
+
+  .current {
+    background-color: var(--clr-gray-400);
+  }
+}
+
+img[hidden] {
+  display: none;
+}
+
+.media.sound:not([hidden]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

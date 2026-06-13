@@ -2,7 +2,6 @@ import type { ObservationsResult } from "../../types/inat_api";
 import type { DataComponentType, AppStoreType } from "../../types/app";
 import {
   renderDates,
-  renderMedia,
   renderMediaCounts,
   renderQualityGrade,
   renderTaxonNames,
@@ -18,41 +17,36 @@ class CardObservation extends HTMLElement {
     super();
   }
 
+  currentIndex = 0;
+  data: ObservationsResult | null = null;
+  mediaCount = 0;
+
   connectedCallback() {
-    this.render();
-
-    window.addEventListener("observationsDisplayFieldsChanged", this);
-  }
-
-  disconnectedCallback() {
-    window.removeEventListener("observationsDisplayFieldsChanged", this);
-  }
-
-  handleEvent() {
-    this.renderCard(window.app.store);
-  }
-
-  async render() {
     setupComponent(template, this);
+    this.data = (this as DataComponentType).data as ObservationsResult;
+    let photosCount = this.data.photos ? this.data.photos.length : 0;
+    let soundsCount = this.data.sounds ? this.data.sounds.length : 0;
+    this.mediaCount = photosCount + soundsCount;
 
-    this.renderCard(window.app.store);
+    this.render(this.data, window.app.store);
   }
 
-  renderCard(appStore: AppStoreType) {
+  disconnectedCallback() {}
+
+  handleEvent(event: Event) {
+    let target = event.target as HTMLInputElement;
+    if (!target) return;
+  }
+
+  async render(data: ObservationsResult, appStore: AppStoreType) {
     let cardEl = this.querySelector(".card");
     if (!cardEl) return;
 
-    let data = (this as DataComponentType).data as ObservationsResult;
-
-    cardEl.innerHTML = "";
-    let url = `${iNatObservationsUrl}/${data.id}`;
-    cardEl.innerHTML = renderMedia(
-      url,
-      data.taxon,
-      data.photos,
-      data.sounds,
-      appStore,
-    );
+    let component = document.createElement(
+      "media-carousel",
+    ) as DataComponentType;
+    component.data = data;
+    cardEl.appendChild(component);
 
     let detailsEl = document.createElement("div");
     detailsEl.className = "details";
