@@ -1,5 +1,8 @@
 import { setupComponent } from "../../lib/component_utils";
-import { currentLocationHandler } from "../../lib/search_current_place";
+import {
+  addCurrentPlaceToMapAndStore,
+  currentLocationHandler,
+} from "../../lib/search_current_place";
 import {
   placeSelectedHandler,
   setupPlacesSearch,
@@ -36,6 +39,7 @@ export class ViewSearch extends HTMLElement {
   moreFilterContainer: HTMLDivElement | null = null;
   latitudeEl: HTMLInputElement | null = null;
   longitudeEl: HTMLInputElement | null = null;
+  radiusEl: HTMLInputElement | null = null;
 
   connectedCallback() {
     setupComponent(template, this);
@@ -50,6 +54,7 @@ export class ViewSearch extends HTMLElement {
     this.moreFilterContainer = document.querySelector(".more-filters-list");
     this.latitudeEl = this.querySelector<HTMLInputElement>("#lat");
     this.longitudeEl = this.querySelector<HTMLInputElement>("#lng");
+    this.radiusEl = this.querySelector<HTMLInputElement>("#radius");
 
     this.render(window.app.store);
 
@@ -104,7 +109,9 @@ export class ViewSearch extends HTMLElement {
           appStore,
         );
       } else {
-        this.formChangeHandlerDebounced(this.formEl);
+        this.formChangeHandlerDebounced(this.formEl).then(() => {
+          addCurrentPlaceToMapAndStore(appStore);
+        });
       }
     }
 

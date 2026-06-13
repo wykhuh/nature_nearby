@@ -1,5 +1,5 @@
 import L from "leaflet";
-import type { GeoJSON, Map } from "leaflet";
+import type { Circle, GeoJSON, Map } from "leaflet";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
@@ -228,13 +228,18 @@ export function renderGeojsonLayer(
 }
 
 export function renderCircleMarker(settings: CircleSettings, map: Map) {
-  return L.circle([settings.latitude, settings.longitude], {
-    color: settings.color,
+  let options: any = {
+    color: settings.color || "red",
     fillColor: settings.fillColor,
     fillOpacity:
       settings.fillOpacity === undefined ? 0.2 : settings.fillOpacity,
     radius: settings.radius || 500,
-  }).addTo(map);
+  };
+  if (settings.interactive === false || settings.interactive === true) {
+    options.style = { interactive: settings.interactive };
+  }
+
+  return L.circle([settings.latitude, settings.longitude], options).addTo(map);
 }
 
 export function renderBoundingBoxLayer(
@@ -249,6 +254,22 @@ export function renderBoundingBoxLayer(
   let layer = L.polygon(latLngCoors, options);
   layer.addTo(map);
   return layer;
+}
+
+export function renderCircle(appStore: AppStoreType) {
+  if (appStore.observationsApiParams.radius === undefined) return;
+  if (appStore.observationsApiParams.lat === undefined) return;
+  if (appStore.observationsApiParams.lng === undefined) return;
+  return L.circle(
+    [appStore.observationsApiParams.lat, appStore.observationsApiParams.lng],
+    {
+      radius: appStore.observationsApiParams.radius * 1000,
+      color: "#4983c6",
+      weight: 2,
+      fillOpacity: 0,
+      interactive: false,
+    },
+  );
 }
 
 // ====================
@@ -286,6 +307,20 @@ export function convertLnLatToiNatBBox(
 
 function cleanBoundsCoordinate(value: number) {
   return value === -0 ? 0 : value;
+}
+
+export function convertCircleToBBox(circle: Circle) {
+  let bounds = circle.getBounds() as LeafletBoundsType;
+
+  let coors: LngLatType[] = [
+    [bounds._southWest.lng, bounds._southWest.lat],
+    [bounds._northEast.lng, bounds._southWest.lat],
+    [bounds._northEast.lng, bounds._northEast.lat],
+    [bounds._southWest.lng, bounds._northEast.lat],
+    [bounds._southWest.lng, bounds._southWest.lat],
+  ];
+
+  return coors;
 }
 
 // turn iNat nelng,nelat,swlng,swlat into geometry that leaflet understands

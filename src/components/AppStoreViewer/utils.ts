@@ -59,7 +59,7 @@ function formatPlacesMapLayers(appStore: AppStoreType) {
 }
 function formatPlacesMarkers(appStore: AppStoreType) {
   return appStore.placesMarkers.map((marker) => {
-    return (marker as any)._latlng;
+    return marker._latlng;
   });
 }
 

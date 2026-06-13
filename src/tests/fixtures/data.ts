@@ -1,5 +1,14 @@
+import {
+  bboxPlaceRecord,
+  currentLocationPlaceRecord,
+} from "../../data/inat_data";
 import { primaryColorScheme } from "../../lib/map_colors_utils";
-import type { NormalizedPlace, NormalizedTaxon } from "../../types/app";
+import type {
+  LatLngType,
+  LngLatType,
+  NormalizedPlace,
+  NormalizedTaxon,
+} from "../../types/app";
 import type {
   DefaultPhoto,
   iNatPlacesAPI,
@@ -289,3 +298,26 @@ export const milkweed: NormalizedTaxon = {
   subtitle: "Asclepias fascicularis",
   title: "Narrowleaf Milkweed",
 };
+
+export function createCurrentLocationDemo() {
+  let coors: LngLatType[] = [
+    [9.985388878568893, 9.985610854305305],
+    [10.014611121431118, 9.985610854305305],
+    [10.014611121431118, 10.014389145694711],
+    [9.985388878568893, 10.014389145694711],
+    [9.985388878568893, 9.985610854305305],
+  ];
+
+  return currentLocationPlaceRecord(coors);
+}
+
+export function createBboxDemo() {
+  let coors: LatLngType[] = [
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+    [0, 0],
+  ];
+  return bboxPlaceRecord(coors);
+}

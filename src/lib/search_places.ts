@@ -172,6 +172,7 @@ export function removeOnePlaceFromStore(
   } else if (placeId === -1) {
     delete appStore.observationsApiParams.lat;
     delete appStore.observationsApiParams.lng;
+    delete appStore.observationsApiParams.radius;
     appStore.placesMarkers = [];
 
     // update observationsApiParams for places

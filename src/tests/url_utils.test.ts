@@ -3,7 +3,13 @@
 import { expect, test, describe } from "vitest";
 import { decodeAppUrl, formatAppParams } from "../lib/url_utils";
 import { defaultStore } from "../lib/store";
-import { milkweed, monarch, placeCity, placeCountry } from "./fixtures/data";
+import {
+  createCurrentLocationDemo,
+  milkweed,
+  monarch,
+  placeCity,
+  placeCountry,
+} from "./fixtures/data";
 import { observationsApiNames, validView } from "../data/app_data";
 import { allTaxaRecord, currentLocationPlaceRecord } from "../data/inat_data";
 
@@ -114,7 +120,7 @@ describe("formatAppParams", () => {
     let store = structuredClone(defaultStore);
     store.observationsApiParams.lat = 0;
     store.observationsApiParams.lng = 10;
-    store.selectedPlaces = [currentLocationPlaceRecord([10, 0])];
+    store.selectedPlaces = [createCurrentLocationDemo()];
 
     let result = formatAppParams(store);
 
@@ -125,7 +131,7 @@ describe("formatAppParams", () => {
     let store = structuredClone(defaultStore);
     store.observationsApiParams.lat = 0;
     store.observationsApiParams.lng = 10;
-    store.selectedPlaces = [currentLocationPlaceRecord([10, 0]), placeCity];
+    store.selectedPlaces = [createCurrentLocationDemo(), placeCity];
 
     let result = formatAppParams(store);
 

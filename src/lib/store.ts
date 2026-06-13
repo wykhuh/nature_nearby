@@ -17,7 +17,6 @@ export const defaultStore: AppStoreType = {
     // license: siteCC.join(","),
     // photo_license: siteCC.join(","),
     photos: true,
-    radius: 1.6,
   },
   viewMetadata: { name_order: "cs" },
   currentView: "search",
@@ -25,6 +24,7 @@ export const defaultStore: AppStoreType = {
   placesMapLayers: {},
   primaryColorScheme: primaryColorSchemeName,
   placesMarkers: [],
+  radius: 1.6,
 };
 
 const proxiedStore = new Proxy(structuredClone(defaultStore), {

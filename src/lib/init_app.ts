@@ -23,7 +23,8 @@ import { updateTilesForSelectedTaxa } from "./search_utils";
 import { decodeAppUrl } from "./url_utils";
 import { drawBBoxHandler } from "./search_bounding_box";
 import type { TerraDraw } from "terra-draw";
-import { bboxPlaceRecord, currentLocationPlaceRecord } from "../data/inat_data";
+import { bboxPlaceRecord } from "../data/inat_data";
+import { createCurrentLocationCircle } from "./search_current_place";
 
 const pathPage = {
   "/about/": "about",
@@ -59,13 +60,7 @@ export async function initApp(
     }
   }
 
-  // add lat & lng to selected places as current location
-  if (urlData["lng"] !== undefined && urlData["lat"] !== undefined) {
-    let place = currentLocationPlaceRecord([urlData["lng"], urlData["lat"]]);
-    appStore.selectedPlaces.push(place);
-  }
-
-  // add ne/sw  to selected places as custom boundary
+  // add ne/sw to selected places as custom boundary
   if (
     urlData["nelng"] !== undefined &&
     urlData["nelat"] !== undefined &&
@@ -151,9 +146,12 @@ export async function initPopulateMap(
   }
 
   if (
-    appStore.observationsApiParams.lat &&
-    appStore.observationsApiParams.lng
+    appStore.observationsApiParams.lat !== undefined &&
+    appStore.observationsApiParams.lng !== undefined
   ) {
+    appStore.observationsApiParams.radius = appStore.radius;
+    
+    // map icon marker
     let marker = renderMarker(
       {
         latitude: appStore.observationsApiParams.lat,
@@ -162,6 +160,13 @@ export async function initPopulateMap(
       appStore.map.map,
     );
     appStore.placesMarkers.push(marker);
+
+    // draw circle around current location
+    let data = createCurrentLocationCircle(appStore);
+    if (data) {
+      appStore.selectedPlaces.push(data.place);
+      appStore.placesMarkers.push(data.marker);
+    }
   }
 
   // load default or selected taxa map layer

@@ -1,4 +1,6 @@
 import type {
+  Circle,
+  CircleMarker,
   GeoJSON,
   GeoJSONOptions,
   LatLngBounds,
@@ -46,12 +48,17 @@ export type AppStoreType = {
   viewMetadata: { name_order };
   taxaMapLayers: { [index: string]: TileLayer[] };
   placesMapLayers: { [index: string]: CustomGeoJSONType[] };
-  placesMarkers: LeafletMarker[];
+  placesMarkers: (LeafletMarker | LeafletCircle)[];
   color?: string;
   primaryColorScheme: keyof typeof appColorSchemes;
+  radius: number;
 };
 
 export interface LeafletMarker extends Marker {
+  _latlng?: { lat: number; lng: number };
+}
+
+export interface LeafletCircle extends Circle {
   _latlng?: { lat: number; lng: number };
 }
 
@@ -175,6 +182,7 @@ export interface CircleSettings extends LeafletOptions {
   latitude: number;
   longitude: number;
   radius?: number;
+  interactive?: boolean;
 }
 
 export interface MarkerSettings {

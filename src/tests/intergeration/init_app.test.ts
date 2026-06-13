@@ -11,7 +11,13 @@ import {
   beforeEach,
 } from "vitest";
 import { defaultStore } from "../../lib/store";
-import { placeCountry, placeCity, monarch, milkweed } from "../fixtures/data";
+import {
+  placeCountry,
+  placeCity,
+  monarch,
+  milkweed,
+  createCurrentLocationDemo,
+} from "../fixtures/data";
 import {
   createMockServer,
   defaultParams,
@@ -19,11 +25,7 @@ import {
 } from "../fixtures/test_helpers";
 import { observationsApiNames, validView } from "../../data/app_data";
 import { initApp, initPopulateMap } from "../../lib/init_app";
-import {
-  allTaxaRecord,
-  bboxPlaceRecord,
-  currentLocationPlaceRecord,
-} from "../../data/inat_data";
+import { allTaxaRecord, bboxPlaceRecord } from "../../data/inat_data";
 import { leafletMapLayers } from "../../lib/data_utils";
 
 const server = createMockServer();
@@ -259,47 +261,45 @@ describe("initApp and initPopulateMap", () => {
 
   test("if lat and lng, adds current place to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = currentLocationPlaceRecord([0, 0]);
+    let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=0&lng=0`, "/", store);
+    await initApp(`?lat=10&lng=10`, "/", store);
     await initPopulateMap(map, terraDraw, layerControl, store);
 
     expect(store.observationsApiParams).toStrictEqual({
       ...defaultParams,
-      lat: 0,
-      lng: 0,
+      lat: 10,
+      lng: 10,
+      radius: 1.6,
     });
     expect(store.selectedPlaces).toStrictEqual([currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${currentPlace.id}`,
-    ]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
     expect(leafletMapLayers(store)).toStrictEqual([
       "basemap: Open Street Map",
       "basemap: USGS Topo",
       "basemap: USGS Imagery",
       "basemap: Open Street Map",
-      "place layer: Current Location, -1",
       "overlay: iNat grid, taxon_id 0",
     ]);
   });
 
   test("if lat, lng, and place_id, adds current place and place to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = currentLocationPlaceRecord([0, 0]);
+    let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=0&lng=0&place_id=${placeCity.id}`, "/", store);
+    await initApp(`?lat=10&lng=10&place_id=${placeCity.id}`, "/", store);
     await initPopulateMap(map, terraDraw, layerControl, store);
 
     expect(store.observationsApiParams).toStrictEqual({
       ...defaultParams,
-      lat: 0,
-      lng: 0,
+      lat: 10,
+      lng: 10,
+      radius: 1.6,
       place_id: placeCity.id,
     });
     expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([
       `${placeCity.id}`,
-      `${currentPlace.id}`,
     ]);
     expect(leafletMapLayers(store)).toStrictEqual([
       "basemap: Open Street Map",
@@ -308,29 +308,28 @@ describe("initApp and initPopulateMap", () => {
       "basemap: Open Street Map",
       "place layer: city, state, 1",
       "place layer: city, state, 1",
-      "place layer: Current Location, -1",
       "overlay: iNat grid, taxon_id 0, place_id 1",
     ]);
   });
 
   test("if lat, lng, and NE/SW, adds current place and custom boundary to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = currentLocationPlaceRecord([0, 0]);
+    let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=0&lng=0&nelat=0&nelng=0&swlat=0&swlng=0`, "/", store);
+    await initApp(`?lat=10&lng=10&nelat=0&nelng=0&swlat=0&swlng=0`, "/", store);
     await initPopulateMap(map, terraDraw, layerControl, store);
 
     expect(store.observationsApiParams).toStrictEqual({
       ...defaultParams,
-      lat: 0,
-      lng: 0,
+      lat: 10,
+      lng: 10,
+      radius: 1.6,
       nelat: 0,
       nelng: 0,
       swlat: 0,
       swlng: 0,
     });
     expect(store.selectedPlaces).toStrictEqual([
-      currentPlace,
       bboxPlaceRecord([
         [0, 0],
         [0, 0],
@@ -338,17 +337,16 @@ describe("initApp and initPopulateMap", () => {
         [0, 0],
         [0, 0],
       ]),
+      currentPlace,
     ]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([
       `${allTaxaRecord.id}`,
-      `${currentPlace.id}`,
     ]);
     expect(leafletMapLayers(store)).toStrictEqual([
       "basemap: Open Street Map",
       "basemap: USGS Topo",
       "basemap: USGS Imagery",
       "basemap: Open Street Map",
-      "place layer: Current Location, -1",
       "place layer: Custom Boundary, 0",
       "bounding box",
       "overlay: iNat grid, taxon_id 0",
