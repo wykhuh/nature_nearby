@@ -71,7 +71,15 @@ export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
 
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
     if (
-      ["taxon_id", "place_id", "spam", "license", "month", "year"]
+      [
+        "taxon_id",
+        "place_id",
+        "spam",
+        "license",
+        "photo_license",
+        "month",
+        "year",
+      ]
         .concat(observationsApiNonFilterableNames)
         .includes(key)
     ) {

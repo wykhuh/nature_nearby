@@ -203,6 +203,26 @@ let observationPane = html`
         ></label>
         <input id="spam" disabled />
       </div>
+      <div class="form-group ">
+        <label for="license"
+          >License
+          <app-tooltip
+            data-content="?"
+            data-tooltip="license: Observation have this license."
+          ></app-tooltip
+        ></label>
+        <input id="license" disabled />
+      </div>
+      <div class="form-group ">
+        <label for="photo_license"
+          >Sound License
+          <app-tooltip
+            data-content="?"
+            data-tooltip="photo_license: Observations have at least one photo with this license."
+          ></app-tooltip
+        ></label>
+        <input id="photo_license" disabled />
+      </div>
     </fieldset>
   </div>
   <!--column 2-->

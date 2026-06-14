@@ -7,7 +7,7 @@ import {
   places1APIResponse,
   places2APIResponse,
 } from "./data";
-import { allTaxaRecord } from "../../data/inat_data";
+import { allTaxaRecord, siteCC } from "../../data/inat_data";
 import { renderMap } from "../../lib/map_utils";
 import { defaultStore } from "../../lib/store";
 import type { AppStoreType } from "../../types/app";
@@ -23,6 +23,8 @@ export const defaultParams = {
   photos: true,
   taxon_id: `${allTaxaRecord.id}`,
   colors: allTaxaRecord.color,
+  photo_license: siteCC.join(","),
+  license: siteCC.join(","),
 };
 
 export function createMockServer() {

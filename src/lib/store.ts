@@ -1,4 +1,5 @@
 import { displayAppstoreData } from "../components/AppStoreViewer/utils";
+import { siteCC } from "../data/inat_data";
 import type { AppStoreType } from "../types/app";
 import { primaryColorSchemeName } from "./map_colors_utils";
 
@@ -14,8 +15,8 @@ export const defaultStore: AppStoreType = {
     // quality_grade: "research",
     // captive: false,
     obscuration: "none",
-    // license: siteCC.join(","),
-    // photo_license: siteCC.join(","),
+    license: siteCC.join(","),
+    photo_license: siteCC.join(","),
     photos: true,
   },
   viewMetadata: { name_order: "cs" },
