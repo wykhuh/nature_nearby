@@ -210,8 +210,14 @@ export type ViewComponentType = {
 
 export interface DataComponentType extends HTMLElement {
   data?: any;
-  type?: string;
+  type?: DataComponentValidTypes;
 }
+
+export type DataComponentValidTypes =
+  | "place"
+  | "current_location"
+  | "custom_boundary"
+  | "taxon";
 
 export type PaginationCallback = (
   currentPage: number,

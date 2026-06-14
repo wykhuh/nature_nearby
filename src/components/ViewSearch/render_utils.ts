@@ -109,7 +109,13 @@ export function renderSelectedFiltersList(appStore: AppStoreType) {
       "selected-filters-item",
     ) as DataComponentType;
     templateEl.data = place;
-    templateEl.type = "place";
+    if (place.id > 0) {
+      templateEl.type = "place";
+    } else if (place.id === 0) {
+      templateEl.type = "custom_boundary";
+    } else if (place.id === -1) {
+      templateEl.type = "current_location";
+    }
     listBasicEl.appendChild(templateEl);
   });
 

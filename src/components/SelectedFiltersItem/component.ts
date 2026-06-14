@@ -1,10 +1,12 @@
 import { x } from "../../assets/icons";
 import { formatTaxonName } from "../../lib/data_utils";
+import { setInputValue, setSelectedOption } from "../../lib/form_utils";
 import { removePlace } from "../../lib/search_places";
 import { removeTaxon } from "../../lib/search_taxa";
 import type {
   AppStoreType,
   DataComponentType,
+  DataComponentValidTypes,
   NormalizedPlace,
   NormalizedTaxon,
   ObservationsApiParamsKeysType,
@@ -22,7 +24,7 @@ class SelectedFiltersItem extends HTMLElement {
   }
 
   data: undefined | NormalizedTaxon | NormalizedTaxon | ParamsType = undefined;
-  type: undefined | string = undefined;
+  type: undefined | DataComponentValidTypes = undefined;
   buttonEl: null | HTMLButtonElement = null;
 
   connectedCallback() {
@@ -31,7 +33,11 @@ class SelectedFiltersItem extends HTMLElement {
 
     if (this.type === "taxon") {
       this.renderTaxon(this.data as NormalizedTaxon, window.app.store);
-    } else if (this.type === "place") {
+    } else if (
+      this.type === "place" ||
+      this.type === "custom_boundary" ||
+      this.type === "current_location"
+    ) {
       this.renderPlace(this.data as NormalizedPlace);
     } else {
       this.render(this.data as ParamsType);
@@ -54,6 +60,7 @@ class SelectedFiltersItem extends HTMLElement {
           window.app.store,
         );
         this.innerHTML = "";
+        setInputValue(`#observations-form input#search-taxa`, "");
         updateAppState(window.app.store);
       } else if (this.type === "place") {
         removePlace(
@@ -61,13 +68,31 @@ class SelectedFiltersItem extends HTMLElement {
           window.app.store,
         );
         this.innerHTML = "";
+        setInputValue(`#observations-form input#search-places`, "");
         updateAppState(window.app.store);
-      } else {
-        deleteFilter(
-          (this.data as ParamsType).field,
-          (this.data as ParamsType).value,
+      } else if (this.type === "custom_boundary") {
+        removePlace(
+          Number((this.data as NormalizedPlace).id),
           window.app.store,
         );
+        this.innerHTML = "";
+        updateAppState(window.app.store);
+      } else if (this.type === "current_location") {
+        removePlace(
+          Number((this.data as NormalizedPlace).id),
+          window.app.store,
+        );
+        this.innerHTML = "";
+        setInputValue(`#observations-form input#lat`, "");
+        setInputValue(`#observations-form input#lng`, "");
+        setSelectedOption(`#observations-form select#radius option`);
+        updateAppState(window.app.store);
+      } else {
+        let field = (this.data as ParamsType).field;
+        deleteFilter(field, (this.data as ParamsType).value, window.app.store);
+        if (field === "month" || field === "year") {
+          setSelectedOption(`#observations-form select#presetDates option`);
+        }
       }
     }
   }
