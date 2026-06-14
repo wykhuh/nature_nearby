@@ -35,9 +35,6 @@ class MediaCarousel extends HTMLElement {
     this.mediaCount = photosCount + soundsCount;
 
     this.render(window.app.store);
-    // updateCarouselState also assigns this.prevEl and this.nextEl
-    this.prevEl = this.querySelector(".prev-selector");
-    this.nextEl = this.querySelector(".next-selector");
 
     this.prevEl?.addEventListener("click", this);
     this.nextEl?.addEventListener("click", this);
@@ -77,6 +74,10 @@ class MediaCarousel extends HTMLElement {
   }
 
   updateCarouselState() {
+    if (this.prevEl === null) {
+      this.prevEl = this.querySelector(".prev-selector");
+      this.nextEl = this.querySelector(".next-selector");
+    }
     if (!this.prevEl) return;
     if (!this.nextEl) return;
 

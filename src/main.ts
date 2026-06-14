@@ -34,6 +34,5 @@ window.addEventListener("popstate", (event) => {
   Router.go(event.state.pathname);
 });
 
-// TODO: switch media when multiple media
 // TODO: switch pagination to get all pages
 // TODO: track user movement

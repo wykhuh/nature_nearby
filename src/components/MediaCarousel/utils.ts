@@ -1,6 +1,5 @@
 import { leftBigIcon, noPhoto, rightBigIcon } from "../../assets/icons";
 import { formatTaxonPhotoAltText } from "../../lib/render_utils";
-import { range } from "../../lib/utils";
 import type { AppStoreType } from "../../types/app";
 import type {
   ObservationPhoto,
@@ -29,41 +28,25 @@ export function renderCarousel(
   content += `<div class="media">`;
   if (photos.length > 0) {
     photos.forEach((photo, i) => {
-      content += renderPhoto(photo, i, taxon, appStore);
+      content += renderPhoto(photo, i, mediaCount, taxon, appStore);
     });
   }
 
   sounds.forEach((sound, i) => {
-    content += renderSound(sound, i + photos.length);
+    content += renderSound(sound, i + photos.length, mediaCount);
   });
 
   content += "</div>";
-  content += renderControls(taxon, mediaCount);
-
+  if (mediaCount > 1) {
+    content += renderControls();
+  }
   return content;
 }
 
-function renderControls(taxon: ObservationTaxon, mediaCount: number) {
+function renderControls() {
   let content = `<div role="group" class="carousel-controls" aria-label="carousel controls">`;
   content += "<div class='item-selector'>";
   content += `<button class="prev-selector" aria-label="Previous slide">${leftBigIcon}</button>`;
-
-  content += "<div>";
-  range(0, mediaCount - 1).forEach((num) => {
-    let classnames = ["carousel-item-selector"];
-    if (num == 0) {
-      classnames.push("current");
-    }
-    content += `<button
-      class="${classnames.join(" ")}"
-      data-item-index="${num}"
-      data-item-id="${taxon.id}"
-      aria-disabled="${num === 0 ? true : false}">
-        <span class="sr-only">Show slide ${num + 1} of ${mediaCount + 1}: ${taxon.name}</span>
-        ${num + 1}
-      </button>`;
-  });
-  content += "</div>";
 
   content += `<button class="next-selector" aria-label="Next slide">${rightBigIcon}</button>`;
   content += `</div>`;
@@ -72,27 +55,43 @@ function renderControls(taxon: ObservationTaxon, mediaCount: number) {
   return content;
 }
 
-function renderSound(sound: ObservationSound, index: number) {
-  let content = `<div ${index > 0 ? "hidden" : ""} data-item-index="${index}" class="carousel-item media sound">`;
+function renderSound(
+  sound: ObservationSound,
+  index: number,
+  mediaCount: number,
+) {
+  let content;
   let url = sound.file_url;
   if (url) {
+    content = `<figure ${index > 0 ? "hidden" : ""} data-item-index="${index}" class="carousel-item sound">`;
     content += ` <audio controls src="${url}"></audio>`;
+    content += `<figcaption>`;
+    content += `<span>${sound.attribution}</span>`;
+    content += `<span class="media-count">${index + 1}/${mediaCount}</span>`;
+    content += `</figcaption>`;
+    content += `</figure>`;
   }
-  content += "</div>";
   return content;
 }
 
 function renderPhoto(
   photo: ObservationPhoto,
   index: number,
+  mediaCount: number,
   taxon: ObservationTaxon,
   appStore: AppStoreType,
 ) {
-  let content = "";
+  let content;
   let url = photo.url?.replace("/square.", `/medium.`);
   if (url) {
     let altText = formatTaxonPhotoAltText(taxon, appStore);
-    content += `<img ${index > 0 ? "hidden" : ""} data-item-index="${index}" class="carousel-item" src="${url}" alt="${altText}">`;
+    content = `<figure ${index > 0 ? "hidden" : ""} data-item-index="${index}" class="carousel-item">`;
+    content += `<img src="${url}" alt="${altText}">`;
+    content += `<figcaption>`;
+    content += `<span>${photo.attribution}</span>`;
+    content += `<span class="media-count">${index + 1}/${mediaCount}</span>`;
+    content += `</figcaption>`;
+    content += `</figure>`;
   }
   return content;
 }
