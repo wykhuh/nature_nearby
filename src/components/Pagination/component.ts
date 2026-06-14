@@ -81,7 +81,7 @@ export class Pagination extends HTMLElement {
   }
 
   render() {
-    let numPages = Math.floor(this.totalRecords / this.perPage);
+    let numPages = Math.ceil(this.totalRecords / this.perPage);
     const sequence = createSequence(numPages, this.currentPage);
 
     let listEl = document.createElement("ul");
