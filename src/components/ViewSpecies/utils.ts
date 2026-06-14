@@ -33,7 +33,7 @@ export function renderObservations(
   pagination1.data = {
     perPage: data.per_page,
     currentPage: data.page,
-    totalRecords: Math.min(data.total_results, 10000),
+    totalRecords: data.total_results,
     paginationCallback,
   };
   containerEl.appendChild(pagination1);
@@ -55,7 +55,7 @@ export function renderObservations(
   pagination2.data = {
     perPage: data.per_page,
     currentPage: data.page,
-    totalRecords: Math.min(data.total_results, 10000),
+    totalRecords: data.total_results,
     paginationCallback,
     scrollToSelector: "#view-container",
   };
