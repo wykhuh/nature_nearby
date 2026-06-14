@@ -25,6 +25,8 @@ export const defaultParams = {
   colors: allTaxaRecord.color,
   photo_license: siteCC.join(","),
   license: siteCC.join(","),
+  order: "desc",
+  order_by: "observed_on",
 };
 
 export function createMockServer() {

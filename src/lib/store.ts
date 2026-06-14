@@ -18,6 +18,8 @@ export const defaultStore: AppStoreType = {
     license: siteCC.join(","),
     photo_license: siteCC.join(","),
     photos: true,
+    order_by: "observed_on",
+    order: "desc",
   },
   viewMetadata: { name_order: "cs" },
   currentView: "search",

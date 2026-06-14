@@ -193,36 +193,6 @@ let observationPane = html`
           <option value="false">False</option>
         </select>
       </div>
-      <div class="form-group ">
-        <label for="spam"
-          >Spam
-          <app-tooltip
-            data-content="?"
-            data-tooltip="spam: Observations marked as spam."
-          ></app-tooltip
-        ></label>
-        <input id="spam" disabled />
-      </div>
-      <div class="form-group ">
-        <label for="license"
-          >License
-          <app-tooltip
-            data-content="?"
-            data-tooltip="license: Observation have this license."
-          ></app-tooltip
-        ></label>
-        <input id="license" disabled />
-      </div>
-      <div class="form-group ">
-        <label for="photo_license"
-          >Sound License
-          <app-tooltip
-            data-content="?"
-            data-tooltip="photo_license: Observations have at least one photo with this license."
-          ></app-tooltip
-        ></label>
-        <input id="photo_license" disabled />
-      </div>
     </fieldset>
   </div>
   <!--column 2-->
@@ -350,6 +320,62 @@ const speciesPane = html`
   </fieldset>
 `;
 
+const nonEditablePane = html` <fieldset>
+  <legend>Fields that can't be changed</legend>
+  <div class="form-group ">
+    <label for="spam"
+      >Spam
+      <app-tooltip
+        data-content="?"
+        data-tooltip="spam: Observations marked as spam."
+      ></app-tooltip
+    ></label>
+    <input id="spam" disabled />
+  </div>
+  <div class="form-group ">
+    <label for="license"
+      >License
+      <app-tooltip
+        data-content="?"
+        data-tooltip="license: Observation have this license."
+      ></app-tooltip
+    ></label>
+    <input id="license" disabled />
+  </div>
+  <div class="form-group ">
+    <label for="photo_license"
+      >Sound License
+      <app-tooltip
+        data-content="?"
+        data-tooltip="photo_license: Observations have at least one photo with this license."
+      ></app-tooltip
+    ></label>
+    <input id="photo_license" disabled />
+  </div>
+
+  <div class="form-group ">
+    <label for="order_by"
+      >Order By
+      <app-tooltip
+        data-content="?"
+        data-tooltip="order_by: Attribute to sort on."
+      ></app-tooltip
+    ></label>
+    <input id="order_by" disabled />
+  </div>
+
+  <div class="form-group ">
+    <label for="order"
+      >Order
+      <app-tooltip
+        data-content="?"
+        data-tooltip="order: Sort order."
+      ></app-tooltip
+    ></label>
+    <input id="order" disabled />
+  </div>
+</fieldset>`;
+
 export const template = html`
   <ol class="filters-list"></ol>
   <ol class="more-filters-list hidden"></ol>
@@ -366,7 +392,7 @@ export const template = html`
     </section>
     <section id="more-options-container" class="hidden">
       <div>${observationPane}</div>
-      <div>${datePane}${speciesPane}</div>
+      <div>${datePane}${speciesPane}${nonEditablePane}</div>
     </section>
   </form>
 `;

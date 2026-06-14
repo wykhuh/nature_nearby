@@ -21,8 +21,6 @@ export const observationsApiNonFilterableNames: ObservationsApiParamsKeysType[] 
     "locale",
     "nelat",
     "nelng",
-    "order",
-    "order_by",
     "page",
     "per_page",
     "swlat",
@@ -39,8 +37,12 @@ export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] 
     "endemic",
     "introduced",
     "lat",
+    "license",
     "lng",
     "native",
+    "order_by",
+    "order",
+    "photo_license",
     "photos",
     "radius",
     "sounds",
@@ -49,16 +51,7 @@ export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] 
   ];
 
 export const observationsFilterableImplementedArrays: ObservationsApiParamsKeysType[] =
-  [
-    "day",
-    "hour",
-    "license",
-    "month",
-    "obscuration",
-    "quality_grade",
-    "photo_license",
-    "year",
-  ];
+  ["day", "hour", "month", "obscuration", "quality_grade", "year"];
 
 const appParams: ObservationsApiParamsKeysType[] = ["view"];
 
@@ -81,6 +74,8 @@ export const observationsFieldName_InputType = {
   month: "multiselect",
   native: "select",
   obscuration: "multiselect",
+  order_by: "textInput",
+  order: "textInput",
   photo_license: "textInput",
   photos: "select",
   place_id: "textInput",
