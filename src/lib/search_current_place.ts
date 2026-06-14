@@ -23,7 +23,9 @@ export async function currentLocationHandler(
 
   appStore.observationsApiParams.lat = data.coords.latitude;
   appStore.observationsApiParams.lng = data.coords.longitude;
-  appStore.observationsApiParams.radius = appStore.radius;
+  if (appStore.observationsApiParams.radius === undefined) {
+    appStore.observationsApiParams.radius = appStore.radius;
+  }
 
   addCurrentPlaceToMapAndStore(appStore);
   await updateSearchForm(appStore, componentCtx);

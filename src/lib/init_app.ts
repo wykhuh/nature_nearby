@@ -149,8 +149,10 @@ export async function initPopulateMap(
     appStore.observationsApiParams.lat !== undefined &&
     appStore.observationsApiParams.lng !== undefined
   ) {
-    appStore.observationsApiParams.radius = appStore.radius;
-    
+    if (appStore.observationsApiParams.radius === undefined) {
+      appStore.observationsApiParams.radius = appStore.radius;
+    }
+
     // map icon marker
     let marker = renderMarker(
       {

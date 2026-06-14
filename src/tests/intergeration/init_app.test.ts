@@ -283,6 +283,46 @@ describe("initApp and initPopulateMap", () => {
     ]);
   });
 
+  test("if lat, lng, and radius, adds current place to store", async () => {
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
+    let currentPlace = createCurrentLocationDemo();
+
+    await initApp(`?lat=10&lng=10&radius=5`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      lat: 10,
+      lng: 10,
+      radius: 5,
+    });
+    expect(store.selectedPlaces).toStrictEqual([
+      {
+        ...currentPlace,
+        bounding_box: {
+          coordinates: [
+            [
+              [9.954340245293842, 9.955033919704059],
+              [10.045659754706168, 9.955033919704059],
+              [10.045659754706168, 10.044966080295932],
+              [9.954340245293842, 10.044966080295932],
+              [9.954340245293842, 9.955033919704059],
+            ],
+          ],
+          type: "Polygon",
+        },
+      },
+    ]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "overlay: iNat grid, taxon_id 0",
+    ]);
+  });
+
   test("if lat, lng, and place_id, adds current place and place to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
     let currentPlace = createCurrentLocationDemo();
