@@ -18,8 +18,7 @@ const Router: RouterType = {
     const mainEl = document.querySelector("#app") as HTMLElement;
     mainEl.innerHTML = "";
     mainEl.appendChild(pageElement);
-    window.scrollX = 0;
-    window.scrollY = 0;
+    window.scroll(0, 0);
   },
 };
 export default Router;
