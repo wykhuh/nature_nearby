@@ -463,6 +463,19 @@
     .scientific-name {
       font-style: italic;
     }
+
+    figcaption {
+      background-color: var(--clr-overlay-dark-700);
+      color: var(--clr-white);
+      font-size: var(--font-size-xsm);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+
+      span {
+        padding: 0.15rem 0.25rem;
+      }
+    }
   }
 
   #observations-grid {
@@ -771,14 +784,6 @@
     }
   }
 
-  .popover__content {
-    position: absolute;
-    visibility: hidden;
-  }
-  .popover__wrapper:hover .popover__content {
-    visibility: visible;
-  }
-
   #view-container {
     margin: 1rem 0.5rem;
   }
@@ -960,22 +965,7 @@
       display: none;
     }
 
-    figcaption {
-      background-color: var(--clr-overlay-dark-700);
-      color: var(--clr-white);
-      font-size: var(--font-size-sm);
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-      /* color: var(--clr-gray-900); */
-    }
-    span {
-      padding: 0.15rem 0.25rem;
-    }
-
     .media-count {
-      /* background-color: var(--clr-overlay-dark-400); */
-      /* color: var(--clr-white); */
       border-left: var(--border-grey);
     }
 
@@ -983,7 +973,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* justify-content: center; */
     }
   }
 }

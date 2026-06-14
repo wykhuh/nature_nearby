@@ -75,26 +75,6 @@ class CardSpecies extends HTMLElement {
       }
     }
 
-    let licenseEl = this.querySelector(".licensing");
-    let license = data.taxon.default_photo?.license_code;
-    if (licenseEl) {
-      let text = "";
-      if (license === null) {
-        text = "&copy;";
-      } else if (license === "pd") {
-        text = "PD";
-      } else {
-        text = "cc";
-      }
-      licenseEl.innerHTML = text;
-    }
-
-    let attributionEl = this.querySelector(".attribution");
-    let attribution = data.taxon.default_photo?.attribution;
-    if (attributionEl && attribution) {
-      attributionEl.textContent = attribution;
-    }
-
     let detailsEl = this.querySelector(".details");
     if (detailsEl) {
       let content = renderTaxonNames(

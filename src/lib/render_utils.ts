@@ -277,12 +277,18 @@ export function renderTaxonDefaultPhoto(
     url = taxon.default_photo.url;
   }
 
-  let alt = formatTaxonPhotoAltText(taxon, appStore);
-  alt += formatTaxonPhotoAttribution(taxon.default_photo);
+  let altText = formatTaxonPhotoAltText(taxon, appStore);
 
-  return html`<a href="${iNatTaxaUrl}/${taxon.id}"
-    ><img src=${url} alt="${alt}"
-  /></a>`;
+  let content = `<figure>`;
+  content += `<a href="${iNatTaxaUrl}/${taxon.id}">`;
+  content += `<img src="${url}" alt="${altText}">`;
+  content += "</a>";
+  content += `<figcaption>`;
+  content += `<span>${taxon.default_photo.attribution}</span>`;
+  content += `</figcaption>`;
+  content += `</figure>`;
+
+  return content;
 }
 
 export function formatTaxonPhotoAltText(
