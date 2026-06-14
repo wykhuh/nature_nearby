@@ -7,15 +7,15 @@ export const observationsHeaderLinks = html`
       <button data-view="search">${search}Search</button>
     </li>
     <li>
-      <button data-view="observations">
-        <span data-count-label="observations" class="header-count">&nbsp;</span
-        ><span>Observations</span>
-      </button>
-    </li>
-    <li>
       <button data-view="species">
         <span data-count-label="species" class="header-count">&nbsp;</span
         ><span>Species</span>
+      </button>
+    </li>
+    <li>
+      <button data-view="observations">
+        <span data-count-label="observations" class="header-count">&nbsp;</span
+        ><span>Observations</span>
       </button>
     </li>
   </ul>

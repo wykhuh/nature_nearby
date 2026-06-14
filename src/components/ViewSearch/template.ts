@@ -13,24 +13,6 @@ const basicFields = html`
     <section>
       <div class="form-group">
         <label
-          >Species
-          <input id="search-taxa" type="text" autocomplete="off" />
-        </label>
-      </div>
-      <div class="form-group">
-        <label
-          >Observed Dates
-          <app-tooltip
-            data-content="?"
-            data-tooltip="Sets month and year for when the observations were observed. If you want more date options, use 'More Options > Date Observed'"
-          ></app-tooltip>
-          ${renderPresetDates()}
-        </label>
-      </div>
-    </section>
-    <section>
-      <div class="form-group">
-        <label
           >Places
           <input id="search-places" type="text" autocomplete="off" />
         </label>
@@ -47,6 +29,24 @@ const basicFields = html`
         data-content="?"
         data-tooltip="Sets latitude and longitude using your current location."
       ></app-tooltip>
+    </section>
+    <section>
+      <div class="form-group">
+        <label
+          >Species
+          <input id="search-taxa" type="text" autocomplete="off" />
+        </label>
+      </div>
+      <div class="form-group">
+        <label
+          >Observed Dates
+          <app-tooltip
+            data-content="?"
+            data-tooltip="Sets month and year for when the observations were observed. If you want more date options, use 'More Options > Date Observed'"
+          ></app-tooltip>
+          ${renderPresetDates()}
+        </label>
+      </div>
     </section>
   </fieldset>
 `;
@@ -320,7 +320,7 @@ const speciesPane = html`
   </fieldset>
 `;
 
-const nonEditablePane = html` <fieldset>
+const nonEditablePane = html` <fieldset class="hidden">
   <legend>Fields that can't be changed</legend>
   <div class="form-group ">
     <label for="spam"
