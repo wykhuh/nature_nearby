@@ -1,95 +1,48 @@
 import type { ObservationsSpeciesResult } from "../../types/inat_api";
 import type { DataComponentType, AppStoreType } from "../../types/app";
-import { pluralize } from "../../lib/utils";
-import { iNatObservationsUrl, iNatTaxaUrl } from "../../data/inat_data";
 import { setupComponent } from "../../lib/component_utils";
-import {
-  renderTaxonDefaultPhoto,
-  renderTaxonNames,
-} from "../../lib/render_utils";
 import { template } from "./template";
-import { formatSpeciesToInatExploreParams } from "../../lib/cleanup_params_utils";
+import { changeViewHandler, renderCard } from "./utils";
 
-class CardSpecies extends HTMLElement {
+export class CardSpecies extends HTMLElement {
   constructor() {
     super();
   }
 
+  observationsLink: null | HTMLLinkElement = null;
+
   connectedCallback() {
-    this.render();
-  }
-
-  async render() {
     setupComponent(template, this);
-
-    this.renderCard(window.app.store);
-  }
-
-  renderCard(appStore: AppStoreType) {
     let data = (this as DataComponentType).data as ObservationsSpeciesResult;
 
-    let photoEl = this.querySelector(".photo") as HTMLLinkElement;
-    if (photoEl) {
-      let img = renderTaxonDefaultPhoto(data.taxon, appStore, "medium");
-      if (img) {
-        photoEl.innerHTML = img;
+    this.render(data, window.app.store);
+
+    this.observationsLink = this.querySelector(".nav-link");
+
+    this.observationsLink?.addEventListener("click", this);
+  }
+
+  disconnectedCallback() {
+    this.observationsLink?.removeEventListener("click", this);
+  }
+
+  handleEvent(event: Event) {
+    let target = event.target as HTMLLinkElement;
+    if (!target) return;
+
+    let appStore = window.app.store;
+
+    if (event.type === "click") {
+      event.preventDefault();
+      if (target.className === "nav-link" && target.dataset.taxon) {
+        let taxon = JSON.parse(target.dataset.taxon);
+        changeViewHandler(taxon, appStore);
       }
     }
+  }
 
-    let mediaEl = this.querySelector(".media") as HTMLLinkElement;
-    if (mediaEl) {
-      let establishmentMeans =
-        data.taxon.establishment_means?.establishment_means;
-
-      if (establishmentMeans) {
-        let options = {} as any;
-        if (establishmentMeans === "native") {
-          options = {
-            content: "N",
-            tooltip: establishmentMeans,
-            id: "tp-native",
-            class: "establishment-means native",
-          };
-        } else if (establishmentMeans === "introduced") {
-          options = {
-            content: "IN",
-            tooltip: establishmentMeans,
-            id: "tp-introduced",
-            class: "establishment-means introduced",
-          };
-        } else if (establishmentMeans === "endemic") {
-          options = {
-            content: "E",
-            tooltip: establishmentMeans,
-            id: "tp-endemic",
-            class: "establishment-means endemic",
-          };
-        }
-        let tooltip = document.createElement("app-tooltip");
-        tooltip.className = options.class;
-        tooltip.dataset.id = options.id;
-        tooltip.dataset.content = options.content;
-        tooltip.dataset.tooltip = options.tooltip;
-
-        mediaEl.appendChild(tooltip);
-      }
-    }
-
-    let detailsEl = this.querySelector(".details");
-    if (detailsEl) {
-      let content = renderTaxonNames(
-        data.taxon,
-        appStore,
-        `${iNatTaxaUrl}/${data.taxon.id}`,
-      );
-
-      let params = formatSpeciesToInatExploreParams(data.taxon.id, appStore);
-      content += `<span class="observations-count">
-        <a href=${iNatObservationsUrl}?taxon_id=${data.taxon.id}&${params}>${pluralize(data.count, "observation", true)}</a>
-        </span>`;
-
-      detailsEl.innerHTML = content;
-    }
+  async render(data: ObservationsSpeciesResult, appStore: AppStoreType) {
+    renderCard(data, appStore, this);
   }
 }
 

@@ -52,7 +52,11 @@ async function fetchHeaderCounts(dataFn: any, searchParams: string) {
   return count;
 }
 
-export function setView(view: ValidViews, appStore: AppStoreType) {
+export function setView(
+  view: ValidViews,
+  appStore: AppStoreType,
+  scrollToTop: boolean = false,
+) {
   if (appStore.currentView === view) return;
   let viewContainerEl = document.querySelector("#view-container");
   if (!viewContainerEl) return;
@@ -76,6 +80,10 @@ export function setView(view: ValidViews, appStore: AppStoreType) {
   let el = document.querySelector(`button[data-view="${view}"]`);
   if (el) {
     el.classList.add("current-view");
+  }
+
+  if (scrollToTop) {
+    window.scroll(0, 0);
   }
 }
 
