@@ -63,9 +63,6 @@ export function renderObservations(
 }
 
 export async function paginationCallback(num: number, appStore: AppStoreType) {
-  const containerEl = document.querySelector("#observations-species-grid");
-  if (!containerEl) return;
-
   appStore.observationsApiParams = {
     ...appStore.observationsApiParams,
     page: num,

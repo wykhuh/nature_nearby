@@ -786,6 +786,7 @@
 
   #view-container {
     margin: 1rem 0.5rem;
+    min-height: 250px;
   }
 
   #view-controls {
