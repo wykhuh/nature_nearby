@@ -28,7 +28,9 @@ export function renderCarousel(
 
   let content = "";
   content = '<div class="details">';
-  content += renderTaxonNames(taxon, appStore);
+  if (taxon) {
+    content += renderTaxonNames(taxon, appStore);
+  }
   content += `<span class="media-count"><span class="current-index">1</span>/${mediaCount}</span>`;
   content += "</div>";
 
