@@ -4,28 +4,44 @@
 
 ## About
 
-Nature Nearby is a website that allows people to discover the plants, animals, fungi, etc. found in a given location. The data comes from [iNaturalist](https://www.inaturalist.org), a platform that encourages people to observe and identify living organisms.
+Nature Nearby is a website that allows people to discover the plants, animals, fungi, etc. that are present at a given location. The data comes from [iNaturalist](https://www.inaturalist.org), a platform that encourages people to observe and identify living organisms.
 
 ## Instructions
 
-### Search
+### Search page
 
-1. Select a place. You can search for a place, and/or use your current location.
-   1. If you search for a place, a list of iNaturalist places will be displayed that matches your search term.
-   2. If you use current location, the app uses your device's GPS, WiFi, or celluar signals to determine your location. By default, the app selects creates a circular area with a radius of 1 mile (1.6 kilometer) from your current location.
+iNaturalist has over 200,000,000 observations and over 500,000 species. This site provides a few ways find the species for a given location.
 
-2. Select species. By default, the app shows all species. You can search for one or more species to filter which species are shown.
+1. **Select location**. There are three ways to select a location.
+   1. If you want search for species within a place, enter the place name in the "Places" search box. You can search for multiple places.
+   2. If you want to search for species near your current location, click the "Current Location" button. The app uses your device's GPS, WiFi, or celluar signals to determine your location. By default, the app creates a circular area with a radius of 1 mile (1.6 kilometer) from your current location. You can change the radius using "More Options" > "Geospatial" > "Radius".
+   3. If you want to search for species within a custom rectangular area, click the <icon-square></icon-square> icon. Click on the map to set one corner of the rectangle, move your cursor, and click the map to set the second corner of the rectangle.
 
-3. Select date. By default, the app shows all dates. You can select from a list of dates to filter which dates are shown.
+2. **Select species.** By default, this site shows all species. You can search for a species by typing in the species name in "Species" search box. You can search for mutiple species.
+
+3. **Select date.** By default, this site shows all dates. You can select species that were observed during a specific time period by selecting a date range from the "Observed Dates" dropdown. If you want more date options, use 'More Options" > "Date Observed".
 
 4. For more search options, click the "More Options" button.
 
-### Species
+Notes:
+
+- The fields for your search query will be shown in green.
+- Click the "x" for the green search fields to delete the search query.
+- Click "Reset" button to delete all search queries.
+- Click the layers icon in the upper right of the map to customize the map. You can select a basemap, and how the iNaturalist observations are displayed.
+
+### Species page
 
 Click "Species" in the top menu to see a list of species that match your search query.
 
-### Observations
+Click on the observations link in each species card to view the observations for that species.
+
+If you search for place by name, a badge will be shown in the upper right corner for species are marked as native or invasive by iNaturalist.
+
+### Observations page
 
 Click "Observations" in the top menu to see a list of iNaturalist observations that match your search query.
+
+Click on the observation image to show a popup with all the photos and sounds for the observation.
 
 </main>
