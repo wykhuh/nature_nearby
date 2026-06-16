@@ -782,8 +782,16 @@
 @layer aboutPage {
   #about-page {
     svg.icon {
-      width: 1rem;
       display: inline;
+    }
+
+    ul {
+      margin-left: 1rem;
+    }
+
+    .square-icon {
+      width: 16px;
+      height: 16px;
     }
 
     .icon {

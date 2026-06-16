@@ -1,27 +1,34 @@
+<script>
+import img from '../../assets/images/search.jpg'
+</script>
+
 <app-header></app-header>
 
 <main id="about-page" class="flow">
 
 ## About
 
-Nature Nearby is a website that allows people to discover the plants, animals, fungi, etc. that are present at a given location. The data comes from [iNaturalist](https://www.inaturalist.org), a platform that encourages people to observe and identify living organisms.
+Nature Nearby is a website that allows people to discover the plants, animals, fungi, etc. that are present at a given location. The data and photos comes from [iNaturalist](https://www.inaturalist.org), a platform that encourages people to observe and identify living organisms.
 
 ## Instructions
 
 ### Search page
 
-iNaturalist has over 200,000,000 observations and over 500,000 species. This site provides a few ways find the species for a given location.
+This site provides a few ways find the species for a given location.
 
 1. **Select location**. There are three ways to select a location.
    1. If you want search for species within a place, enter the place name in the "Places" search box. You can search for multiple places.
    2. If you want to search for species near your current location, click the "Current Location" button. The app uses your device's GPS, WiFi, or celluar signals to determine your location. By default, the app creates a circular area with a radius of 1 mile (1.6 kilometer) from your current location. You can change the radius using "More Options" > "Geospatial" > "Radius".
-   3. If you want to search for species within a custom rectangular area, click the <icon-square></icon-square> icon. Click on the map to set one corner of the rectangle, move your cursor, and click the map to set the second corner of the rectangle.
+   3. If you want to search for species within a custom rectangular area, click the <icon-square></icon-square> icon in the upper left of the map. Click on the map to set one corner of the rectangle, move your cursor, and click the map to set the second corner of the rectangle.
 
 2. **Select species.** By default, this site shows all species. You can search for a species by typing in the species name in "Species" search box. You can search for mutiple species.
 
 3. **Select date.** By default, this site shows all dates. You can select species that were observed during a specific time period by selecting a date range from the "Observed Dates" dropdown. If you want more date options, use 'More Options" > "Date Observed".
 
 4. For more search options, click the "More Options" button.
+
+Here's a search for "birds" in "San Francisco", with currrent location, and May-June 2024-2026 observed dates.
+<img src="/images/search.jpg" width="300px">
 
 Notes:
 
@@ -34,9 +41,11 @@ Notes:
 
 Click "Species" in the top menu to see a list of species that match your search query.
 
-Click on the observations link in each species card to view the observations for that species.
+Click on the observations link for the species to view the observations for that species.
 
-If you search for place by name, a badge will be shown in the upper right corner for species are marked as native or invasive by iNaturalist.
+If you search for place by name, a badge will be shown in the upper right corner for species are marked as native (green N) or invasive (pink IN) by iNaturalist.
+
+<img src="/images/species.jpg" width="300px">
 
 ### Observations page
 

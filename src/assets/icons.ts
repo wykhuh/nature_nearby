@@ -1,5 +1,5 @@
 // https://svgsilh.com/image/157352.html
-export const speech = `<svg class="speech-icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
+export const speech = `<svg class="speech-icon icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1280.000000pt" height="1089.000000pt" viewBox="0 0 1280.000000 1089.000000"
  preserveAspectRatio="xMidYMid meet">
 <metadata>
@@ -19,7 +19,7 @@ fill="#000000" stroke="none">
 </svg>`;
 
 // https://svgsilh.com/image/2098873.html
-export const person = `<svg class="person-icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
+export const person = `<svg class="person-icon icon" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1280.000000pt" height="1231.000000pt" viewBox="0 0 1280.000000 1231.000000"
  preserveAspectRatio="xMidYMid meet">
 <metadata>
@@ -41,7 +41,7 @@ fill="#000000" stroke="none">
 </g>
 </svg>`;
 
-export const person2 = `<svg class="person-icon" class="avatar" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+export const person2 = `<svg class="person-icon icon" class="avatar" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
 <g>
 	<circle cx="50.036" cy="32.302" r="24.545"/>
@@ -50,14 +50,14 @@ export const person2 = `<svg class="person-icon" class="avatar" version="1.1" id
 </svg>`;
 
 // https://commons.wikimedia.org/wiki/File:Speaker_Icon.svg#/media/File:Speaker_Icon.svg
-export const audio = `<svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" version="1.0"  width="500" height="500" viewBox="0 0 75 75">
+export const audio = `<svg class="audio-icon icon" xmlns="http://www.w3.org/2000/svg" version="1.0"  width="500" height="500" viewBox="0 0 75 75">
 <path d="M39.389,13.769 L22.235,28.606 L6,28.606 L6,47.699 L21.989,47.699 L39.389,62.75 L39.389,13.769z"
 style="stroke:#111;stroke-width:5;stroke-linejoin:round;fill:#111;"
 />
 <path d="M48,27.6a19.5,19.5 0 0 1 0,21.4M55.1,20.5a30,30 0 0 1 0,35.6M61.6,14a38.8,38.8 0 0 1 0,48.6" style="fill:none;stroke:#111;stroke-width:5;stroke-linecap:round"/>
 </svg>`;
 
-export const mapMarker2 = `<svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 512 512">
+export const mapMarker2 = `<svg class="map-marker-icon icon" xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 512 512">
   <path
     d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"
   />
@@ -72,7 +72,7 @@ export const hamburgerMenu = "&#9776;";
 export const x2 = "&#10007;";
 export const x = "&#215;";
 
-export const square = `<svg class="square-icon" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.0"
+export const square = `<svg class="square-icon icon" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.0"
   width="25" height="25" viewBox="0 0 25 25" id="svg1886">
   <defs id="defs1888" />
   <path
@@ -83,20 +83,20 @@ export const square = `<svg class="square-icon" xmlns:svg="http://www.w3.org/200
 `;
 
 export const mapMarker = `
-<svg class="map-marker-icon" xmlns="http://www.w3.org/2000/svg" fill="#000000" width="800px" height="800px" viewBox="-64 0 512 512">
+<svg class="map-marker-icon icon" xmlns="http://www.w3.org/2000/svg" fill="#000000" width="800px" height="800px" viewBox="-64 0 512 512">
 <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"/>
 </svg>
 `;
 
 export const mapMarkerObscured = `
-<svg class="map-marker-obscured-icon" xmlns="http://www.w3.org/2000/svg" fill="#000000" width="800px" height="800px" viewBox="-64 0 512 512">
+<svg class="map-marker-obscured-icon icon" xmlns="http://www.w3.org/2000/svg" fill="#000000" width="800px" height="800px" viewBox="-64 0 512 512">
 <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0z"/>
 </svg>
 `;
 
 // https://www.svgrepo.com/svg/502790/photo-camera-off
 export const noPhoto = `
- <svg class="no-photo" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <svg class="no-photo icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M6.96899 5.8832C6.82644 5.9589 6.66577 6 6.5 6H5C3.34315 6 2 7.34315 2 9V18C2 19.6569 3.34315 21 5 21H19C19.9023 21 20.7115 20.6017 21.2615 19.9713C21.0898 19.9293 20.927 19.8412 20.7929 19.7071L19.7487 18.6629C19.5655 18.8697 19.298 19 19 19H5C4.44772 19 4 18.5523 4 18V9C4 8.44772 4.44772 8 5 8H6.5C7.20173 8 7.87302 7.75448 8.4041 7.31832L6.96899 5.8832ZM9.66393 8.57815C8.07949 9.41694 7 11.0824 7 13C7 15.7614 9.23858 18 12 18C13.9176 18 15.5831 16.9205 16.4219 15.3361L14.8908 13.805C14.539 15.0709 13.378 16 12 16C10.3431 16 9 14.6569 9 13C9 11.622 9.92908 10.461 11.195 10.1092L9.66393 8.57815ZM16.9993 13.0851L11.9149 8.00071C11.9432 8.00024 11.9716 8 12 8C14.7614 8 17 10.2386 17 13C17 13.0284 16.9998 13.0568 16.9993 13.0851ZM20 16.0858V9C20 8.44772 19.5523 8 19 8H17.5C16.5557 8 15.6666 7.55542 15.1 6.8L14.05 5.4C13.8611 5.14819 13.5648 5 13.25 5H10.75C10.4352 5 10.1389 5.14819 9.95 5.4L9.67752 5.76331L8.24895 4.33474L8.35 4.2C8.91656 3.44458 9.80573 3 10.75 3H13.25C14.1943 3 15.0834 3.44458 15.65 4.2L16.7 5.6C16.8889 5.85181 17.1852 6 17.5 6H19C20.6569 6 22 7.34315 22 9V18C22 18.0283 21.9996 18.0565 21.9988 18.0846L20 16.0858Z" fill="#000000"/>
 <path d="M3 3L21 21" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
@@ -104,7 +104,7 @@ export const noPhoto = `
 
 // https://svgsilh.com/tag/magnifying%20glass-1.html
 export const search = `
-  <svg version="1.0" class="search-icon" xmlns="http://www.w3.org/2000/svg"
+  <svg version="1.0" class="search-icon icon" xmlns="http://www.w3.org/2000/svg"
    width="1280.000000pt" height="1230.000000pt" viewBox="0 0 1280.000000 1230.000000"
    preserveAspectRatio="xMidYMid meet">
   <metadata>
@@ -132,7 +132,7 @@ export const shield = "&#9751;";
 
 // www.svgrepo.com/svg/506814/computer
 export const computer = `
-<svg class="computer-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg class="computer-icon icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M2 6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V15C22 16.6569 20.6569 18 19 18H13V19H15C15.5523 19 16 19.4477 16 20C16 20.5523 15.5523 21 15 21H9C8.44772 21 8 20.5523 8 20C8 19.4477 8.44772 19 9 19H11V18H5C3.34315 18 2 16.6569 2 15V6ZM5 5C4.44772 5 4 5.44772 4 6V15C4 15.5523 4.44772 16 5 16H19C19.5523 16 20 15.5523 20 15V6C20 5.44772 19.5523 5 19 5H5Z" fill="#000000"/>
 </svg>`;
 
@@ -142,7 +142,7 @@ export const download = `<svg
    width="37mm"
    height="26mm"
    viewBox="0 0 131.10236 92.125983"
-   id="download-icon"
+   class="download-icon icon"
    version="1.1" >
   <g
      id="layer1" >
@@ -171,21 +171,21 @@ export const downArrow = `<span style="display:block;transform:rotate(90deg);">&
 
 // https://www.svgrepo.com/svg/488929/external-link
 export const externalLink = `
-  <svg class="external-link-icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg class="external-link-icon icon" width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M10 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V14M11 13L20 4M20 4V9M20 4H15" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   `;
 
 // https://commons.wikimedia.org/wiki/File:Copy_-_The_Noun_Project.svg
 export const copy =
-  '<svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0px" y="0px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve"><g><path d="M18,8v12H9V8H18 M18,6H9C7.9,6,7,6.9,7,8v12c0,1.1,0.9,2,2,2h9c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6L18,6z"></path></g><path d="M5,17V4h10V2H5C3.9,2,3,2.9,3,4v13H5z"></path></svg>';
+  '<svg class="copy-icon icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0px" y="0px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve"><g><path d="M18,8v12H9V8H18 M18,6H9C7.9,6,7,6.9,7,8v12c0,1.1,0.9,2,2,2h9c1.1,0,2-0.9,2-2V8C20,6.9,19.1,6,18,6L18,6z"></path></g><path d="M5,17V4h10V2H5C3.9,2,3,2.9,3,4v13H5z"></path></svg>';
 
 // https://commons.wikimedia.org/wiki/File:Font_Awesome_5_regular_play-circle.svg
-export const playIcon = `<svg class="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z"/></svg>`;
+export const playIcon = `<svg class="play-icon icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z"/></svg>`;
 
 // https://commons.wikimedia.org/wiki/File:Font_Awesome_5_regular_pause-circle.svg
 export const pauseIcon =
-  '<svg class="pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm96-280v160c0 8.8-7.2 16-16 16h-48c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16zm-112 0v160c0 8.8-7.2 16-16 16h-48c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16z"/></svg>';
+  '<svg class="pause-icon icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm96-280v160c0 8.8-7.2 16-16 16h-48c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16zm-112 0v160c0 8.8-7.2 16-16 16h-48c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h48c8.8 0 16 7.2 16 16z"/></svg>';
 
 export const leftBigIcon = "&#10094;";
 export const leftDoubleIcon = "&#171;";
