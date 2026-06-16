@@ -138,6 +138,7 @@ export async function fetchiNatMapDataForTaxon(
   let { iNatGrid, iNatHeatmap, iNatTaxonRange, iNatPoint } = getiNatMapTiles(
     mapParams,
     taxonObj,
+    appStore
   );
 
   let iNatGridLayer = addOverlayToMap(iNatGrid, map, layerControl, true);

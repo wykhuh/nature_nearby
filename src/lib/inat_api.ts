@@ -1,4 +1,5 @@
 import type {
+  AppStoreType,
   iNatObservationTilesSettingsType,
   MapTilesAPIParamsType,
   NormalizedTaxon,
@@ -13,6 +14,7 @@ import type {
   iNatTaxaAPI,
 } from "../types/inat_api.d.ts";
 import { loggerUrl } from "./logger.ts";
+import { iNatOrange } from "./map_colors_utils.ts";
 
 const search_api = "https://api.inaturalist.org/v2/search";
 export const autocomplete_places_api = `${search_api}?sources=places`;
@@ -179,6 +181,7 @@ function formatDescription(
 export const getiNatMapTiles = (
   mapTilesApiParams: MapTilesAPIParamsType,
   taxonObj: NormalizedTaxon,
+  appStore: AppStoreType,
 ): iNatObservationTilesSettingsType => {
   let dupParams = structuredClone(mapTilesApiParams) as any;
   if (dupParams.taxon_id === "0") {
@@ -193,6 +196,8 @@ export const getiNatMapTiles = (
 
   delete dupParams.color;
   let noColorParamsString = new URLSearchParams(dupParams).toString();
+  let pointParamsString =
+    appStore.color == iNatOrange ? noColorParamsString : paramsString;
 
   let tiles: iNatObservationTilesSettingsType = {
     iNatGrid: {
@@ -212,7 +217,7 @@ export const getiNatMapTiles = (
     iNatPoint: {
       name: "Points",
       type: "overlay",
-      url: `https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?${paramsString}`,
+      url: `https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?${pointParamsString}`,
       options: {
         attribution:
           'Observation data by <a href="https://www.inaturalist.org/">iNaturalist</a>.',
