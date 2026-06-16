@@ -33,6 +33,10 @@ function cleanupParams(params: URLSearchParams) {
   if (params.get("spam") === null) {
     params.append("spam", "false");
   }
+
+  if (params.get('photos') === 'false') {
+    params.delete("photo_license");
+  }
 }
 
 function deleteParams(deleteParams: string[], params: URLSearchParams) {

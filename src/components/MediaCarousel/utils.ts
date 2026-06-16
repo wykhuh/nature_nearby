@@ -1,5 +1,8 @@
 import { leftBigIcon, noPhoto, rightBigIcon } from "../../assets/icons";
-import { formatTaxonPhotoAltText } from "../../lib/render_utils";
+import {
+  formatTaxonPhotoAltText,
+  renderTaxonNames,
+} from "../../lib/render_utils";
 import type { AppStoreType } from "../../types/app";
 import type {
   ObservationPhoto,
@@ -24,16 +27,20 @@ export function renderCarousel(
   }
 
   let content = "";
+  content = '<div class="details">';
+  content += renderTaxonNames(taxon, appStore);
+  content += `<span class="media-count"><span class="current-index">1</span>/${mediaCount}</span>`;
+  content += "</div>";
 
   content += `<div class="media">`;
   if (photos.length > 0) {
     photos.forEach((photo, i) => {
-      content += renderPhoto(photo, i, mediaCount, taxon, appStore);
+      content += renderPhoto(photo, i, taxon, appStore);
     });
   }
 
   sounds.forEach((sound, i) => {
-    content += renderSound(sound, i + photos.length, mediaCount);
+    content += renderSound(sound, i + photos.length);
   });
 
   content += "</div>";
@@ -55,19 +62,14 @@ function renderControls() {
   return content;
 }
 
-function renderSound(
-  sound: ObservationSound,
-  index: number,
-  mediaCount: number,
-) {
+function renderSound(sound: ObservationSound, index: number) {
   let content;
   let url = sound.file_url;
   if (url) {
     content = `<figure ${index > 0 ? "hidden" : ""} data-item-index="${index}" class="carousel-item sound">`;
-    content += ` <audio controls src="${url}"></audio>`;
+    content += ` <audio loading="lazy" controls src="${url}"></audio>`;
     content += `<figcaption>`;
     content += `<span>${sound.attribution}</span>`;
-    content += `<span class="media-count">${index + 1}/${mediaCount}</span>`;
     content += `</figcaption>`;
     content += `</figure>`;
   }
@@ -77,7 +79,6 @@ function renderSound(
 function renderPhoto(
   photo: ObservationPhoto,
   index: number,
-  mediaCount: number,
   taxon: ObservationTaxon,
   appStore: AppStoreType,
 ) {
@@ -86,10 +87,9 @@ function renderPhoto(
   if (url) {
     let altText = formatTaxonPhotoAltText(taxon, appStore);
     content = `<figure ${index > 0 ? "hidden" : ""} data-item-index="${index}" class="carousel-item">`;
-    content += `<img src="${url}" alt="${altText}">`;
+    content += `<img loading="lazy" src="${url}" alt="${altText}">`;
     content += `<figcaption>`;
     content += `<span>${photo.attribution}</span>`;
-    content += `<span class="media-count">${index + 1}/${mediaCount}</span>`;
     content += `</figcaption>`;
     content += `</figure>`;
   }
@@ -108,5 +108,9 @@ export function setCurrentMedia(index: number, componentCtx: HTMLElement) {
   );
   if (itemContainer) {
     itemContainer.hidden = false;
+  }
+  let countEl = componentCtx.querySelector(".current-index");
+  if (countEl) {
+    countEl.textContent = `${index + 1}`;
   }
 }

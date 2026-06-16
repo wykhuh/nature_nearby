@@ -3,7 +3,7 @@ import type { AppStoreType, DataComponentType } from "../../types/app";
 import type { ObservationsResult } from "../../types/inat_api";
 import { renderCarousel, setCurrentMedia } from "./utils";
 
-const template = html` <div
+const template = html`<div
   id="carousel"
   role="region"
   aria-roledescription="carousel"
@@ -91,20 +91,6 @@ class MediaCarousel extends HTMLElement {
       this.nextEl.disabled = true;
     } else {
       this.nextEl.disabled = false;
-    }
-
-    // update current item
-    let oldCurrent = this.querySelector(".carousel-item-selector.current");
-    if (oldCurrent) {
-      oldCurrent.classList.remove("current");
-    }
-
-    let newCurrent = this.querySelector(
-      `.carousel-item-selector[data-item-index="${this.currentIndex}"]`,
-    );
-
-    if (newCurrent) {
-      newCurrent.classList.add("current");
     }
   }
 }

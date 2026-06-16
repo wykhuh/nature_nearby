@@ -17,7 +17,6 @@ import {
   person2,
 } from "../assets/icons.ts";
 import { formatTaxonName } from "./data_utils.ts";
-import { logger } from "./logger.ts";
 import { pluralize, capitalizeFirstLetter } from "./utils.ts";
 import { html } from "./component_utils.ts";
 import { formatTooltip } from "../components/Tooltip/component.ts";
@@ -137,14 +136,15 @@ function renderTaxonName(
 }
 
 export function renderMedia(
-  inatUrl: string,
-  taxon: ObservationTaxon,
-  photos: ObservationPhoto[],
-  sounds: ObservationSound[],
+  observation: ObservationsResult,
+  inatUrl: string | undefined,
   appStore: AppStoreType,
   displayCount = false,
   size = "medium",
 ) {
+  let photos = observation.photos;
+  let sounds = observation.sounds;
+  let taxon = observation.taxon
   let classes = ["media"];
   if (photos.length === 0 && sounds.length > 0) {
     classes.push("sound-only");
@@ -162,20 +162,35 @@ export function renderMedia(
     let url = photos[0].url?.replace("/square.", `/${size}`);
     if (url) {
       let altText = formatTaxonPhotoAltText(taxon, appStore);
-      mediaContent += `<a href="${inatUrl}">`;
+      if (inatUrl) {
+        mediaContent += `<a href="${inatUrl}">`;
+      }
       mediaContent += `<img src="${url}" alt="${altText}">`;
-      mediaContent += "</a>";
-    } else {
-      logger(photos);
+      if (inatUrl) {
+        mediaContent += "</a>";
+      }
     }
-  } else {
-    logger(photos);
   }
 
   if (sounds.length > 0) {
-    mediaContent += `<a href="${inatUrl}">`;
+    if (inatUrl) {
+      mediaContent += `<a href="${inatUrl}">`;
+    }
     mediaContent += `${audio}`;
-    mediaContent += "</a>";
+    // let sound = sounds[0]
+    // let url = sound.file_url
+    // if (url) {
+    //   mediaContent = `<figure class="sound">`;
+    //   mediaContent += ` <audio controls src="${url}"></audio>`;
+    //   mediaContent += `<figcaption>`;
+    //   mediaContent += `<span>${sound.attribution}</span>`;
+    //   mediaContent += `</figcaption>`;
+    //   mediaContent += `</figure>`;
+    // }
+
+    if (inatUrl) {
+      mediaContent += "</a>";
+    }
   }
 
   if (sounds.length === 0 && photos.length === 0) {
@@ -186,6 +201,7 @@ export function renderMedia(
     mediaContent += `<span class="photos-count">${photos.length}</span>`;
   }
   mediaContent += "</div>";
+
   return mediaContent;
 }
 
@@ -193,7 +209,9 @@ export function renderMediaCounts(
   photos: ObservationPhoto[],
   sounds: ObservationSound[],
 ) {
-  if (photos.length === 0 && sounds.length === 0) return;
+  if (photos.length === 0 && sounds.length === 0) {
+    return '<div class="media-counts">0 media</div>';
+  }
 
   let text = [];
   if (photos.length > 0) {

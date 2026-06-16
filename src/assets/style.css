@@ -237,7 +237,7 @@
 
   ::backdrop {
     background-color: var(--clr-black);
-    opacity: 0.5;
+    opacity: 0.8;
   }
 
   dialog {
@@ -476,6 +476,39 @@
         padding: 0.15rem 0.25rem;
       }
     }
+
+    .media:not(.sound-only) {
+      .audio-icon {
+        --audio-color: var(--clr-overlay-light-900);
+        --audio-background: var(--clr-overlay-dark-400);
+        --icon-height: 40px;
+        --icon-width: 40px;
+        --icon-padding: 8px;
+
+        background-color: var(--audio-background);
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        width: var(--icon-height);
+        height: var(--icon-width);
+        padding: var(--icon-padding);
+      }
+    }
+    .media.sound-only {
+      .audio-icon {
+        --audio-color: var(--clr-overlay-dark-400);
+        --icon-height: 250px;
+        --icon-width: 100%;
+        --icon-padding: 25px;
+
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        padding: var(--icon-padding);
+        width: var(--icon-width);
+        height: var(--icon-height);
+      }
+    }
   }
 
   #observations-grid {
@@ -517,13 +550,14 @@
       position: relative;
       border-bottom: var(--border-grey);
       background-color: var(--clr-gray-200);
-      min-height: calc(250px);
+      min-height: 250px;
 
       img {
+        margin: 0 auto;
         object-fit: cover;
-        width: 100%;
         height: 250px;
       }
+
       audio {
         height: 250px;
       }
@@ -533,6 +567,11 @@
         width: 100%;
         height: 250px;
       }
+    }
+
+    .media:hover {
+      opacity: 0.7;
+      cursor: pointer;
     }
   }
 
@@ -618,6 +657,123 @@
       }
       .establishment-means.endemic {
         background-color: var(--clr-iNat-blue);
+      }
+    }
+  }
+
+  #observations-grid {
+    dialog.media-modal {
+      width: 98vw;
+      height: 99vh;
+      grid-template-rows: 2rem 1fr;
+      padding: 0 0.5rem;
+
+      .modal-header {
+        display: flex;
+        justify-content: end;
+      }
+
+      .close-btn {
+        background-color: transparent;
+        border: none;
+        font-size: 40px;
+        padding: 0;
+        line-height: 0.7;
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+      }
+
+      .close-btn:hover {
+        background-color: var(--clr-gray-400);
+      }
+    }
+
+    dialog.media-modal:popover-open {
+      display: grid;
+    }
+
+    media-carousel {
+      .details {
+        display: block;
+        text-align: center;
+        padding: 0 0.25rem 0.5rem 0.25rem;
+      }
+
+      .media {
+        border: 0;
+        height: 100%;
+        background-color: initial;
+
+        figure[hidden] {
+          display: none;
+        }
+
+        figure {
+          height: 100%;
+        }
+
+        img {
+          max-height: min(75vh, 100%);
+          height: initial;
+        }
+
+        audio {
+          height: min(400px, 50vh);
+        }
+
+        .sound:not([hidden]) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        figcaption {
+          display: block;
+          text-align: center;
+          background-color: initial;
+          color: inherit;
+          margin-top: 0.75rem;
+        }
+      }
+
+      .media:hover {
+        opacity: initial;
+        cursor: initial;
+      }
+
+      .media-count {
+        color: var(--clr-gray-800);
+        font-size: var(--font-size-sm);
+        border-left: var(--border-dark-grey);
+        margin-left: 2px;
+        padding-left: 5px;
+      }
+
+      .item-selector {
+        .prev-selector,
+        .next-selector {
+          border-radius: 50%;
+          width: 25px;
+          height: 25px;
+          padding: 0;
+          opacity: 0.9;
+          position: absolute;
+          top: 45%;
+        }
+
+        .prev-selector[disabled],
+        .next-selector[disabled] {
+          display: none;
+        }
+
+        .prev-selector {
+          left: 5px;
+        }
+
+        .next-selector {
+          right: 5px;
+        }
       }
     }
   }
@@ -930,50 +1086,6 @@
 
     .casual-badge {
       background-color: var(--clr-warning);
-    }
-  }
-
-  media-carousel {
-    position: relative;
-
-    .item-selector {
-      .prev-selector,
-      .next-selector {
-        border-radius: 50%;
-        width: 25px;
-        height: 25px;
-        padding: 0;
-        opacity: 0.9;
-        position: absolute;
-        top: 45%;
-      }
-
-      .prev-selector[disabled],
-      .next-selector[disabled] {
-        display: none;
-      }
-
-      .prev-selector {
-        left: 2px;
-      }
-
-      .next-selector {
-        right: 3px;
-      }
-    }
-
-    figure[hidden] {
-      display: none;
-    }
-
-    .media-count {
-      border-left: var(--border-grey);
-    }
-
-    .sound:not([hidden]) {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
   }
 }

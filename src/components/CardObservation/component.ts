@@ -2,6 +2,7 @@ import type { ObservationsResult } from "../../types/inat_api";
 import type { DataComponentType, AppStoreType } from "../../types/app";
 import {
   renderDates,
+  renderMedia,
   renderMediaCounts,
   renderQualityGrade,
   renderTaxonNames,
@@ -9,6 +10,7 @@ import {
 } from "../../lib/render_utils";
 import { iNatObservationsUrl } from "../../data/inat_data";
 import { setupComponent } from "../../lib/component_utils";
+import { circleX } from "../../assets/icons";
 
 const template = '<div class="card"></div>';
 
@@ -20,6 +22,8 @@ class CardObservation extends HTMLElement {
   currentIndex = 0;
   data: ObservationsResult | null = null;
   mediaCount = 0;
+  mediaEl: null | HTMLDivElement = null;
+  modalEl: null | HTMLDialogElement = null;
 
   connectedCallback() {
     setupComponent(template, this);
@@ -28,25 +32,56 @@ class CardObservation extends HTMLElement {
     let soundsCount = this.data.sounds ? this.data.sounds.length : 0;
     this.mediaCount = photosCount + soundsCount;
 
-    this.render(this.data, window.app.store);
+    this.render(this.data, window.app.store).then(() => {
+      this.mediaEl = this.querySelector(".media");
+      this.modalEl = this.querySelector("dialog");
+
+      this.mediaEl?.addEventListener("click", this);
+    });
   }
 
-  disconnectedCallback() {}
+  disconnectedCallback() {
+    this.mediaEl?.removeEventListener("click", this);
+  }
 
   handleEvent(event: Event) {
     let target = event.target as HTMLInputElement;
     if (!target) return;
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    if (event.type === "click") {
+      if (target.className === "media" || target.closest(".media")) {
+        this.modalEl?.showPopover();
+      }
+    }
   }
 
   async render(data: ObservationsResult, appStore: AppStoreType) {
     let cardEl = this.querySelector(".card");
     if (!cardEl) return;
 
+    let url = undefined;
+    cardEl.innerHTML = renderMedia(data, url, appStore);
+
+    let dialogEl = document.createElement("dialog");
+    dialogEl.id = `modal-${data.id}`;
+    dialogEl.className = "media-modal";
+    dialogEl.popover = "auto";
+
+    let closeButton = `<div class="modal-header"><button
+      class="close-btn btn-primary"
+      popovertarget="modal-${data.id}"
+      popovertargetaction="hide">${circleX}</button></div>`;
+
     let component = document.createElement(
       "media-carousel",
     ) as DataComponentType;
     component.data = data;
-    cardEl.appendChild(component);
+
+    dialogEl.innerHTML = closeButton;
+    dialogEl.appendChild(component);
+    cardEl.appendChild(dialogEl);
 
     let detailsEl = document.createElement("div");
     detailsEl.className = "details";
