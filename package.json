@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "deploy": "npx wrangler pages deploy dist",
+    "deploy": "npm run build & npx wrangler pages deploy dist",
     "preview": "vite preview",
     "type": "tsc",
     "test_watch": "vitest --mode test",
@@ -20,7 +20,8 @@
     "markdown-it": "^14.2.0",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.7",
+    "wrangler": "^4.98.0"
   },
   "dependencies": {
     "@bramus/pagination-sequence": "^1.2.1",
