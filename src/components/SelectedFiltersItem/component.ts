@@ -3,12 +3,14 @@ import { formatTaxonName } from "../../lib/data_utils";
 import { setInputValue, setSelectedOption } from "../../lib/form_utils";
 import { removePlace } from "../../lib/search_places";
 import { removeTaxon } from "../../lib/search_taxa";
+import { removeUnobservedByUser } from "../../lib/search_unobserved";
 import type {
   AppStoreType,
   DataComponentType,
   DataComponentValidTypes,
   NormalizedPlace,
   NormalizedTaxon,
+  NormalizedUser,
   ObservationsApiParamsKeysType,
 } from "../../types/app";
 import { updateAppState } from "../ViewSearch/shared_utils";
@@ -39,6 +41,8 @@ class SelectedFiltersItem extends HTMLElement {
       this.type === "current_location"
     ) {
       this.renderPlace(this.data as NormalizedPlace);
+    } else if (this.type === "unobservedByUser") {
+      this.renderUnobserved(this.data as NormalizedUser);
     } else {
       this.render(this.data as ParamsType);
     }
@@ -87,6 +91,10 @@ class SelectedFiltersItem extends HTMLElement {
         setInputValue(`#observations-form input#lng`, "");
         setSelectedOption(`#observations-form select#radius option`);
         updateAppState(window.app.store);
+      } else if (this.type === "unobservedByUser") {
+        removeUnobservedByUser(window.app.store);
+        this.innerHTML = "";
+        updateAppState(window.app.store);
       } else {
         let field = (this.data as ParamsType).field;
         deleteFilter(field, (this.data as ParamsType).value, window.app.store);
@@ -125,6 +133,18 @@ class SelectedFiltersItem extends HTMLElement {
   renderPlace(place: NormalizedPlace) {
     let itemEl = document.createElement("li");
     itemEl.textContent = `${place.name}`;
+    let button = document.createElement("button");
+    button.innerHTML = x;
+    button.className = "close-button";
+    button.dataset.testid = "filter-list-item-close";
+
+    itemEl.appendChild(button);
+    this.appendChild(itemEl);
+  }
+
+  renderUnobserved(user: NormalizedUser) {
+    let itemEl = document.createElement("li");
+    itemEl.textContent = `unobserved_by_user_id=${user.login}`;
     let button = document.createElement("button");
     button.innerHTML = x;
     button.className = "close-button";

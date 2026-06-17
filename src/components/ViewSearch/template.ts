@@ -18,25 +18,20 @@ const basicFields = html`
         </label>
       </div>
 
-      <button
-        type="button"
-        class="btn-primary"
-        name="current-location"
-        id="current-location"
-      >
-        Current location</button
-      ><app-tooltip
-        data-content="?"
-        data-tooltip="Sets latitude and longitude using your current location."
-      ></app-tooltip>
-    </section>
-    <section>
       <div class="form-group">
-        <label
-          >Species
-          <input id="search-taxa" type="text" autocomplete="off" />
-        </label>
+        <button
+          type="button"
+          class="btn-primary"
+          name="current-location"
+          id="current-location"
+        >
+          Current location</button
+        ><app-tooltip
+          data-content="?"
+          data-tooltip="Sets latitude and longitude using your current location."
+        ></app-tooltip>
       </div>
+
       <div class="form-group">
         <label
           >Observed Dates
@@ -45,6 +40,14 @@ const basicFields = html`
             data-tooltip="Sets month and year for when the observations were observed. If you want more date options, use 'More Options > Date Observed'"
           ></app-tooltip>
           ${renderPresetDates()}
+        </label>
+      </div>
+    </section>
+    <section>
+      <div class="form-group">
+        <label
+          >Species
+          <input id="search-taxa" type="text" autocomplete="off" />
         </label>
       </div>
     </section>
@@ -192,6 +195,22 @@ let observationPane = html`
           <option value="true" selected>True</option>
           <option value="false">False</option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="unobserved-by-user-search"
+          >Unobserved by user
+          <app-tooltip
+            data-content="?"
+            data-tooltip="unobserved_by_user_id: Observations with taxon not previously observed by this user"
+          ></app-tooltip>
+        </label>
+        <input
+          name="unobserved_by_user_id"
+          id="search-unobserved-by-user"
+          type="text"
+          autocomplete="off"
+        />
       </div>
     </fieldset>
   </div>

@@ -221,7 +221,8 @@ export type DataComponentValidTypes =
   | "place"
   | "current_location"
   | "custom_boundary"
-  | "taxon";
+  | "taxon"
+  | "unobservedByUser";
 
 export type PaginationCallback = (
   currentPage: number,

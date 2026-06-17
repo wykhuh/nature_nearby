@@ -8,6 +8,7 @@ import type {
   iNatAPIError,
   iNatAutocompletePlaceAPI,
   iNatAutocompleteTaxaAPI,
+  iNatAutocompleteUsersAPI,
   iNatObservationsAPI,
   iNatObservationsSpeciesAPI,
   iNatPlacesAPI,
@@ -24,6 +25,7 @@ const places_api = "https://api.inaturalist.org/v2/places";
 export const autocomplete_taxa_api =
   "https://api.inaturalist.org/v2/taxa/autocomplete?";
 const taxa_api = "https://api.inaturalist.org/v2/taxa";
+export const autocomplete_users_api = `https://api.inaturalist.org/v2/users/autocomplete?order=activity`;
 const users_api = "https://api.inaturalist.org/v2/users";
 
 export async function inatFetch(url: string, funcName: string) {
@@ -130,6 +132,20 @@ export async function getAutocompleteTaxa(query: string, locale?: string) {
     url,
     "getAutocompleteTaxa",
   )) as iNatAutocompleteTaxaAPI;
+  if ("results" in data) {
+    loggerUrl(url, data.total_results);
+  }
+  return data;
+}
+
+export async function getAutocompleteUsers(query: string) {
+  let fields = `(icon:!t,login:!t,name:!t)`;
+
+  let url = `${autocomplete_users_api}&fields=${fields}&per_page=25&q=${query}`;
+  let data = (await inatFetch(
+    url,
+    "getAutocompleteUsers",
+  )) as iNatAutocompleteUsersAPI;
   if ("results" in data) {
     loggerUrl(url, data.total_results);
   }

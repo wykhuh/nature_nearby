@@ -81,6 +81,7 @@ export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
         "spam",
         "taxon_id",
         "year",
+        "unobserved_by_user_id",
       ]
         .concat(observationsApiNonFilterableNames)
         .includes(key)
@@ -95,6 +96,13 @@ export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
 
     listEl.appendChild(itemEl);
   }
+
+  let templateEl = document.createElement(
+    "selected-filters-item",
+  ) as DataComponentType;
+  templateEl.data = appStore.selectedUnobservedByUser;
+  templateEl.type = "unobservedByUser";
+  listEl.appendChild(templateEl);
 }
 
 export function renderSelectedFiltersList(appStore: AppStoreType) {

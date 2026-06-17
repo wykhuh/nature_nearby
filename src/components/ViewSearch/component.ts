@@ -8,6 +8,10 @@ import {
   setupPlacesSearch,
 } from "../../lib/search_places";
 import { setupTaxaSearch, taxonSelectedHandler } from "../../lib/search_taxa";
+import {
+  setupUnobservedByUserSearch,
+  unobservedByUserSelectedHandler,
+} from "../../lib/search_unobserved";
 import { updateAppUrl } from "../../lib/url_utils";
 import { debouncePromise } from "../../lib/utils";
 import type { AppStoreType } from "../../types/app";
@@ -33,6 +37,7 @@ export class ViewSearch extends HTMLElement {
   currentLocationEl: null | HTMLButtonElement = null;
   searchPlacesInputEl: HTMLInputElement | null = null;
   searchSpeciesInputEl: HTMLInputElement | null = null;
+  searchUnobservedInputEl: HTMLInputElement | null = null;
   moreOptionsButton: HTMLButtonElement | null = null;
   moreOptionsContainer: HTMLDivElement | null = null;
   showMoreOptions = false;
@@ -46,6 +51,9 @@ export class ViewSearch extends HTMLElement {
     this.formEl = this.querySelector("#observations-form") as HTMLFormElement;
     this.searchPlacesInputEl = document.querySelector("#search-places");
     this.searchSpeciesInputEl = document.querySelector("#search-taxa");
+    this.searchUnobservedInputEl = document.querySelector(
+      "#search-unobserved-by-user",
+    );
     this.currentLocationEl = document.querySelector("#current-location");
     this.moreOptionsButton = document.querySelector("#more-options");
     this.moreOptionsContainer = document.querySelector(
@@ -62,6 +70,7 @@ export class ViewSearch extends HTMLElement {
     this.formEl?.addEventListener("reset", this);
     this.searchPlacesInputEl?.addEventListener("selection", this);
     this.searchSpeciesInputEl?.addEventListener("selection", this);
+    this.searchUnobservedInputEl?.addEventListener("selection", this);
     this.currentLocationEl?.addEventListener("click", this);
     this.moreOptionsButton?.addEventListener("click", this);
   }
@@ -71,6 +80,7 @@ export class ViewSearch extends HTMLElement {
     this.formEl?.removeEventListener("reset", this);
     this.searchPlacesInputEl?.removeEventListener("selection", this);
     this.searchSpeciesInputEl?.removeEventListener("selection", this);
+    this.searchUnobservedInputEl?.removeEventListener("selection", this);
     this.currentLocationEl?.removeEventListener("click", this);
     this.moreOptionsButton?.removeEventListener("click", this);
   }
@@ -136,6 +146,11 @@ export class ViewSearch extends HTMLElement {
           renderSelectedFiltersList(appStore);
           updateAppUrl(window.location, appStore);
         });
+      } else if (target.id === "search-unobserved-by-user") {
+        unobservedByUserSelectedHandler(record, appStore).then(() => {
+          renderSelectedFiltersList(appStore);
+          updateAppUrl(window.location, appStore);
+        });
       }
     }
   }
@@ -145,6 +160,7 @@ export class ViewSearch extends HTMLElement {
 
     setupPlacesSearch("#search-places");
     setupTaxaSearch("#search-taxa", appStore);
+    setupUnobservedByUserSearch("#search-unobserved-by-user");
     renderSelectedFiltersList(appStore);
     renderSelectedMoreFiltersList(appStore);
   }
