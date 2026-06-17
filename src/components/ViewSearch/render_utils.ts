@@ -96,13 +96,6 @@ export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
 
     listEl.appendChild(itemEl);
   }
-
-  let templateEl = document.createElement(
-    "selected-filters-item",
-  ) as DataComponentType;
-  templateEl.data = appStore.selectedUnobservedByUser;
-  templateEl.type = "unobservedByUser";
-  listEl.appendChild(templateEl);
 }
 
 export function renderSelectedFiltersList(appStore: AppStoreType) {
@@ -137,8 +130,17 @@ export function renderSelectedFiltersList(appStore: AppStoreType) {
     listBasicEl.appendChild(templateEl);
   });
 
+  if (appStore.selectedUnobservedByUser.id) {
+    let templateEl = document.createElement(
+      "selected-filters-item",
+    ) as DataComponentType;
+    templateEl.data = appStore.selectedUnobservedByUser;
+    templateEl.type = "unobservedByUser";
+    listBasicEl.appendChild(templateEl);
+  }
+
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
-    if (["month", "year"].includes(key) && value !== "") {
+    if (["month", "year", "iconic_taxa"].includes(key) && value !== "") {
       let itemEl = document.createElement(
         "selected-filters-item",
       ) as DataComponentType;

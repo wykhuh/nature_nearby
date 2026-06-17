@@ -9,8 +9,9 @@ import {
 } from "./render_utils";
 
 const basicFields = html`
-  <fieldset class="fields-basic">
-    <section>
+  <div class="fields-basic">
+    <fieldset>
+      <legend>Basic Search</legend>
       <div class="form-group">
         <label
           >Places
@@ -19,12 +20,7 @@ const basicFields = html`
       </div>
 
       <div class="form-group">
-        <button
-          type="button"
-          class="btn-primary"
-          name="current-location"
-          id="current-location"
-        >
+        <button type="button" class="btn-primary" name="current-location" id="current-location">
           Current location</button
         ><app-tooltip
           data-content="?"
@@ -42,16 +38,70 @@ const basicFields = html`
           ${renderPresetDates()}
         </label>
       </div>
-    </section>
-    <section>
+    </fieldset>
+
+    <fieldset>
+      <legend>Species</legend>
       <div class="form-group">
         <label
           >Species
           <input id="search-taxa" type="text" autocomplete="off" />
         </label>
       </div>
-    </section>
-  </fieldset>
+
+      <div class="iconic_taxa_list">
+        <div class="form-group">
+          <input type="checkbox" id="Aves" value="Aves" name="iconic_taxa" />
+          <label for="Aves">Birds</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Amphibia" value="Amphibia" name="iconic_taxa" />
+          <label for="Amphibia">Amphibians</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Reptilia" value="Reptilia" name="iconic_taxa" />
+          <label for="Reptilia">Reptiles</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Mammalia" value="Mammalia" name="iconic_taxa" />
+          <label for="Mammalia">Mammals</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Actinopterygii" value="Actinopterygii" name="iconic_taxa" />
+          <label for="Actinopterygii">Ray-finned Fishes</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Mollusca" value="Mollusca" name="iconic_taxa" />
+          <label for="Mollusca">Mollusks</label>
+        </div>
+
+        <div class="form-group">
+          <input type="checkbox" id="Arachnida" value="Arachnida" name="iconic_taxa" />
+          <label for="Arachnida">Arachnids</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Insecta" value="Insecta" name="iconic_taxa" />
+          <label for="Insecta">Insects</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Plantae" value="Plantae" name="iconic_taxa" />
+          <label for="Plantae">Plants</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Fungi" value="Fungi" name="iconic_taxa" />
+          <label for="Fungi">Fungi</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="Protozoa" value="Protozoa" name="iconic_taxa" />
+          <label for="Protozoa">Protozoans</label>
+        </div>
+        <div class="form-group">
+          <input type="checkbox" id="unknown" value="unknown" name="iconic_taxa" />
+          <label for="unknown">Unknown</label>
+        </div>
+      </div>
+    </fieldset>
+  </div>
 `;
 
 let datePane = html`
@@ -222,20 +272,14 @@ let observationPane = html`
       <div class="form-group">
         <label for="lat"
           >Latitude
-          <app-tooltip
-            data-content="?"
-            data-tooltip="lat: Observation latitude"
-          ></app-tooltip>
+          <app-tooltip data-content="?" data-tooltip="lat: Observation latitude"></app-tooltip>
         </label>
         <input id="lat" name="lat" type="text" />
       </div>
       <div class="form-group">
         <label for="lng"
           >Longitude
-          <app-tooltip
-            data-content="?"
-            data-tooltip="lng: Observation longitude"
-          ></app-tooltip
+          <app-tooltip data-content="?" data-tooltip="lng: Observation longitude"></app-tooltip
         ></label>
         <input id="lng" name="lng" type="text" />
       </div>
@@ -344,10 +388,7 @@ const nonEditablePane = html` <fieldset class="hidden">
   <div class="form-group ">
     <label for="spam"
       >Spam
-      <app-tooltip
-        data-content="?"
-        data-tooltip="spam: Observations marked as spam."
-      ></app-tooltip
+      <app-tooltip data-content="?" data-tooltip="spam: Observations marked as spam."></app-tooltip
     ></label>
     <input id="spam" disabled />
   </div>
@@ -375,21 +416,14 @@ const nonEditablePane = html` <fieldset class="hidden">
   <div class="form-group ">
     <label for="order_by"
       >Order By
-      <app-tooltip
-        data-content="?"
-        data-tooltip="order_by: Attribute to sort on."
-      ></app-tooltip
+      <app-tooltip data-content="?" data-tooltip="order_by: Attribute to sort on."></app-tooltip
     ></label>
     <input id="order_by" disabled />
   </div>
 
   <div class="form-group ">
     <label for="order"
-      >Order
-      <app-tooltip
-        data-content="?"
-        data-tooltip="order: Sort order."
-      ></app-tooltip
+      >Order <app-tooltip data-content="?" data-tooltip="order: Sort order."></app-tooltip
     ></label>
     <input id="order" disabled />
   </div>
@@ -403,9 +437,7 @@ export const template = html`
     <section class="options-container">
       ${basicFields}
       <div class="controls">
-        <button type="button" class="btn-primary" id="more-options">
-          More Options
-        </button>
+        <button type="button" class="btn-primary" id="more-options">More Options</button>
         <button class="btn-danger" type="reset">Reset</button>
       </div>
     </section>

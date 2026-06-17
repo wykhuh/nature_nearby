@@ -75,6 +75,7 @@ type ObservationsApiParamsType = {
   day?: string;
   endemic?: boolean;
   hour?: string;
+  iconic_taxa?: string;
   introduced?: boolean;
   lat?: number;
   license?: string;

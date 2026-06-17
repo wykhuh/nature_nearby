@@ -52,7 +52,15 @@ export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] 
   ];
 
 export const observationsFilterableImplementedArrays: ObservationsApiParamsKeysType[] =
-  ["day", "hour", "month", "obscuration", "quality_grade", "year"];
+  [
+    "day",
+    "hour",
+    "iconic_taxa",
+    "month",
+    "obscuration",
+    "quality_grade",
+    "year",
+  ];
 
 const appParams: ObservationsApiParamsKeysType[] = ["view"];
 
@@ -68,6 +76,7 @@ export const observationsFieldName_InputType = {
   day: "multiselect",
   endemic: "select",
   hour: "multiselect",
+  iconic_taxa: "checkbox",
   introduced: "select",
   lat: "textInput",
   license: "textInput",
@@ -85,6 +94,7 @@ export const observationsFieldName_InputType = {
   sounds: "select",
   spam: "textInput",
   taxon_id: "textInput",
+  unobserved_by_user_id: "textInput",
   verifiable: "select",
   year: "multiselect",
 };
