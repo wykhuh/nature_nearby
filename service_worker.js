@@ -40,7 +40,14 @@ self.addEventListener("activate", (evt) => {
 self.addEventListener("fetch", (ev) => {
   let url = ev.request.url;
 
-  if (url.startsWith("https://api.inaturalist.org/v2")) {
+  if (url.startsWith("https://api.inaturalist.org/v2/search")) {
+  } else if (
+    url.startsWith("https://api.inaturalist.org/v2/taxa/autocomplete")
+  ) {
+  } else if (
+    url.startsWith("https://api.inaturalist.org/v2/users/autocomplete")
+  ) {
+  } else if (url.startsWith("https://api.inaturalist.org/v2")) {
     ev.respondWith(fetchHandler(ev));
   } else if (url.startsWith("https://api.inaturalist.org/v1")) {
     // ev.respondWith(fetchHandler(ev));
