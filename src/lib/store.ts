@@ -1,4 +1,7 @@
-import { displayAppstoreData } from "../components/AppStoreViewer/utils";
+import {
+  displayAppstoreData,
+  displayAppstoreParams,
+} from "../components/AppStoreViewer/utils";
 import { siteCC } from "../data/inat_data";
 import type { AppStoreType, NormalizedUser } from "../types/app";
 import { primaryColorSchemeName } from "./map_colors_utils";
@@ -36,7 +39,7 @@ const proxiedStore = new Proxy(structuredClone(defaultStore), {
     (target as any)[property] = value;
 
     displayAppstoreData(proxiedStore, `proxiedStore ${property.toString()}`);
-
+    displayAppstoreParams(proxiedStore);
     return true;
   },
 });

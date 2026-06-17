@@ -95,6 +95,16 @@ export function displayAppstoreData(appStore: AppStoreType, _source: string) {
   displayJson(data, displayJsonWrapperEl);
 }
 
+export function displayAppstoreParams(appStore: AppStoreType) {
+  const debug = import.meta.env?.VITE_DEBUG;
+  if (!debug || debug === "false") return;
+
+  let displayJsonWrapperEl = document.getElementById("display-json-params");
+  if (!displayJsonWrapperEl) return;
+
+  displayJson(appStore.observationsApiParams, displayJsonWrapperEl);
+}
+
 export function displayMapData(appStore: AppStoreType) {
   const debug = import.meta.env?.VITE_DEBUG;
   if (!debug || debug === "false") return;
