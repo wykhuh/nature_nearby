@@ -9,6 +9,7 @@ import {
   monarch,
   placeCity,
   placeCountry,
+  userDemo,
 } from "./fixtures/data";
 import { observationsApiNames, validView } from "../data/app_data";
 import { allTaxaRecord } from "../data/inat_data";
@@ -177,6 +178,15 @@ describe("formatAppParams", () => {
     let result = formatAppParams(store);
 
     expect(result).toBe(undefined);
+  });
+
+  test("returns unobserved_by_user_id if params have unobserved_by_user", () => {
+    let store = structuredClone(defaultStore);
+    store.observationsApiParams.unobserved_by_user_id = userDemo.id;
+
+    let result = formatAppParams(store);
+
+    expect(result).toBe(`unobserved_by_user_id=${userDemo.id}`);
   });
 
   test("does not add view if currentView is search", () => {

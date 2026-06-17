@@ -96,7 +96,11 @@ export class ViewSearch extends HTMLElement {
     }
 
     if (event.type === "input") {
-      let searches = ["search-places", "search-taxa"];
+      let searches = [
+        "search-places",
+        "search-taxa",
+        "search-unobserved-by-user",
+      ];
       // use formChangeHandler to clear search input; use autocomplete to select record
       if (searches.includes(target.id)) {
         if (target.value === "") {

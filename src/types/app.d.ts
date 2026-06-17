@@ -44,6 +44,7 @@ export type AppStoreType = {
   };
   selectedPlaces: NormalizedPlace[];
   selectedTaxa: NormalizedTaxon[];
+  selectedUnobservedByUser: NormalizedUser;
   observationsApiParams: ObservationsApiParamsType;
   viewMetadata: { name_order };
   // need to save leaflet layers to store so the app can remove the layers
@@ -98,6 +99,7 @@ type ObservationsApiParamsType = {
   swlat?: number;
   swlng?: number;
   taxon_id?: string;
+  unobserved_by_user_id?: number;
   verifiable?: boolean;
   year?: string;
 
@@ -303,4 +305,11 @@ type iNatBBox = {
   nelng: number;
   swlat: number;
   swlng: number;
+};
+
+type NormalizedUser = {
+  id: number;
+  icon?: null | string;
+  login: string;
+  name: string;
 };

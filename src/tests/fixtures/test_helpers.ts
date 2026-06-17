@@ -6,6 +6,7 @@ import {
   monarchTaxaApiResponse,
   places1APIResponse,
   places2APIResponse,
+  usersAPIResponse,
 } from "./data";
 import { allTaxaRecord, siteCC } from "../../data/inat_data";
 import { renderMap } from "../../lib/map_utils";
@@ -46,6 +47,10 @@ export function createMockServer() {
         return HttpResponse.json(monarchMilkweedTaxaApiResponse);
       },
     ),
+
+    http.get("https://api.inaturalist.org/v2/users/10", async (_args) => {
+      return HttpResponse.json(usersAPIResponse);
+    }),
 
     http.get("*", async (_args) => {
       console.error("!! request.url !!", _args.request.url);

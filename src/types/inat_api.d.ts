@@ -145,6 +145,23 @@ export interface DefaultPhoto {
   square_url: string;
   url: string;
 }
+// ==================
+// user api
+// ==================
+
+export interface iNatUsersAPI {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: UserResult[];
+}
+
+type UserResult = {
+  id: number;
+  icon: null | string;
+  login: string;
+  name: string;
+};
 
 // ==================
 // autocomplete api
@@ -175,4 +192,11 @@ export interface AutocompletePlaceResult {
 
 interface AutocompletePlacePlace extends PlaceResult {
   matched_term: string;
+}
+
+export interface iNatAutocompleteUsersAPI {
+  total_results: number;
+  page: number;
+  per_page: number;
+  results: UserResult[];
 }

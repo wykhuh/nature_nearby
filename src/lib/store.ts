@@ -1,6 +1,6 @@
 import { displayAppstoreData } from "../components/AppStoreViewer/utils";
 import { siteCC } from "../data/inat_data";
-import type { AppStoreType } from "../types/app";
+import type { AppStoreType, NormalizedUser } from "../types/app";
 import { primaryColorSchemeName } from "./map_colors_utils";
 
 export const defaultStore: AppStoreType = {
@@ -8,6 +8,7 @@ export const defaultStore: AppStoreType = {
   map: { map: null, layerControl: null, terraDraw: null },
   selectedPlaces: [],
   selectedTaxa: [],
+  selectedUnobservedByUser: {} as NormalizedUser,
   observationsApiParams: {
     spam: false,
     verifiable: true,

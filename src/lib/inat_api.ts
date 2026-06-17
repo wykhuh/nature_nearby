@@ -12,6 +12,7 @@ import type {
   iNatObservationsSpeciesAPI,
   iNatPlacesAPI,
   iNatTaxaAPI,
+  iNatUsersAPI,
 } from "../types/inat_api.d.ts";
 import { loggerUrl } from "./logger.ts";
 import { iNatOrange } from "./map_colors_utils.ts";
@@ -23,6 +24,7 @@ const places_api = "https://api.inaturalist.org/v2/places";
 export const autocomplete_taxa_api =
   "https://api.inaturalist.org/v2/taxa/autocomplete?";
 const taxa_api = "https://api.inaturalist.org/v2/taxa";
+const users_api = "https://api.inaturalist.org/v2/users";
 
 export async function inatFetch(url: string, funcName: string) {
   try {
@@ -157,6 +159,18 @@ export async function getTaxonById(ids: number | string) {
     `)`;
   let url = `${taxa_api}/${ids}?fields=${fields}`;
   let data = (await inatFetch(url, "getTaxonById")) as iNatTaxaAPI;
+  if ("results" in data) {
+    loggerUrl(url, data.total_results);
+  }
+  return data;
+}
+
+export async function getUserById(id: number) {
+  let fields = `(icon:!t,login:!t,name:!t)`;
+  let url = `${users_api}/${id}?fields=${fields}`;
+  let data = (await inatFetch(url, "getUserById")) as
+    | iNatUsersAPI
+    | iNatAPIError;
   if ("results" in data) {
     loggerUrl(url, data.total_results);
   }

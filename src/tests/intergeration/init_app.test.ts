@@ -17,6 +17,7 @@ import {
   monarch,
   milkweed,
   createCurrentLocationDemo,
+  userDemo,
 } from "../fixtures/data";
 import {
   createMockServer,
@@ -83,7 +84,15 @@ describe("initApp", () => {
       let store = structuredClone(defaultStore);
       let value: string | number = "abc";
       let paramStr = `?${field}=${value}`;
-      if (["colors", "taxon_id", "place_id", "view"].includes(field)) {
+      if (
+        [
+          "colors",
+          "taxon_id",
+          "place_id",
+          "view",
+          "unobserved_by_user_id",
+        ].includes(field)
+      ) {
         return;
       }
 
@@ -161,6 +170,19 @@ describe("initApp", () => {
     expect(store.selectedTaxa).toStrictEqual([monarch, milkweed]);
     expect(store.color).toBe(milkweed.color);
     expect(store.currentView).toBe("search");
+  });
+
+  test("if one unobserved_by_user_id, add unobserved_by_user_id to observationsApiParams and selectedUnobservedByUser", async () => {
+    let store = structuredClone(defaultStore);
+
+    await initApp(`?unobserved_by_user_id=${userDemo.id}`, "/", store);
+
+    let expected = {
+      ...defaultParams,
+      unobserved_by_user_id: userDemo.id,
+    };
+    expect(store.observationsApiParams).toStrictEqual(expected);
+    expect(store.selectedUnobservedByUser).toStrictEqual(userDemo);
   });
 });
 

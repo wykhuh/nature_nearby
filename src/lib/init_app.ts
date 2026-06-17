@@ -11,7 +11,7 @@ import {
   addDefaultTaxaRecordToMap,
   addDefaultTaxaRecordToStore,
 } from "./data_utils";
-import { getPlaceById, getTaxonById } from "./inat_api";
+import { getPlaceById, getTaxonById, getUserById } from "./inat_api";
 import {
   addiNatBBoxToMap,
   convertiNatBBoxToLngLat,
@@ -57,6 +57,8 @@ export async function initApp(
       await fetchAndSavePlace(value as any, appStore);
     } else if (key === "taxon_id") {
       await fetchAndSaveTaxa(value as any, appStore);
+    } else if (key === "unobserved_by_user_id") {
+      await fetchAndSaveUser(value as any, appStore);
     }
   }
 
@@ -109,6 +111,16 @@ async function fetchAndSaveTaxa(
         .map((t) => t.color)
         .join(",");
       appStore.color = taxon.color;
+    });
+  }
+}
+
+async function fetchAndSaveUser(value: number, appStore: AppStoreType) {
+  let data = await getUserById(value);
+
+  if (data && !("error" in data)) {
+    data.results.forEach((result) => {
+      appStore.selectedUnobservedByUser = result;
     });
   }
 }

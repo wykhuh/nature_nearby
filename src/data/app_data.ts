@@ -47,6 +47,7 @@ export const observationsFilterableImplemented: ObservationsApiParamsKeysType[] 
     "radius",
     "sounds",
     "spam",
+    "unobserved_by_user_id",
     "verifiable",
   ];
 

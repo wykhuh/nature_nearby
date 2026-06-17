@@ -8,11 +8,13 @@ import type {
   LngLatType,
   NormalizedPlace,
   NormalizedTaxon,
+  NormalizedUser,
 } from "../../types/app";
 import type {
   DefaultPhoto,
   iNatPlacesAPI,
   iNatTaxaAPI,
+  iNatUsersAPI,
 } from "../../types/inat_api";
 
 export const places1APIResponse: iNatPlacesAPI = {
@@ -149,6 +151,27 @@ export const placeCity: NormalizedPlace = {
     ],
   },
   place_type_name: "Town",
+};
+
+export const usersAPIResponse: iNatUsersAPI = {
+  total_results: 2,
+  page: 1,
+  per_page: 30,
+  results: [
+    {
+      id: 10,
+      name: "Jane Bennet",
+      login: "jane",
+      icon: "http://example.com",
+    },
+  ],
+};
+
+export let userDemo: NormalizedUser = {
+  id: 10,
+  name: "Jane Bennet",
+  login: "jane",
+  icon: "http://example.com",
 };
 
 export const placeCountry: NormalizedPlace = {
