@@ -278,7 +278,11 @@ let observationPane = html`
             data-tooltip="captive: Captive or cultivated observations"
           ></app-tooltip>
         </label>
-        ${renderTrueFalseSelect("captive", "captive")}
+        <select id="captive" name="captive">
+          <option value=""></option>
+          <option value="false">Wild</option>
+          <option value="true">Captive</option>
+        </select>
       </div>
 
       <div class="form-group multiselect">
