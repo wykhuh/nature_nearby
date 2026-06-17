@@ -14,11 +14,10 @@ import {
   normalizePlaceResult,
   removeIdfromInatApiParams,
   renderResourceGeometryLayer,
-  resetPageNumber,
 } from "./data_utils.ts";
 import { fitBoundsPlaces } from "./map_utils.ts";
-import { updateTilesForSelectedTaxa } from "./search_utils.ts";
 import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
+import { setPlaceIdFormField } from "../components/ViewSearch/utils.ts";
 
 export function setupPlacesSearch(selector: string) {
   const autoCompletePlacesJS = new autoComplete({
@@ -117,7 +116,6 @@ export async function placeSelectedHandler(
 
   // save place to store
   appStore.selectedPlaces = [...appStore.selectedPlaces, place];
-  resetPageNumber(appStore);
 
   appStore.observationsApiParams = {
     ...appStore.observationsApiParams,
@@ -134,7 +132,9 @@ export async function placeSelectedHandler(
     };
   }
 
-  await updateTilesForSelectedTaxa(appStore);
+  setPlaceIdFormField(appStore);
+
+  await updateAppState(appStore);
 
   // zoom to map to fit all selected places
   if (map) {
@@ -150,6 +150,8 @@ export async function removePlace(placeId: number, appStore: AppStoreType) {
   removeOnePlaceFromMap(appStore, placeId);
   await removeOnePlaceFromStore(appStore, placeId);
 
+  setPlaceIdFormField(appStore);
+
   updateAppState(appStore);
 }
 
@@ -160,7 +162,6 @@ export function removeOnePlaceFromStore(
   appStore.selectedPlaces = appStore.selectedPlaces.filter(
     (place) => place.id !== placeId,
   );
-  resetPageNumber(appStore);
 
   // update observationsApiParams for bounding box
   if (placeId === 0) {

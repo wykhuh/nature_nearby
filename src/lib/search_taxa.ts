@@ -14,12 +14,12 @@ import {
   normalizeTaxonResult,
   removeDefaultTaxonFromStoreAndMap,
   removeIdfromInatApiParams,
-  resetPageNumber,
 } from "./data_utils.ts";
 
 import { renderTaxonNames } from "./render_utils";
 import { getColor, appColorSchemes } from "./map_colors_utils.ts";
 import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
+import { setTaxonIdFormField } from "../components/ViewSearch/utils.ts";
 
 export function setupTaxaSearch(selector: string, appStore: AppStoreType) {
   const autoCompleteTaxaJS = new autoComplete({
@@ -132,7 +132,6 @@ export async function taxonSelectedHandler(
   };
 
   appStore.selectedTaxa = [...appStore.selectedTaxa, taxon];
-  resetPageNumber(appStore);
 
   appStore.observationsApiParams = {
     ...appStore.observationsApiParams,
@@ -148,10 +147,10 @@ export async function taxonSelectedHandler(
 
   appStore.color = color;
 
+  setTaxonIdFormField(appStore);
+
   updateAppState(appStore);
 }
-
- 
 
 // called when user deletes a taxon.
 // use debounce so if people quickly remove multiple items, app only calls API once
@@ -163,6 +162,10 @@ export async function removeTaxon(taxonId: number, appStore: AppStoreType) {
   if (appStore.selectedTaxa.length === 0) {
     await addDefaultTaxonToStoreAndMap(appStore);
   }
+
+  setTaxonIdFormField(appStore);
+
+  updateAppState(appStore);
 }
 
 export function removeOneTaxonFromStore(
@@ -173,7 +176,6 @@ export function removeOneTaxonFromStore(
     (taxon) => taxon.id !== taxonId,
   );
 
-  resetPageNumber(appStore);
   removeIdfromInatApiParams(appStore, "selectedTaxa", taxonId);
 }
 

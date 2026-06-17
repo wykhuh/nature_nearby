@@ -8,11 +8,8 @@ import type {
 import { getAutocompleteUsers } from "../lib/inat_api.ts";
 import type { iNatAutocompleteUsersAPI } from "../types/inat_api";
 
-import { resetPageNumber } from "./data_utils.ts";
-import {
-  setAutocompleteValuesToId,
-  updateAppWithFormData,
-} from "../components/ViewSearch/shared_utils.ts";
+import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
+import { setUnobservedByUserIdFormField } from "../components/ViewSearch/utils.ts";
 
 export function setupUnobservedByUserSearch(selector: string) {
   const autoCompleteUsersJS = new autoComplete({
@@ -81,24 +78,22 @@ export async function unobservedByUserSelectedHandler(
 ) {
   // add to store
   appStore.selectedUnobservedByUser = selection;
-  resetPageNumber(appStore);
 
   appStore.observationsApiParams = {
     ...appStore.observationsApiParams,
     unobserved_by_user_id: selection.id,
   };
 
-  // add unobserved_by_user_id to filters list shown in filters modal
-  const form = document.querySelector("#observations-form") as HTMLFormElement;
-  if (form) {
-    const data = new FormData(form);
+  setUnobservedByUserIdFormField(appStore);
 
-    setAutocompleteValuesToId(data, appStore);
-    updateAppWithFormData(data, appStore);
-  }
+  updateAppState(appStore);
 }
 
 export function removeUnobservedByUser(appStore: AppStoreType) {
   appStore.selectedUnobservedByUser = {} as NormalizedUser;
   delete appStore.observationsApiParams.unobserved_by_user_id;
+
+  setUnobservedByUserIdFormField(appStore);
+
+  updateAppState(appStore);
 }

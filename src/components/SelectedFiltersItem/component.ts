@@ -13,8 +13,7 @@ import type {
   NormalizedUser,
   ObservationsApiParamsKeysType,
 } from "../../types/app";
-import { updateAppState } from "../ViewSearch/shared_utils";
-import { deleteFilter } from "./utils";
+import { deleteCurrentLocationFilter, deleteFilter } from "./utils";
 
 type ParamsType = {
   field: ObservationsApiParamsKeysType;
@@ -65,7 +64,6 @@ class SelectedFiltersItem extends HTMLElement {
         );
         this.innerHTML = "";
         setInputValue(`#observations-form input#search-taxa`, "");
-        updateAppState(window.app.store);
       } else if (this.type === "place") {
         removePlace(
           Number((this.data as NormalizedPlace).id),
@@ -73,28 +71,22 @@ class SelectedFiltersItem extends HTMLElement {
         );
         this.innerHTML = "";
         setInputValue(`#observations-form input#search-places`, "");
-        updateAppState(window.app.store);
       } else if (this.type === "custom_boundary") {
         removePlace(
           Number((this.data as NormalizedPlace).id),
           window.app.store,
         );
         this.innerHTML = "";
-        updateAppState(window.app.store);
       } else if (this.type === "current_location") {
         removePlace(
           Number((this.data as NormalizedPlace).id),
           window.app.store,
         );
         this.innerHTML = "";
-        setInputValue(`#observations-form input#lat`, "");
-        setInputValue(`#observations-form input#lng`, "");
-        setSelectedOption(`#observations-form select#radius option`);
-        updateAppState(window.app.store);
+        deleteCurrentLocationFilter();
       } else if (this.type === "unobservedByUser") {
         removeUnobservedByUser(window.app.store);
         this.innerHTML = "";
-        updateAppState(window.app.store);
       } else {
         let field = (this.data as ParamsType).field;
         deleteFilter(field, (this.data as ParamsType).value, window.app.store);

@@ -28,7 +28,7 @@ export function initFilters(appStore: AppStoreType) {
   setPresetDates(appStore);
 }
 
-export function setTaxonIdField(appStore: AppStoreType) {
+export function setTaxonIdFormField(appStore: AppStoreType) {
   let inputEl = document.querySelector<HTMLInputElement>("#taxon_id");
   if (!inputEl) return;
 
@@ -37,12 +37,24 @@ export function setTaxonIdField(appStore: AppStoreType) {
   }
 }
 
-export function setPlaceIdField(appStore: AppStoreType) {
+export function setPlaceIdFormField(appStore: AppStoreType) {
   let inputEl = document.querySelector<HTMLInputElement>("#place_id");
   if (!inputEl) return;
 
   if (appStore.observationsApiParams.place_id) {
     inputEl.value = appStore.observationsApiParams.place_id;
+  }
+}
+
+export function setUnobservedByUserIdFormField(appStore: AppStoreType) {
+  let inputEl = document.querySelector<HTMLInputElement>(
+    "#unobserved_by_user_id",
+  );
+  if (!inputEl) return;
+
+  if (appStore.observationsApiParams.unobserved_by_user_id) {
+    inputEl.value =
+      appStore.observationsApiParams.unobserved_by_user_id.toString();
   }
 }
 

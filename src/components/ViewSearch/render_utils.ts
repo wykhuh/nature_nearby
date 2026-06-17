@@ -69,23 +69,21 @@ export function renderSelectedMoreFiltersList(appStore: AppStoreType) {
 
   listEl.innerHTML = "";
 
+  let ignoreFields = [
+    "license",
+    "month",
+    "order_by",
+    "order",
+    "photo_license",
+    "place_id",
+    "spam",
+    "taxon_id",
+    "unobserved_by_user_id",
+    "year",
+  ];
+
   for (let [key, value] of Object.entries(appStore.observationsApiParams)) {
-    if (
-      [
-        "license",
-        "month",
-        "order_by",
-        "order",
-        "photo_license",
-        "place_id",
-        "spam",
-        "taxon_id",
-        "year",
-        "unobserved_by_user_id",
-      ]
-        .concat(observationsApiNonFilterableNames)
-        .includes(key)
-    ) {
+    if (ignoreFields.concat(observationsApiNonFilterableNames).includes(key)) {
       continue;
     }
 

@@ -137,19 +137,3 @@ function concatParamsWithMultivalues(
   }
 }
 
-// set the form data value for autocomplete fields to use the number id from
-// app store instead of the string name that is displayed on the form UI
-export function setAutocompleteValuesToId(
-  data: FormData,
-  appStore: AppStoreType,
-) {
-  if (
-    data.get("unobserved_by_user_id") &&
-    appStore.observationsApiParams.unobserved_by_user_id
-  ) {
-    data.set(
-      "unobserved_by_user_id",
-      appStore.observationsApiParams.unobserved_by_user_id.toString(),
-    );
-  }
-}

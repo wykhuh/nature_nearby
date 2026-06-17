@@ -63,7 +63,6 @@ export function setView(
 
   // reset page
   delete appStore.observationsApiParams.page;
-  updateAppUrl(window.location, appStore);
   appStore.currentView = view;
 
   // render view

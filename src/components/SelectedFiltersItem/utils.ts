@@ -2,6 +2,7 @@ import { observationsFieldName_InputType } from "../../data/app_data";
 import {
   setInputChecked,
   setInputValue,
+  setSelectedOption,
   unsetSelectedOption,
 } from "../../lib/form_utils";
 import type {
@@ -59,5 +60,12 @@ export async function deleteFilter(
 async function updateForm(appStore: AppStoreType) {
   let form = document.querySelector("#observations-form") as HTMLFormElement;
   const data = new FormData(form);
+
   await updateAppWithFormData(data, appStore);
+}
+
+export async function deleteCurrentLocationFilter() {
+  setInputValue(`#observations-form input#lat`, "");
+  setInputValue(`#observations-form input#lng`, "");
+  setSelectedOption(`#observations-form select#radius option`);
 }

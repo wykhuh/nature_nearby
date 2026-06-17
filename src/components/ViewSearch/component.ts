@@ -12,7 +12,6 @@ import {
   setupUnobservedByUserSearch,
   unobservedByUserSelectedHandler,
 } from "../../lib/search_unobserved";
-import { updateAppUrl } from "../../lib/url_utils";
 import { debouncePromise } from "../../lib/utils";
 import type { AppStoreType } from "../../types/app";
 import {
@@ -137,20 +136,11 @@ export class ViewSearch extends HTMLElement {
     if (event.type === "selection") {
       let record = event.detail.selection.value;
       if (target.id === "search-places") {
-        placeSelectedHandler(record, appStore).then(() => {
-          renderSelectedFiltersList(appStore);
-          updateAppUrl(window.location, appStore);
-        });
+        placeSelectedHandler(record, appStore);
       } else if (target.id === "search-taxa") {
-        taxonSelectedHandler(record, appStore).then(() => {
-          renderSelectedFiltersList(appStore);
-          updateAppUrl(window.location, appStore);
-        });
+        taxonSelectedHandler(record, appStore);
       } else if (target.id === "search-unobserved-by-user") {
-        unobservedByUserSelectedHandler(record, appStore).then(() => {
-          renderSelectedFiltersList(appStore);
-          updateAppUrl(window.location, appStore);
-        });
+        unobservedByUserSelectedHandler(record, appStore);
       }
     }
   }
