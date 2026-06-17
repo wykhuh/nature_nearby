@@ -544,3 +544,9 @@ export function removeMap(appStore: AppStoreType) {
     appStore.map.terraDraw.stop();
   }
 }
+
+export function clearMapLayers(appStore: AppStoreType) {
+  appStore.taxaMapLayers = {};
+  appStore.placesMapLayers = {};
+  appStore.placesMarkers = [];
+}

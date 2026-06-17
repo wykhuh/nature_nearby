@@ -46,6 +46,8 @@ export type AppStoreType = {
   selectedTaxa: NormalizedTaxon[];
   observationsApiParams: ObservationsApiParamsType;
   viewMetadata: { name_order };
+  // need to save leaflet layers to store so the app can remove the layers
+  // when user deletes a selected resources
   taxaMapLayers: { [index: string]: TileLayer[] };
   placesMapLayers: { [index: string]: CustomGeoJSONType[] };
   placesMarkers: (LeafletMarker | LeafletCircle)[];

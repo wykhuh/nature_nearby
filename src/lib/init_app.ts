@@ -166,7 +166,9 @@ export async function initPopulateMap(
     // draw circle around current location
     let data = createCurrentLocationCircle(appStore);
     if (data) {
-      appStore.selectedPlaces.push(data.place);
+      if (appStore.selectedPlaces.find((p) => p.id === -1) === undefined) {
+        appStore.selectedPlaces.push(data.place);
+      }
       appStore.placesMarkers.push(data.marker);
     }
   }

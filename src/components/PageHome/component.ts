@@ -5,7 +5,7 @@ import "../../assets/autocomplete.css";
 import { setupComponent } from "../../lib/component_utils";
 import type { AppStoreType } from "../../types/app";
 import { template } from "./template";
-import { removeMap, renderMap } from "../../lib/map_utils.ts";
+import { clearMapLayers, removeMap, renderMap } from "../../lib/map_utils.ts";
 import { viewComponentObj } from "../../data/app_data.ts";
 import { initPopulateMap } from "../../lib/init_app.ts";
 import { renderDemoLayers } from "../../lib/dev_utils.ts";
@@ -28,6 +28,7 @@ class PageHome extends HTMLElement {
 
   disconnectedCallback() {
     removeMap(window.app.store);
+    clearMapLayers(window.app.store);
   }
 
   handleEvent(event: CustomEvent) {
