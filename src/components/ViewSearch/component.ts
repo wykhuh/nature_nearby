@@ -8,6 +8,7 @@ import {
   setupPlacesSearch,
 } from "../../lib/search_places";
 import { setupTaxaSearch, taxonSelectedHandler } from "../../lib/search_taxa";
+import { trackingLocationHandler } from "../../lib/search_tracking_location";
 import {
   setupUnobservedByUserSearch,
   unobservedByUserSelectedHandler,
@@ -44,6 +45,7 @@ export class ViewSearch extends HTMLElement {
   latitudeEl: HTMLInputElement | null = null;
   longitudeEl: HTMLInputElement | null = null;
   radiusEl: HTMLInputElement | null = null;
+  trackLocationEl: null | HTMLButtonElement = null;
 
   connectedCallback() {
     setupComponent(template, this);
@@ -54,6 +56,7 @@ export class ViewSearch extends HTMLElement {
       "#search-unobserved-by-user",
     );
     this.currentLocationEl = document.querySelector("#current-location");
+    this.trackLocationEl = document.querySelector("#track-location");
     this.moreOptionsButton = document.querySelector("#more-options");
     this.moreOptionsContainer = document.querySelector(
       "#more-options-container",
@@ -71,6 +74,7 @@ export class ViewSearch extends HTMLElement {
     this.searchSpeciesInputEl?.addEventListener("selection", this);
     this.searchUnobservedInputEl?.addEventListener("selection", this);
     this.currentLocationEl?.addEventListener("click", this);
+    this.trackLocationEl?.addEventListener("click", this);
     this.moreOptionsButton?.addEventListener("click", this);
   }
 
@@ -81,6 +85,7 @@ export class ViewSearch extends HTMLElement {
     this.searchSpeciesInputEl?.removeEventListener("selection", this);
     this.searchUnobservedInputEl?.removeEventListener("selection", this);
     this.currentLocationEl?.removeEventListener("click", this);
+    this.trackLocationEl?.removeEventListener("click", this);
     this.moreOptionsButton?.removeEventListener("click", this);
   }
 
@@ -88,10 +93,6 @@ export class ViewSearch extends HTMLElement {
     let target = event.target as HTMLInputElement;
     if (!target) return;
     if (!this.formEl) return;
-    if (!this.currentLocationEl) return;
-    if (!this.moreOptionsContainer) return;
-    if (!this.moreOptionsButton) return;
-    if (!this.moreFilterContainer) return;
 
     let appStore = window.app.store;
     if (event.type === "click") {
@@ -99,6 +100,8 @@ export class ViewSearch extends HTMLElement {
 
       if (target.name === "current-location") {
         currentLocationHandler(appStore, this);
+      } else if (target.name === "track-location") {
+        trackingLocationHandler(appStore, this);
       } else if (target.id === "more-options") {
         showMoreOptionsHandler(this);
       }

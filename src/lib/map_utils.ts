@@ -3,6 +3,7 @@ import type { Circle, GeoJSON, Map } from "leaflet";
 import markerIconUrl from "leaflet/dist/images/marker-icon.png";
 import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+import markerWalking from "../assets/images/walk_marker.png";
 import { TerraDraw, TerraDrawRectangleMode } from "terra-draw";
 import { TerraDrawLeafletAdapter } from "terra-draw-leaflet-adapter";
 
@@ -272,6 +273,12 @@ export function renderCircle(appStore: AppStoreType) {
   );
 }
 
+export function renderWalkingMarker(settings: MarkerSettings, map: Map) {
+  return L.marker([settings.latitude, settings.longitude], {
+    icon: walkMarker,
+  }).addTo(map);
+}
+
 // ====================
 // convert data
 // ====================
@@ -440,6 +447,7 @@ export function flipLatLng(coordinates: CoordinatesType): CoordinatesType {
 // basemaps
 // ====================
 
+// BUG: fetch calls are made to non-active basemaps
 export function getMapTiles(): {
   [name: string]: ObservationTilesSettingType;
 } {
@@ -550,3 +558,14 @@ export function clearMapLayers(appStore: AppStoreType) {
   appStore.placesMapLayers = {};
   appStore.placesMarkers = [];
 }
+
+// ====================
+// custom icon
+// ====================
+
+// https://commons.wikimedia.org/wiki/File:Map_marker_icon_–_Nicolas_Mollet_–_Walking_tour_–_Culture_%26_Entertainment_–_Classic.png
+const walkMarker = L.icon({
+  iconUrl: markerWalking,
+  iconSize: [32, 37],
+  iconAnchor: [15, 36],
+});

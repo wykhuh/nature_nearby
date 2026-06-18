@@ -24,8 +24,9 @@ import { decodeAppUrl } from "./url_utils";
 import { drawBBoxHandler } from "./search_bounding_box";
 import type { TerraDraw } from "terra-draw";
 import { bboxPlaceRecord } from "../data/inat_data";
-import { validGeolocationType } from "../data/app_data";
 import { addCurrentPlaceToMapAndStore } from "./search_current_place";
+import { initGeoTracking } from "./search_tracking_location";
+import { validGeolocationType } from "../data/app_data";
 
 const pathPage = {
   "/about/": "about",
@@ -42,7 +43,6 @@ export async function initApp(
   appStore: AppStoreType,
 ) {
   let urlData = decodeAppUrl(searchParams, pathname);
-
   for await (let [k, value] of Object.entries(urlData)) {
     let key = k as ObservationsApiParamsKeysType;
 
@@ -170,7 +170,9 @@ export async function initPopulateMap(
       appStore.observationsApiParams.radius = appStore.radius;
     }
 
-    if (appStore.geolocation === "current") {
+    if (appStore.geolocation === "tracking") {
+      initGeoTracking(appStore, null);
+    } else if (appStore.geolocation === "current") {
       addCurrentPlaceToMapAndStore(appStore);
     }
   }

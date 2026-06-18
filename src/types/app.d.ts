@@ -53,6 +53,8 @@ export type AppStoreType = {
   placesMapLayers: { [index: string]: CustomGeoJSONType[] };
   placesMarkers: (LeafletMarker | LeafletCircle)[];
   geolocation?: GeolocationType;
+  trackingId?: any;
+  trackingTimestamp?: number;
   color?: string;
   primaryColorScheme: keyof typeof appColorSchemes;
   radius: number;
@@ -318,4 +320,11 @@ type NormalizedUser = {
   icon?: null | string;
   login: string;
   name: string;
+};
+
+type RoutePoint = {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: number;
 };

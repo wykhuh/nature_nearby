@@ -7,6 +7,7 @@ import {
   fitBoundsPlaces,
   renderCircle,
   renderMarker,
+  renderWalkingMarker,
 } from "./map_utils";
 
 export async function currentLocationHandler(
@@ -16,6 +17,12 @@ export async function currentLocationHandler(
   let map = appStore.map.map;
   if (!map) return;
 
+  // stop tracking
+  if (appStore.trackingId) {
+    navigator.geolocation.clearWatch(appStore.trackingId);
+  }
+
+  // get location
   let data = await getLatLong();
   if (!data) {
     return;
@@ -29,7 +36,7 @@ export async function currentLocationHandler(
   appStore.geolocation = "current";
 
   addCurrentPlaceToMapAndStore(appStore);
-  await updateSearchForm(appStore, componentCtx);
+  await updateSearchFormForLocation(appStore, componentCtx);
 }
 
 export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
@@ -47,19 +54,31 @@ export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
   // update map
   appStore.placesMarkers.forEach((m) => m.remove());
   appStore.placesMarkers = [locationData.marker];
-  let marker = renderMarker(
-    {
-      latitude: appStore.observationsApiParams.lat,
-      longitude: appStore.observationsApiParams.lng,
-    },
-    appStore.map.map,
-  );
+
+  let marker;
+  if (appStore.geolocation === "tracking") {
+    marker = renderWalkingMarker(
+      {
+        latitude: appStore.observationsApiParams.lat,
+        longitude: appStore.observationsApiParams.lng,
+      },
+      appStore.map.map,
+    );
+  } else {
+    marker = renderMarker(
+      {
+        latitude: appStore.observationsApiParams.lat,
+        longitude: appStore.observationsApiParams.lng,
+      },
+      appStore.map.map,
+    );
+  }
   appStore.placesMarkers.push(marker);
 
   fitBoundsPlaces(appStore);
 }
 
-async function updateSearchForm(
+export async function updateSearchFormForLocation(
   appStore: AppStoreType,
   componentCtx: ViewSearch,
 ) {

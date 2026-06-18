@@ -30,6 +30,7 @@ import type { LatLngType } from "../../types/app";
 import { currentLocationHandler } from "../../lib/search_current_place";
 import type { ViewSearch } from "../../components/ViewSearch/component";
 import { getLatLong } from "../../lib/geolocation";
+import { validGeolocationType } from "../../data/app_data";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -60,8 +61,7 @@ beforeEach(() => {
   );
   // @ts-ignore
   global.document = dom.window.document;
-});
-beforeEach(() => {
+
   vi.mocked(getLatLong).mockResolvedValue({
     coords: {
       latitude: 10,
@@ -74,6 +74,20 @@ beforeEach(() => {
     },
     timestamp: 1,
   });
+
+  const mockGeolocation = {
+    watchPosition: vi.fn().mockImplementation((success) =>
+      success({
+        coords: {
+          latitude: 10,
+          longitude: 10,
+        },
+        timestamp: 123456,
+      }),
+    ),
+    clearWatch: vi.fn().mockImplementation(() => {}),
+  };
+  navigator.geolocation = mockGeolocation;
 });
 
 describe("removePlace", () => {
@@ -137,35 +151,42 @@ describe("removePlace", () => {
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
   });
 
-  test("remove current place from store and map", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "remove current place from store and map",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=10&lng=10&geolocation=current`, "/", store);
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(`?lat=10&lng=10&geolocation=${type}`, "/", store);
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-    });
-    expect(store.selectedPlaces).toStrictEqual([currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+      });
+      expect(store.geolocation).toBe(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
 
-    await removePlace(currentPlace.id, store);
+      await removePlace(currentPlace.id, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-    });
-    expect(store.selectedPlaces).toStrictEqual([]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
-    expect(store.placesMarkers).toStrictEqual([]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+      });
+      expect(store.selectedPlaces).toStrictEqual([]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+      expect(store.placesMarkers).toStrictEqual([]);
+    },
+  );
 
   test("remove custom boundary from store and map", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
@@ -195,186 +216,216 @@ describe("removePlace", () => {
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
   });
 
-  test("remove place when place and current place", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "remove place when place and current place",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(
-      `?place_id=${placeCity.id}&lat=10&lng=10&geolocation=current`,
-      "/",
-      store,
-    );
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(
+        `?place_id=${placeCity.id}&lat=10&lng=10&geolocation=${type}`,
+        "/",
+        store,
+      );
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      place_id: placeCity.id,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${placeCity.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        place_id: placeCity.id,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${placeCity.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
 
-    await removePlace(placeCity.id, store);
+      await removePlace(placeCity.id, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-    });
-    expect(store.selectedPlaces).toStrictEqual([currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+      });
+      expect(store.selectedPlaces).toStrictEqual([currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
+    },
+  );
 
-  test("remove current place when place and current place", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "remove current place when place and current place",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(
-      `?place_id=${placeCity.id}&lat=10&lng=10&geolocation=current`,
-      "/",
-      store,
-    );
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(
+        `?place_id=${placeCity.id}&lat=10&lng=10&geolocation=${type}`,
+        "/",
+        store,
+      );
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      place_id: placeCity.id,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${placeCity.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        place_id: placeCity.id,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${placeCity.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
 
-    await removePlace(currentPlace.id, store);
+      await removePlace(currentPlace.id, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      place_id: placeCity.id,
-    });
-    expect(store.selectedPlaces).toStrictEqual([placeCity]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${placeCity.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        place_id: placeCity.id,
+      });
+      expect(store.selectedPlaces).toStrictEqual([placeCity]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${placeCity.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([]);
+    },
+  );
 
-  test("remove custom boundary when custom boundary and current place", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
-    let customBoundary = createBboxDemo();
+  test.each(validGeolocationType)(
+    "remove custom boundary when custom boundary and current place",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
+      let customBoundary = createBboxDemo();
 
-    await initApp(
-      `?nelat=0&nelng=0&swlat=0&swlng=0&lat=10&lng=10&geolocation=current`,
-      "/",
-      store,
-    );
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(
+        `?nelat=0&nelng=0&swlat=0&swlng=0&lat=10&lng=10&geolocation=${type}`,
+        "/",
+        store,
+      );
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      nelat: 0,
-      nelng: 0,
-      swlat: 0,
-      swlng: 0,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([customBoundary, currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${customBoundary.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        nelat: 0,
+        nelng: 0,
+        swlat: 0,
+        swlng: 0,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([
+        customBoundary,
+        currentPlace,
+      ]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${customBoundary.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
 
-    await removePlace(customBoundary.id, store);
+      await removePlace(customBoundary.id, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-    });
-    expect(store.selectedPlaces).toStrictEqual([currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+      });
+      expect(store.selectedPlaces).toStrictEqual([currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
+    },
+  );
 
-  test("remove current place when custom boundary and current place", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
-    let customBoundary = createBboxDemo();
+  test.each(validGeolocationType)(
+    "remove current place when custom boundary and current place",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
+      let customBoundary = createBboxDemo();
 
-    await initApp(
-      `?nelat=0&nelng=0&swlat=0&swlng=0&lat=10&lng=10&geolocation=current`,
-      "/",
-      store,
-    );
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(
+        `?nelat=0&nelng=0&swlat=0&swlng=0&lat=10&lng=10&geolocation=${type}`,
+        "/",
+        store,
+      );
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      nelat: 0,
-      nelng: 0,
-      swlat: 0,
-      swlng: 0,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([customBoundary, currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${customBoundary.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        nelat: 0,
+        nelng: 0,
+        swlat: 0,
+        swlng: 0,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([
+        customBoundary,
+        currentPlace,
+      ]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${customBoundary.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
 
-    await removePlace(currentPlace.id, store);
+      await removePlace(currentPlace.id, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      nelat: 0,
-      nelng: 0,
-      swlat: 0,
-      swlng: 0,
-    });
-    expect(store.selectedPlaces).toStrictEqual([customBoundary]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${customBoundary.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        nelat: 0,
+        nelng: 0,
+        swlat: 0,
+        swlng: 0,
+      });
+      expect(store.selectedPlaces).toStrictEqual([customBoundary]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${customBoundary.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([]);
+    },
+  );
 });
 
 describe("drawBBoxHandler", () => {
@@ -462,42 +513,51 @@ describe("drawBBoxHandler", () => {
     ]);
   });
 
-  test("if current place exists, adds custom boundary and keep current place", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let coors: LatLngType[] = [
-      [0, 0],
-      [0, 0],
-      [0, 0],
-      [0, 0],
-      [0, 0],
-    ];
-    let customBoundary = bboxPlaceRecord(coors);
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "if current place exists, adds custom boundary and keep current place",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let coors: LatLngType[] = [
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+      ];
+      let customBoundary = bboxPlaceRecord(coors);
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`lat=10&lng=10&geolocation=current`, "/", store);
-    await initPopulateMap(map, terraDraw, layerControl, store);
-    await drawBBoxHandler(coors, store);
+      await initApp(`lat=10&lng=10&geolocation=${type}`, "/", store);
+      await initPopulateMap(map, terraDraw, layerControl, store);
+      await drawBBoxHandler(coors, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      nelat: 0,
-      nelng: 0,
-      swlat: 0,
-      swlng: 0,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([currentPlace, customBoundary]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${customBoundary.id}`,
-    ]);
-    expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
-      { lat: 10, lng: 10 },
-      { lat: 10, lng: 10 },
-    ]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        nelat: 0,
+        nelng: 0,
+        swlat: 0,
+        swlng: 0,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([
+        currentPlace,
+        customBoundary,
+      ]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${customBoundary.id}`,
+      ]);
+      expect(store.placesMarkers.map((m) => m._latlng)).toStrictEqual([
+        { lat: 10, lng: 10 },
+        { lat: 10, lng: 10 },
+      ]);
+    },
+  );
 });
 
 describe("currentLocationHandler", () => {

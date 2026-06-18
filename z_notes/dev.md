@@ -112,6 +112,7 @@ function renderDemoLayers(map: Map) {
   // -354.763069811 -363.7668646 2.615585951 -2.823088996
 }
 ```
+
 ==
 [Bug] Can't move or resize object across -180 or 180 longitude
 
@@ -120,7 +121,6 @@ https://github.com/JamesLMilner/terra-draw/issues/485
 ==
 
 Links vs buttons vs other clicky things
-
 
 https://www.makethingsaccessible.com/guides/links-vs-buttons-vs-other-clicky-things/
 
@@ -131,3 +131,16 @@ leaflet circle radius
 https://github.com/Leaflet/Leaflet/issues/5357
 
 https://stackoverflow.com/questions/16942697/geojson-circles-supported-or-not
+promise geolocation
+
+https://stackoverflow.com/questions/47984873/geolocation-inside-a-promise
+
+https://www.geeksforgeeks.org/javascript/how-to-promisify-geolocation-api-to-get-current-position-using-javascript/
+
+https://gist.github.com/varmais/74586ec1854fe288d393
+
+https://stackoverflow.com/questions/42549953/is-it-possible-to-wrap-function-such-as-geolocation-watchposition-in-a-promise
+
+==
+
+https://stackoverflow.com/questions/42549953/is-it-possible-to-wrap-function-such-as-geolocation-watchposition-in-a-promise

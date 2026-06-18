@@ -34,6 +34,12 @@ const basicFields = html`
       </div>
 
       <div class="form-group">
+        <button type="button" id="track-location" name="track-location">
+          Track location
+        </button>
+      </div>
+
+      <div class="form-group">
         <label
           >Observed Dates
           <app-tooltip

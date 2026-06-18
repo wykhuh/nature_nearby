@@ -9,6 +9,7 @@ import {
   afterEach,
   afterAll,
   beforeEach,
+  vi,
 } from "vitest";
 import { defaultStore } from "../../lib/store";
 import {
@@ -24,7 +25,11 @@ import {
   defaultParams,
   setupMapAndStore,
 } from "../fixtures/test_helpers";
-import { observationsApiNames, validView } from "../../data/app_data";
+import {
+  observationsApiNames,
+  validGeolocationType,
+  validView,
+} from "../../data/app_data";
 import { initApp, initPopulateMap } from "../../lib/init_app";
 import { allTaxaRecord, bboxPlaceRecord } from "../../data/inat_data";
 import { leafletMapLayers } from "../../lib/data_utils";
@@ -35,9 +40,25 @@ beforeAll(() => {
 });
 afterEach(() => {
   server.resetHandlers();
+  vi.restoreAllMocks();
 });
 afterAll(() => {
   server.close();
+});
+
+beforeEach(() => {
+  const mockGeolocation = {
+    watchPosition: vi.fn().mockImplementation((success) =>
+      success({
+        coords: {
+          latitude: 10,
+          longitude: 10,
+        },
+        timestamp: 123456,
+      }),
+    ),
+  };
+  navigator.geolocation = mockGeolocation;
 });
 
 beforeEach(() => {
@@ -304,149 +325,176 @@ describe("initApp and initPopulateMap", () => {
     ]);
   });
 
-  test("if lat, lng and geolocation=current, adds current place to store", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "if lat, lng and geolocation, adds current place to store",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=10&lng=10&geolocation=current`, "/", store);
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(`?lat=10&lng=10&geolocation=${type}`, "/", store);
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
-    expect(leafletMapLayers(store)).toStrictEqual([
-      "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
-      "basemap: Open Street Map",
-      "overlay: iNat grid, taxon_id 0",
-    ]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+      expect(leafletMapLayers(store)).toStrictEqual([
+        "basemap: Open Street Map",
+        "basemap: USGS Topo",
+        "basemap: USGS Imagery",
+        "basemap: Open Street Map",
+        "overlay: iNat grid, taxon_id 0",
+      ]);
+    },
+  );
 
-  test("if lat, lng, and radius, adds current place to store", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "if lat, lng, and radius, adds current place to store",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
+      await initApp(`?lat=10&lng=10&geolocation=${type}&radius=5`, "/", store);
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    await initApp(`?lat=10&lng=10&geolocation=current&radius=5`, "/", store);
-    await initPopulateMap(map, terraDraw, layerControl, store);
-
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 5,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([
-      {
-        ...currentPlace,
-        bounding_box: {
-          coordinates: [
-            [
-              [9.954340245293842, 9.955033919704059],
-              [10.045659754706168, 9.955033919704059],
-              [10.045659754706168, 10.044966080295932],
-              [9.954340245293842, 10.044966080295932],
-              [9.954340245293842, 9.955033919704059],
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 5,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([
+        {
+          ...currentPlace,
+          bounding_box: {
+            coordinates: [
+              [
+                [9.954340245293842, 9.955033919704059],
+                [10.045659754706168, 9.955033919704059],
+                [10.045659754706168, 10.044966080295932],
+                [9.954340245293842, 10.044966080295932],
+                [9.954340245293842, 9.955033919704059],
+              ],
             ],
-          ],
-          type: "Polygon",
+            type: "Polygon",
+          },
         },
-      },
-    ]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
-    expect(leafletMapLayers(store)).toStrictEqual([
-      "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
-      "basemap: Open Street Map",
-      "overlay: iNat grid, taxon_id 0",
-    ]);
-  });
+      ]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+      expect(leafletMapLayers(store)).toStrictEqual([
+        "basemap: Open Street Map",
+        "basemap: USGS Topo",
+        "basemap: USGS Imagery",
+        "basemap: Open Street Map",
+        "overlay: iNat grid, taxon_id 0",
+      ]);
+    },
+  );
 
-  test("if lat, lng, and place_id, adds current place and place to store", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "if lat, lng, and place_id, adds current place and place to store",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(
-      `?lat=10&lng=10&geolocation=current&place_id=${placeCity.id}`,
-      "/",
-      store,
-    );
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(
+        `?lat=10&lng=10&geolocation=${type}&place_id=${placeCity.id}`,
+        "/",
+        store,
+      );
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      place_id: placeCity.id,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${placeCity.id}`,
-    ]);
-    expect(leafletMapLayers(store)).toStrictEqual([
-      "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
-      "basemap: Open Street Map",
-      "place layer: city, state, 1",
-      "place layer: city, state, 1",
-      "overlay: iNat grid, taxon_id 0, place_id 1",
-    ]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        place_id: placeCity.id,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${placeCity.id}`,
+      ]);
+      expect(leafletMapLayers(store)).toStrictEqual([
+        "basemap: Open Street Map",
+        "basemap: USGS Topo",
+        "basemap: USGS Imagery",
+        "basemap: Open Street Map",
+        "place layer: city, state, 1",
+        "place layer: city, state, 1",
+        "overlay: iNat grid, taxon_id 0, place_id 1",
+      ]);
+    },
+  );
 
-  test("if lat, lng, and NE/SW, adds current place and custom boundary to store", async () => {
-    let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
+  test.each(validGeolocationType)(
+    "if lat, lng, and NE/SW, adds current place and custom boundary to store",
+    async (type) => {
+      let { map, store, terraDraw, layerControl } = setupMapAndStore();
+      let currentPlace = createCurrentLocationDemo();
 
-    await initApp(
-      `?lat=10&lng=10&nelat=0&nelng=0&swlat=0&swlng=0&geolocation=current`,
-      "/",
-      store,
-    );
-    await initPopulateMap(map, terraDraw, layerControl, store);
+      await initApp(
+        `?lat=10&lng=10&nelat=0&nelng=0&swlat=0&swlng=0&geolocation=${type}`,
+        "/",
+        store,
+      );
+      await initPopulateMap(map, terraDraw, layerControl, store);
 
-    expect(store.observationsApiParams).toStrictEqual({
-      ...defaultParams,
-      lat: 10,
-      lng: 10,
-      radius: 1.6,
-      nelat: 0,
-      nelng: 0,
-      swlat: 0,
-      swlng: 0,
-    });
-    expect(store.geolocation).toStrictEqual("current");
-    expect(store.selectedPlaces).toStrictEqual([
-      bboxPlaceRecord([
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-      ]),
-      currentPlace,
-    ]);
-    expect(Object.keys(store.placesMapLayers)).toStrictEqual([
-      `${allTaxaRecord.id}`,
-    ]);
-    expect(leafletMapLayers(store)).toStrictEqual([
-      "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
-      "basemap: Open Street Map",
-      "place layer: Custom Boundary, 0",
-      "bounding box",
-      "overlay: iNat grid, taxon_id 0",
-    ]);
-  });
+      expect(store.observationsApiParams).toStrictEqual({
+        ...defaultParams,
+        lat: 10,
+        lng: 10,
+        radius: 1.6,
+        nelat: 0,
+        nelng: 0,
+        swlat: 0,
+        swlng: 0,
+      });
+      expect(store.geolocation).toStrictEqual(type);
+      if (type === "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+      if (type == "tracking") {
+        expect(store.trackingTimestamp).toStrictEqual(123456);
+      }
+
+      expect(store.selectedPlaces).toStrictEqual([
+        bboxPlaceRecord([
+          [0, 0],
+          [0, 0],
+          [0, 0],
+          [0, 0],
+          [0, 0],
+        ]),
+        currentPlace,
+      ]);
+      expect(Object.keys(store.placesMapLayers)).toStrictEqual([
+        `${allTaxaRecord.id}`,
+      ]);
+      expect(leafletMapLayers(store)).toStrictEqual([
+        "basemap: Open Street Map",
+        "basemap: USGS Topo",
+        "basemap: USGS Imagery",
+        "basemap: Open Street Map",
+        "place layer: Custom Boundary, 0",
+        "bounding box",
+        "overlay: iNat grid, taxon_id 0",
+      ]);
+    },
+  );
 });
