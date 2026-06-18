@@ -36,7 +36,7 @@ export async function currentLocationHandler(
   appStore.geolocation = "current";
 
   addCurrentPlaceToMapAndStore(appStore);
-  await updateSearchFormForLocation(appStore, componentCtx);
+  await renderAndFetchLatLong(appStore, componentCtx);
 }
 
 export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
@@ -78,7 +78,7 @@ export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
   fitBoundsPlaces(appStore);
 }
 
-export async function updateSearchFormForLocation(
+export async function renderAndFetchLatLong(
   appStore: AppStoreType,
   componentCtx: ViewSearch,
 ) {

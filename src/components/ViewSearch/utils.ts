@@ -18,12 +18,23 @@ import { defaultStore } from "../../lib/store";
 import { updateAppState, updateAppWithFormData } from "./shared_utils";
 import type { ViewSearch } from "./component";
 
-export function initFilters(appStore: AppStoreType) {
+export function initFilters(
+  appStore: AppStoreType,
+  componentCtx: ViewSearch | null,
+) {
   populateFormFields(
     "#observations-form",
     observationsFieldName_InputType,
     appStore,
   );
+
+  if (
+    componentCtx &&
+    componentCtx.trackLocationEl &&
+    appStore.geolocation === "tracking"
+  ) {
+    componentCtx.trackLocationEl.textContent = "Stop tracking";
+  }
 
   setPresetDates(appStore);
 }
@@ -74,7 +85,7 @@ export async function resetFormHandler(appStore: AppStoreType) {
     appStore.observationsApiParams = defaultStore.observationsApiParams;
 
     // update ui
-    initFilters(appStore);
+    initFilters(appStore, null);
 
     updateAppState(appStore);
 

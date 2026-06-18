@@ -1,9 +1,13 @@
 import type { ViewSearch } from "../components/ViewSearch/component";
+import {
+  renderSelectedFiltersList,
+  renderSelectedMoreFiltersList,
+} from "../components/ViewSearch/render_utils";
 import type { AppStoreType } from "../types/app";
 
 import {
   addCurrentPlaceToMapAndStore,
-  updateSearchFormForLocation,
+  renderAndFetchLatLong,
 } from "./search_current_place";
 
 export async function trackingLocationHandler(
@@ -82,8 +86,13 @@ export async function geoTrackingSuccess(
 
   addCurrentPlaceToMapAndStore(appStore);
 
+  // update ui
+  renderSelectedFiltersList(appStore);
+  renderSelectedMoreFiltersList(appStore);
+
+  //  update ui and app state
   if (componentCtx) {
-    await updateSearchFormForLocation(appStore, componentCtx);
+    await renderAndFetchLatLong(appStore, componentCtx);
   }
 }
 

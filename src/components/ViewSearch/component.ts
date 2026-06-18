@@ -149,13 +149,16 @@ export class ViewSearch extends HTMLElement {
   }
 
   async render(appStore: AppStoreType) {
-    initFilters(appStore);
+    initFilters(appStore, this);
 
     setupPlacesSearch("#search-places");
     setupTaxaSearch("#search-taxa", appStore);
     setupUnobservedByUserSearch("#search-unobserved-by-user");
-    renderSelectedFiltersList(appStore);
-    renderSelectedMoreFiltersList(appStore);
+
+    if (appStore.geolocation !== "tracking") {
+      renderSelectedFiltersList(appStore);
+      renderSelectedMoreFiltersList(appStore);
+    }
   }
 
   formChangeHandlerDebounced = debouncePromise(this.formChangeHandler);
