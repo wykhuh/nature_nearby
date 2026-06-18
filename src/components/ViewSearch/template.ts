@@ -461,7 +461,7 @@ const nonEditablePane = html` <fieldset class="hidden">
         data-tooltip="spam: Observations marked as spam."
       ></app-tooltip
     ></label>
-    <input id="spam" disabled />
+    <input id="spam" name="spam" />
   </div>
   <div class="form-group ">
     <label for="license"
@@ -471,7 +471,7 @@ const nonEditablePane = html` <fieldset class="hidden">
         data-tooltip="license: Observation have this license."
       ></app-tooltip
     ></label>
-    <input id="license" disabled />
+    <input id="license" name="license" />
   </div>
   <div class="form-group ">
     <label for="photo_license"
@@ -481,7 +481,7 @@ const nonEditablePane = html` <fieldset class="hidden">
         data-tooltip="photo_license: Observations have at least one photo with this license."
       ></app-tooltip
     ></label>
-    <input id="photo_license" disabled />
+    <input id="photo_license" name="photo_license" />
   </div>
 
   <div class="form-group ">
@@ -492,7 +492,7 @@ const nonEditablePane = html` <fieldset class="hidden">
         data-tooltip="order_by: Attribute to sort on."
       ></app-tooltip
     ></label>
-    <input id="order_by" disabled />
+    <input id="order_by" name="order_by" />
   </div>
 
   <div class="form-group ">
@@ -503,19 +503,19 @@ const nonEditablePane = html` <fieldset class="hidden">
         data-tooltip="order: Sort order."
       ></app-tooltip
     ></label>
-    <input id="order" disabled />
+    <input id="order" name="order" />
   </div>
 
   <div class="form-group">
     <label for="place_id"
       >Places
-      <input id="place_id" name="place_id" type="text" disabled />
+      <input id="place_id" name="place_id" type="text" />
     </label>
   </div>
   <div class="form-group">
     <label for="taxon_id"
       >Species
-      <input id="taxon_id" name="taxon_id" type="text" disabled />
+      <input id="taxon_id" name="taxon_id" type="text" />
     </label>
   </div>
   <div class="form-group">
@@ -525,7 +525,6 @@ const nonEditablePane = html` <fieldset class="hidden">
         id="unobserved_by_user_id"
         name="unobserved_by_user_id"
         type="text"
-        disabled
       />
     </label>
   </div>
