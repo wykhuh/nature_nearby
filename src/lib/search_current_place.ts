@@ -26,6 +26,7 @@ export async function currentLocationHandler(
   if (appStore.observationsApiParams.radius === undefined) {
     appStore.observationsApiParams.radius = appStore.radius;
   }
+  appStore.geolocation = "current";
 
   addCurrentPlaceToMapAndStore(appStore);
   await updateSearchForm(appStore, componentCtx);

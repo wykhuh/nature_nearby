@@ -52,6 +52,7 @@ export type AppStoreType = {
   taxaMapLayers: { [index: string]: TileLayer[] };
   placesMapLayers: { [index: string]: CustomGeoJSONType[] };
   placesMarkers: (LeafletMarker | LeafletCircle)[];
+  geolocation?: GeolocationType;
   color?: string;
   primaryColorScheme: keyof typeof appColorSchemes;
   radius: number;
@@ -60,6 +61,8 @@ export type AppStoreType = {
 export interface LeafletMarker extends Marker {
   _latlng?: { lat: number; lng: number };
 }
+
+export type GeolocationType = "current" | "tracking";
 
 export interface LeafletCircle extends Circle {
   _latlng?: { lat: number; lng: number };
@@ -106,6 +109,7 @@ type ObservationsApiParamsType = {
 
   // app params
   view?: string;
+  geolocation?: GeolocationType;
 };
 
 export type ObservationsApiParamsKeysType = keyof ObservationsApiParamsType;

@@ -1,6 +1,11 @@
-import { observationsApiNames, validView } from "../data/app_data";
+import {
+  observationsApiNames,
+  validGeolocationType,
+  validView,
+} from "../data/app_data";
 import type {
   AppStoreType,
+  GeolocationType,
   ObservationsApiParamsKeysType,
   ValidAppParams,
   ValidAppParamsKeys,
@@ -17,6 +22,10 @@ export function decodeAppUrl(searchParams: string, path: string) {
     if (key === "view") {
       if (validView.includes(value as any)) {
         params[key] = value;
+      }
+    } else if (key === "geolocation") {
+      if (validGeolocationType.includes(value as GeolocationType)) {
+        params[key] = value as GeolocationType;
       }
     } else if (observationsApiNames.includes(key as ValidAppParamsKeys)) {
       let cleanedValue;
@@ -59,11 +68,19 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
     params.set("view", view);
   }
 
+  let geolocation = appStore.geolocation;
+  if (geolocation) {
+    if (validGeolocationType.includes(geolocation)) {
+      params.set("geolocation", geolocation);
+    }
+  }
+
   let processedKeys: ObservationsApiParamsKeysType[] = [
     "taxon_id",
     "place_id",
     "colors",
     "view",
+    "geolocation",
   ];
   Object.entries(appStore.observationsApiParams).forEach(([key, value]) => {
     // @ts-ignore

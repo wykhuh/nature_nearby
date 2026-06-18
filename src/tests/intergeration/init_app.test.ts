@@ -281,9 +281,8 @@ describe("initApp and initPopulateMap", () => {
     ]);
   });
 
-  test("if lat and lng, adds current place to store", async () => {
+  test("if lat, lng, adds lat and lng to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
-    let currentPlace = createCurrentLocationDemo();
 
     await initApp(`?lat=10&lng=10`, "/", store);
     await initPopulateMap(map, terraDraw, layerControl, store);
@@ -294,6 +293,31 @@ describe("initApp and initPopulateMap", () => {
       lng: 10,
       radius: 1.6,
     });
+    expect(store.selectedPlaces).toStrictEqual([]);
+    expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
+    expect(leafletMapLayers(store)).toStrictEqual([
+      "basemap: Open Street Map",
+      "basemap: USGS Topo",
+      "basemap: USGS Imagery",
+      "basemap: Open Street Map",
+      "overlay: iNat grid, taxon_id 0",
+    ]);
+  });
+
+  test("if lat, lng and geolocation=current, adds current place to store", async () => {
+    let { map, store, terraDraw, layerControl } = setupMapAndStore();
+    let currentPlace = createCurrentLocationDemo();
+
+    await initApp(`?lat=10&lng=10&geolocation=current`, "/", store);
+    await initPopulateMap(map, terraDraw, layerControl, store);
+
+    expect(store.observationsApiParams).toStrictEqual({
+      ...defaultParams,
+      lat: 10,
+      lng: 10,
+      radius: 1.6,
+    });
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([currentPlace]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
     expect(leafletMapLayers(store)).toStrictEqual([
@@ -309,7 +333,7 @@ describe("initApp and initPopulateMap", () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
     let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=10&lng=10&radius=5`, "/", store);
+    await initApp(`?lat=10&lng=10&geolocation=current&radius=5`, "/", store);
     await initPopulateMap(map, terraDraw, layerControl, store);
 
     expect(store.observationsApiParams).toStrictEqual({
@@ -318,6 +342,7 @@ describe("initApp and initPopulateMap", () => {
       lng: 10,
       radius: 5,
     });
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([
       {
         ...currentPlace,
@@ -349,7 +374,11 @@ describe("initApp and initPopulateMap", () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
     let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=10&lng=10&place_id=${placeCity.id}`, "/", store);
+    await initApp(
+      `?lat=10&lng=10&geolocation=current&place_id=${placeCity.id}`,
+      "/",
+      store,
+    );
     await initPopulateMap(map, terraDraw, layerControl, store);
 
     expect(store.observationsApiParams).toStrictEqual({
@@ -359,6 +388,7 @@ describe("initApp and initPopulateMap", () => {
       radius: 1.6,
       place_id: placeCity.id,
     });
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([placeCity, currentPlace]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([
       `${placeCity.id}`,
@@ -378,7 +408,11 @@ describe("initApp and initPopulateMap", () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
     let currentPlace = createCurrentLocationDemo();
 
-    await initApp(`?lat=10&lng=10&nelat=0&nelng=0&swlat=0&swlng=0`, "/", store);
+    await initApp(
+      `?lat=10&lng=10&nelat=0&nelng=0&swlat=0&swlng=0&geolocation=current`,
+      "/",
+      store,
+    );
     await initPopulateMap(map, terraDraw, layerControl, store);
 
     expect(store.observationsApiParams).toStrictEqual({
@@ -391,6 +425,7 @@ describe("initApp and initPopulateMap", () => {
       swlat: 0,
       swlng: 0,
     });
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([
       bboxPlaceRecord([
         [0, 0],

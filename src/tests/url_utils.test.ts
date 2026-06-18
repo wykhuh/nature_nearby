@@ -11,7 +11,11 @@ import {
   placeCountry,
   userDemo,
 } from "./fixtures/data";
-import { observationsApiNames, validView } from "../data/app_data";
+import {
+  observationsApiNames,
+  validGeolocationType,
+  validView,
+} from "../data/app_data";
 import { allTaxaRecord } from "../data/inat_data";
 
 describe("decodeAppUrl", () => {
@@ -80,6 +84,18 @@ describe("decodeAppUrl", () => {
 
     expect(results).toStrictEqual({});
   });
+
+  test.each(validGeolocationType)("sets geolcation if it is valid", (type) => {
+    let results = decodeAppUrl(`?geolocation=${type}`, "/");
+
+    expect(results).toStrictEqual({ geolocation: type });
+  });
+
+  test("ignores invalid geolcation values", () => {
+    let results = decodeAppUrl(`?tracking=bad`, "/");
+
+    expect(results).toStrictEqual({});
+  });
 });
 
 describe("formatAppParams", () => {
@@ -117,27 +133,47 @@ describe("formatAppParams", () => {
     expect(result).toBe(`place_id=${placeCity.id}`);
   });
 
-  test("returns lat and lng, ignore place_id if store has current location", () => {
+  test("returns lat and lng if store has lat and lng", () => {
     let store = structuredClone(defaultStore);
     store.observationsApiParams.lat = 0;
     store.observationsApiParams.lng = 10;
-    store.selectedPlaces = [createCurrentLocationDemo()];
 
     let result = formatAppParams(store);
 
     expect(result).toBe(`lat=0&lng=10`);
   });
 
-  test("returns lat and lng, place_id if store has selected place and current location", () => {
-    let store = structuredClone(defaultStore);
-    store.observationsApiParams.lat = 0;
-    store.observationsApiParams.lng = 10;
-    store.selectedPlaces = [createCurrentLocationDemo(), placeCity];
+  test.each(validGeolocationType)(
+    "returns lat and lng, ignore place_id if store has geolocation and current location",
+    (type) => {
+      let store = structuredClone(defaultStore);
+      store.observationsApiParams.lat = 0;
+      store.observationsApiParams.lng = 10;
+      store.geolocation = type;
+      store.selectedPlaces = [createCurrentLocationDemo()];
 
-    let result = formatAppParams(store);
+      let result = formatAppParams(store);
 
-    expect(result).toBe(`place_id=${placeCity.id}&lat=0&lng=10`);
-  });
+      expect(result).toBe(`geolocation=${type}&lat=0&lng=10`);
+    },
+  );
+
+  test.each(validGeolocationType)(
+    "returns lat and lng, place_id if store has selected place, geolocation, and current location",
+    (type) => {
+      let store = structuredClone(defaultStore);
+      store.observationsApiParams.lat = 0;
+      store.observationsApiParams.lng = 10;
+      store.geolocation = type;
+      store.selectedPlaces = [createCurrentLocationDemo(), placeCity];
+
+      let result = formatAppParams(store);
+
+      expect(result).toBe(
+        `place_id=${placeCity.id}&geolocation=${type}&lat=0&lng=10`,
+      );
+    },
+  );
 
   test("returns taxon_id if store has taxon", () => {
     let store = structuredClone(defaultStore);
@@ -214,6 +250,25 @@ describe("formatAppParams", () => {
     let store = structuredClone(defaultStore);
     // @ts-ignore
     store.currentView = "bad";
+
+    let result = formatAppParams(store);
+
+    expect(result).toStrictEqual("");
+  });
+
+  test.each(validGeolocationType)("adds geolocation if it is valid", (type) => {
+    let store = structuredClone(defaultStore);
+    store.geolocation = type;
+
+    let result = formatAppParams(store);
+
+    expect(result).toStrictEqual(`geolocation=${type}`);
+  });
+
+  test("ignore geolocation if it is invalid", () => {
+    let store = structuredClone(defaultStore);
+    // @ts-ignore
+    store.geolocation = "bad";
 
     let result = formatAppParams(store);
 

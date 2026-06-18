@@ -2,6 +2,7 @@ import type { Map } from "leaflet";
 import type {
   AppPage,
   AppStoreType,
+  GeolocationType,
   LngLatType,
   ObservationsApiParamsKeysType,
   ValidViews,
@@ -16,7 +17,6 @@ import {
   addiNatBBoxToMap,
   convertiNatBBoxToLngLat,
   fitBoundsPlaces,
-  renderMarker,
   renderSelectedPlacesBoundaries,
 } from "./map_utils";
 import { updateTilesForSelectedTaxa } from "./search_utils";
@@ -24,7 +24,8 @@ import { decodeAppUrl } from "./url_utils";
 import { drawBBoxHandler } from "./search_bounding_box";
 import type { TerraDraw } from "terra-draw";
 import { bboxPlaceRecord } from "../data/inat_data";
-import { createCurrentLocationCircle } from "./search_current_place";
+import { validGeolocationType } from "../data/app_data";
+import { addCurrentPlaceToMapAndStore } from "./search_current_place";
 
 const pathPage = {
   "/about/": "about",
@@ -47,6 +48,10 @@ export async function initApp(
 
     if (key === "view") {
       appStore.currentView = value as ValidViews;
+    } else if (key === "geolocation") {
+      if (validGeolocationType.includes(value as GeolocationType)) {
+        appStore.geolocation = value as GeolocationType;
+      }
     } else {
       // populate observationsApiParams
       appStore.observationsApiParams[key] = value as any;
@@ -165,23 +170,8 @@ export async function initPopulateMap(
       appStore.observationsApiParams.radius = appStore.radius;
     }
 
-    // map icon marker
-    let marker = renderMarker(
-      {
-        latitude: appStore.observationsApiParams.lat,
-        longitude: appStore.observationsApiParams.lng,
-      },
-      appStore.map.map,
-    );
-    appStore.placesMarkers.push(marker);
-
-    // draw circle around current location
-    let data = createCurrentLocationCircle(appStore);
-    if (data) {
-      if (appStore.selectedPlaces.find((p) => p.id === -1) === undefined) {
-        appStore.selectedPlaces.push(data.place);
-      }
-      appStore.placesMarkers.push(data.marker);
+    if (appStore.geolocation === "current") {
+      addCurrentPlaceToMapAndStore(appStore);
     }
   }
 

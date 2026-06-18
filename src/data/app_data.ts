@@ -1,4 +1,5 @@
 import type {
+  GeolocationType,
   NameOrderType,
   ObservationsApiParamsKeysType,
   ValidViews,
@@ -98,3 +99,5 @@ export const observationsFieldName_InputType = {
   verifiable: "select",
   year: "multiselect",
 };
+
+export const validGeolocationType: GeolocationType[] = ["current", "tracking"];

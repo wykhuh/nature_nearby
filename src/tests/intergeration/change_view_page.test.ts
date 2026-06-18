@@ -90,6 +90,7 @@ describe("switch pages", () => {
       lng: 10,
       radius: store.radius,
     });
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([currentPlace]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
     expect(Object.keys(store.taxaMapLayers)).toStrictEqual(["0"]);
@@ -99,6 +100,7 @@ describe("switch pages", () => {
     removeMap(store);
     clearMapLayers(store);
 
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([currentPlace]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
     expect(Object.keys(store.taxaMapLayers)).toStrictEqual([]);
@@ -119,6 +121,7 @@ describe("switch pages", () => {
       lng: 10,
       radius: store.radius,
     });
+    expect(store.geolocation).toStrictEqual("current");
     expect(store.selectedPlaces).toStrictEqual([currentPlace]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual(["-1"]);
     expect(Object.keys(store.taxaMapLayers)).toStrictEqual(["0"]);
