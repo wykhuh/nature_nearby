@@ -281,13 +281,7 @@ let antimerdianCoorsPostive: LngLatType[][][] = [
   ],
 ];
 
-let expectedMapLayers = [
-  "basemap: Open Street Map",
-  "basemap: USGS Topo",
-  "basemap: USGS Imagery",
-  "basemap: Open Street Map",
-  "bounding box",
-];
+let expectedMapLayers = ["basemap: Open Street Map", "bounding box"];
 
 describe("normalizeTerraDrawLngLat", () => {
   test.each(lonLatValid)(

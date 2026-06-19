@@ -244,9 +244,6 @@ describe("initApp and initPopulateMap", () => {
     ]);
     expect(leafletMapLayers(store)).toStrictEqual([
       "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
-      "basemap: Open Street Map",
       "place layer: city, state, 1",
       "place layer: city, state, 1",
       "overlay: iNat grid, taxon_id 0, place_id 1",
@@ -273,9 +270,6 @@ describe("initApp and initPopulateMap", () => {
       `${placeCountry.id}`,
     ]);
     expect(leafletMapLayers(store)).toStrictEqual([
-      "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
       "basemap: Open Street Map",
       "place layer: city, state, 1",
       "place layer: city, state, 1",
@@ -312,9 +306,6 @@ describe("initApp and initPopulateMap", () => {
     ]);
     expect(leafletMapLayers(store)).toStrictEqual([
       "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
-      "basemap: Open Street Map",
       "place layer: Custom Boundary, 0",
       "bounding box",
       "overlay: iNat grid, taxon_id 0",
@@ -335,9 +326,6 @@ describe("initApp and initPopulateMap", () => {
     expect(store.selectedPlaces).toStrictEqual([]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
     expect(leafletMapLayers(store)).toStrictEqual([
-      "basemap: Open Street Map",
-      "basemap: USGS Topo",
-      "basemap: USGS Imagery",
       "basemap: Open Street Map",
       "overlay: iNat grid, taxon_id 0",
     ]);
@@ -368,9 +356,6 @@ describe("initApp and initPopulateMap", () => {
       expect(store.selectedPlaces).toStrictEqual([currentPlace]);
       expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
       expect(leafletMapLayers(store)).toStrictEqual([
-        "basemap: Open Street Map",
-        "basemap: USGS Topo",
-        "basemap: USGS Imagery",
         "basemap: Open Street Map",
         "overlay: iNat grid, taxon_id 0",
       ]);
@@ -419,9 +404,6 @@ describe("initApp and initPopulateMap", () => {
       expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
       expect(leafletMapLayers(store)).toStrictEqual([
         "basemap: Open Street Map",
-        "basemap: USGS Topo",
-        "basemap: USGS Imagery",
-        "basemap: Open Street Map",
         "overlay: iNat grid, taxon_id 0",
       ]);
     },
@@ -459,9 +441,6 @@ describe("initApp and initPopulateMap", () => {
         `${placeCity.id}`,
       ]);
       expect(leafletMapLayers(store)).toStrictEqual([
-        "basemap: Open Street Map",
-        "basemap: USGS Topo",
-        "basemap: USGS Imagery",
         "basemap: Open Street Map",
         "place layer: city, state, 1",
         "place layer: city, state, 1",
@@ -518,9 +497,6 @@ describe("initApp and initPopulateMap", () => {
         `${allTaxaRecord.id}`,
       ]);
       expect(leafletMapLayers(store)).toStrictEqual([
-        "basemap: Open Street Map",
-        "basemap: USGS Topo",
-        "basemap: USGS Imagery",
         "basemap: Open Street Map",
         "place layer: Custom Boundary, 0",
         "bounding box",
