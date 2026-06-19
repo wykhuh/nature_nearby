@@ -39,7 +39,7 @@ export function changeViewHandler(
   // update map tiles
   updateTilesForSelectedTaxaDebounced(appStore);
   // update header count
-  window.dispatchEvent(new Event("observationsChange"));
+  window.dispatchEvent(new Event("updateHeaderCount"));
 }
 
 export function renderCard(

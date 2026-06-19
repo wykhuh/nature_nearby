@@ -188,6 +188,8 @@ export async function initPopulateMap(
 
   fitBoundsPlaces(appStore);
 
+  window.dispatchEvent(new Event("updateHeaderCount"));
+
   return map;
 }
 

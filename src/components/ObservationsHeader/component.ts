@@ -22,7 +22,7 @@ export class ObservationHeader extends HTMLElement {
     this.speciesCtrlEl = this.querySelector("#view-species");
 
     window.addEventListener("popstateAfter", this);
-    window.addEventListener("observationsChange", this);
+    window.addEventListener("updateHeaderCount", this);
     document
       .querySelectorAll("#observations-header button")
       .forEach((button) => {
@@ -32,7 +32,7 @@ export class ObservationHeader extends HTMLElement {
 
   disconnectedCallback() {
     window.removeEventListener("popstateAfter", this);
-    window.removeEventListener("observationsChange", this);
+    window.removeEventListener("updateHeaderCount", this);
     document
       .querySelectorAll("#observations-header button")
       .forEach((button) => {
@@ -47,7 +47,7 @@ export class ObservationHeader extends HTMLElement {
     // update header counts
     // wait for storePopulated event to fetch counts so api request will have
     // correct params
-    let updateCountsEvents = ["observationsChange", "popstateAfter"];
+    let updateCountsEvents = ["popstateAfter", "updateHeaderCount"];
     if (updateCountsEvents.includes(event.type)) {
       updateCountsHeader(window.app.store);
     }
@@ -63,7 +63,6 @@ export class ObservationHeader extends HTMLElement {
   }
 
   async render(appStore: AppStoreType) {
-    updateCountsHeader(appStore);
     initFilters(appStore, this);
   }
 }

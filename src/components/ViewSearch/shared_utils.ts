@@ -117,7 +117,7 @@ export async function updateAppState(appStore: AppStoreType) {
   // update url
   updateAppUrl(window.location, appStore);
   // update header count
-  window.dispatchEvent(new Event("observationsChange"));
+  window.dispatchEvent(new Event("updateHeaderCount"));
   // update map
   await updateTilesForSelectedTaxaDebounced(appStore);
 }
