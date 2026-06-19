@@ -9,6 +9,7 @@ import { clearMapLayers, removeMap, renderMap } from "../../lib/map_utils.ts";
 import { viewComponentObj } from "../../data/app_data.ts";
 import { initPopulateMap } from "../../lib/init_app.ts";
 import { renderDemoLayers } from "../../lib/dev_utils.ts";
+import { geoTrackingHandler } from "../../lib/search_tracking_location.ts";
 
 class PageHome extends HTMLElement {
   constructor() {
@@ -24,16 +25,22 @@ class PageHome extends HTMLElement {
     this.viewContainerEl = this.querySelector("#view-container");
 
     this.render(window.app.store);
+    window.addEventListener("geoTrackingSuccess", this);
   }
 
   disconnectedCallback() {
     removeMap(window.app.store);
     clearMapLayers(window.app.store);
+    window.removeEventListener("geoTrackingSuccess", this);
   }
 
   handleEvent(event: CustomEvent) {
     let target = event.target as HTMLInputElement;
     if (!target) return;
+
+    if (event.type === "geoTrackingSuccess") {
+      geoTrackingHandler(event.detail, window.app.store);
+    }
   }
 
   async render(appStore: AppStoreType) {

@@ -24,7 +24,10 @@ import { decodeAppUrl } from "./url_utils";
 import { drawBBoxHandler } from "./search_bounding_box";
 import type { TerraDraw } from "terra-draw";
 import { bboxPlaceRecord } from "../data/inat_data";
-import { addCurrentPlaceToMapAndStore } from "./search_current_place";
+import {
+  addCurrentPlaceToMapAndStore,
+  initGeoCurrent,
+} from "./search_current_place";
 import { initGeoTracking } from "./search_tracking_location";
 import { validGeolocationType } from "../data/app_data";
 
@@ -84,6 +87,18 @@ export async function initApp(
   if (urlData.taxon_id === undefined) {
     // add default taxon if no search params
     addDefaultTaxaRecordToStore(appStore);
+  }
+
+  if (appStore.geolocation) {
+    if (appStore.observationsApiParams.radius === undefined) {
+      appStore.observationsApiParams.radius = appStore.radius;
+    }
+
+    if (appStore.geolocation === "tracking") {
+      initGeoTracking(appStore);
+    } else if (appStore.geolocation === "current") {
+      await initGeoCurrent(appStore);
+    }
   }
 }
 
@@ -162,33 +177,28 @@ export async function initPopulateMap(
     addiNatBBoxToMap(appStore);
   }
 
-  if (
-    appStore.observationsApiParams.lat !== undefined &&
-    appStore.observationsApiParams.lng !== undefined
-  ) {
-    if (appStore.observationsApiParams.radius === undefined) {
-      appStore.observationsApiParams.radius = appStore.radius;
-    }
-
-    if (appStore.geolocation === "tracking") {
-      initGeoTracking(appStore, null);
-    } else if (appStore.geolocation === "current") {
-      addCurrentPlaceToMapAndStore(appStore);
-    }
+  if (appStore.geolocation === "current") {
+    addCurrentPlaceToMapAndStore(appStore);
   }
 
-  // load default or selected taxa map layer
-  if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {
-    // load default Taxa map tiles
-    await addDefaultTaxaRecordToMap(appStore);
-  } else {
-    // update taxa tiles for selected taxa
-    await updateTilesForSelectedTaxa(appStore);
+  // add map taxa layers
+  if (appStore.geolocation !== "tracking") {
+    // load default or selected taxa map layer
+    if (
+      appStore.selectedTaxa.length === 1 &&
+      appStore.selectedTaxa[0].id === 0
+    ) {
+      // load default Taxa map tiles
+      await addDefaultTaxaRecordToMap(appStore);
+    } else {
+      // update taxa tiles for selected taxa
+      await updateTilesForSelectedTaxa(appStore);
+    }
+
+    window.dispatchEvent(new Event("updateHeaderCount"));
   }
 
   fitBoundsPlaces(appStore);
-
-  window.dispatchEvent(new Event("updateHeaderCount"));
 
   return map;
 }

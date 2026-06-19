@@ -17,6 +17,12 @@ import {
 import { defaultStore } from "../../lib/store";
 import { updateAppState, updateAppWithFormData } from "./shared_utils";
 import type { ViewSearch } from "./component";
+import {
+  addCurrentPlaceToMapAndStore,
+  initGeoCurrent,
+} from "../../lib/search_current_place";
+import { updateFormLatLong } from "./render_utils";
+import { initGeoTracking } from "../../lib/search_tracking_location";
 
 export function initFilters(
   appStore: AppStoreType,
@@ -184,5 +190,53 @@ export function showMoreOptionsHandler(componentCtx: ViewSearch) {
     componentCtx.moreOptionsButton.textContent = "More Options";
     componentCtx.moreOptionsContainer.classList.add("hidden");
     componentCtx.moreFilterContainer.classList.add("hidden");
+  }
+}
+
+export async function currentLocationHandler(
+  appStore: AppStoreType,
+  componentCtx: ViewSearch,
+) {
+  let map = appStore.map.map;
+  if (!map) return;
+
+  // stop tracking
+  delete appStore.trackingTimestamp;
+  if (appStore.trackingId) {
+    navigator.geolocation.clearWatch(appStore.trackingId);
+    delete appStore.trackingId;
+  }
+
+  await initGeoCurrent(appStore);
+  addCurrentPlaceToMapAndStore(appStore);
+  updateFormLatLong(appStore, componentCtx);
+  await componentCtx.formChangeHandlerDebounced(componentCtx.formEl);
+}
+
+export async function trackingLocationHandler(
+  appStore: AppStoreType,
+  componentCtx: ViewSearch,
+) {
+  if (!componentCtx.trackLocationEl) return;
+  if (!navigator.geolocation) {
+    return;
+  }
+
+  // stop tracking
+  if (appStore.geolocation === "tracking") {
+    delete appStore.geolocation;
+    
+    delete appStore.trackingTimestamp;
+    if (appStore.trackingId) {
+      navigator.geolocation.clearWatch(appStore.trackingId);
+      delete appStore.trackingId;
+    }
+    componentCtx.trackLocationEl.textContent = "Track location";
+
+    // start tracking
+  } else {
+    initGeoTracking(appStore);
+
+    componentCtx.trackLocationEl.textContent = "Stop tracking";
   }
 }

@@ -5,7 +5,6 @@ import type {
   AppStoreSelectedResourcesKeysType,
   AppStoreType,
   CustomLayerOptionsType,
-  MapTilesAPIParamsType,
   NormalizedPlace,
   NormalizedTaxon,
   ObservationsApiParamsKeysType,
@@ -124,9 +123,8 @@ export async function fetchiNatMapDataForTaxon(
   if (map === null) return;
   if (layerControl === null) return;
 
-  let mapParams = {} as MapTilesAPIParamsType;
   let params = cleanupObservationsMapParams(appStore.observationsApiParams);
-  mapParams = {
+  let mapParams = {
     ...params,
     color: taxonObj.color,
   };
@@ -138,7 +136,7 @@ export async function fetchiNatMapDataForTaxon(
   let { iNatGrid, iNatHeatmap, iNatTaxonRange, iNatPoint } = getiNatMapTiles(
     mapParams,
     taxonObj,
-    appStore
+    appStore,
   );
 
   let iNatGridLayer = addOverlayToMap(iNatGrid, map, layerControl, true);

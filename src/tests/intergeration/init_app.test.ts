@@ -33,6 +33,7 @@ import {
 import { initApp, initPopulateMap } from "../../lib/init_app";
 import { allTaxaRecord, bboxPlaceRecord } from "../../data/inat_data";
 import { leafletMapLayers } from "../../lib/data_utils";
+import { geoTrackingHandler } from "../../lib/search_tracking_location";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -48,6 +49,15 @@ afterAll(() => {
 
 beforeEach(() => {
   const mockGeolocation = {
+    getCurrentPosition: vi.fn().mockImplementation((success) =>
+      success({
+        coords: {
+          latitude: 10,
+          longitude: 10,
+        },
+        timestamp: 123456,
+      }),
+    ),
     watchPosition: vi.fn().mockImplementation((success) =>
       success({
         coords: {
@@ -58,6 +68,7 @@ beforeEach(() => {
       }),
     ),
   };
+  // @ts-ignore
   navigator.geolocation = mockGeolocation;
 });
 
@@ -75,6 +86,14 @@ beforeEach(() => {
   // @ts-ignore
   global.document = dom.window.document;
 });
+
+let trackingData = {
+  coords: {
+    latitude: 10,
+    longitude: 10,
+  },
+  timestamp: 123456,
+} as GeolocationPosition;
 
 describe("initApp", () => {
   test("if no search params, set observationsApiParams to default params ", async () => {
@@ -302,7 +321,7 @@ describe("initApp and initPopulateMap", () => {
     ]);
   });
 
-  test("if lat, lng, adds lat and lng to store", async () => {
+  test("if lat and lng, adds lat and lng to store", async () => {
     let { map, store, terraDraw, layerControl } = setupMapAndStore();
 
     await initApp(`?lat=10&lng=10`, "/", store);
@@ -312,7 +331,6 @@ describe("initApp and initPopulateMap", () => {
       ...defaultParams,
       lat: 10,
       lng: 10,
-      radius: 1.6,
     });
     expect(store.selectedPlaces).toStrictEqual([]);
     expect(Object.keys(store.placesMapLayers)).toStrictEqual([]);
@@ -331,8 +349,11 @@ describe("initApp and initPopulateMap", () => {
       let { map, store, terraDraw, layerControl } = setupMapAndStore();
       let currentPlace = createCurrentLocationDemo();
 
-      await initApp(`?lat=10&lng=10&geolocation=${type}`, "/", store);
+      await initApp(`?geolocation=${type}`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -361,8 +382,12 @@ describe("initApp and initPopulateMap", () => {
     async (type) => {
       let { map, store, terraDraw, layerControl } = setupMapAndStore();
       let currentPlace = createCurrentLocationDemo();
-      await initApp(`?lat=10&lng=10&geolocation=${type}&radius=5`, "/", store);
+
+      await initApp(`?geolocation=${type}&radius=5`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -409,11 +434,14 @@ describe("initApp and initPopulateMap", () => {
       let currentPlace = createCurrentLocationDemo();
 
       await initApp(
-        `?lat=10&lng=10&geolocation=${type}&place_id=${placeCity.id}`,
+        `?geolocation=${type}&place_id=${placeCity.id}`,
         "/",
         store,
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -449,11 +477,14 @@ describe("initApp and initPopulateMap", () => {
       let currentPlace = createCurrentLocationDemo();
 
       await initApp(
-        `?lat=10&lng=10&nelat=0&nelng=0&swlat=0&swlng=0&geolocation=${type}`,
+        `?nelat=0&nelng=0&swlat=0&swlng=0&geolocation=${type}`,
         "/",
         store,
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,

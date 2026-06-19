@@ -27,10 +27,11 @@ import { bboxPlaceRecord } from "../../data/inat_data";
 import { removePlace } from "../../lib/search_places";
 import { drawBBoxHandler } from "../../lib/search_bounding_box";
 import type { LatLngType } from "../../types/app";
-import { currentLocationHandler } from "../../lib/search_current_place";
+import { currentLocationHandler } from "../../components/ViewSearch/utils";
 import type { ViewSearch } from "../../components/ViewSearch/component";
 import { getLatLong } from "../../lib/geolocation";
 import { validGeolocationType } from "../../data/app_data";
+import { geoTrackingHandler } from "../../lib/search_tracking_location";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -76,6 +77,15 @@ beforeEach(() => {
   });
 
   const mockGeolocation = {
+    getCurrentPosition: vi.fn().mockImplementation((success) =>
+      success({
+        coords: {
+          latitude: 10,
+          longitude: 10,
+        },
+        timestamp: 123456,
+      }),
+    ),
     watchPosition: vi.fn().mockImplementation((success) =>
       success({
         coords: {
@@ -87,8 +97,17 @@ beforeEach(() => {
     ),
     clearWatch: vi.fn().mockImplementation(() => {}),
   };
+  // @ts-ignore
   navigator.geolocation = mockGeolocation;
 });
+
+let trackingData = {
+  coords: {
+    latitude: 10,
+    longitude: 10,
+  },
+  timestamp: 123456,
+} as GeolocationPosition;
 
 describe("removePlace", () => {
   test("remove one place from store and map", async () => {
@@ -159,6 +178,9 @@ describe("removePlace", () => {
 
       await initApp(`?lat=10&lng=10&geolocation=${type}`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -228,6 +250,9 @@ describe("removePlace", () => {
         store,
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -278,6 +303,9 @@ describe("removePlace", () => {
         store,
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -326,6 +354,9 @@ describe("removePlace", () => {
         store,
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -383,6 +414,9 @@ describe("removePlace", () => {
         store,
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -530,6 +564,9 @@ describe("drawBBoxHandler", () => {
       await initApp(`lat=10&lng=10&geolocation=${type}`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
       await drawBBoxHandler(coors, store);
+      if (type === "tracking") {
+        await geoTrackingHandler(trackingData, store);
+      }
 
       expect(store.observationsApiParams).toStrictEqual({
         ...defaultParams,
@@ -545,10 +582,14 @@ describe("drawBBoxHandler", () => {
       if (type === "tracking") {
         expect(store.trackingTimestamp).toStrictEqual(123456);
       }
-      expect(store.selectedPlaces).toStrictEqual([
-        currentPlace,
-        customBoundary,
-      ]);
+
+      let places;
+      if (type === "tracking") {
+        places = [customBoundary, currentPlace];
+      } else {
+        places = [currentPlace, customBoundary];
+      }
+      expect(store.selectedPlaces).toStrictEqual(places);
       expect(Object.keys(store.placesMapLayers)).toStrictEqual([
         `${customBoundary.id}`,
       ]);

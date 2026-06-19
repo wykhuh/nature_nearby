@@ -1,4 +1,3 @@
-import type { ViewSearch } from "../components/ViewSearch/component";
 import { currentLocationPlaceRecord } from "../data/inat_data";
 import type { AppStoreType } from "../types/app";
 import { getLatLong } from "./geolocation";
@@ -10,33 +9,26 @@ import {
   renderWalkingMarker,
 } from "./map_utils";
 
-export async function currentLocationHandler(
-  appStore: AppStoreType,
-  componentCtx: ViewSearch,
-) {
-  let map = appStore.map.map;
-  if (!map) return;
-
-  // stop tracking
-  if (appStore.trackingId) {
-    navigator.geolocation.clearWatch(appStore.trackingId);
+export async function initGeoCurrent(appStore: AppStoreType) {
+  let data;
+  // get location
+  try {
+    data = await getLatLong();
+  } catch (error) {
+    console.log(error);
+    return;
   }
 
-  // get location
-  let data = await getLatLong();
   if (!data) {
     return;
   }
 
+  appStore.geolocation = "current";
   appStore.observationsApiParams.lat = data.coords.latitude;
   appStore.observationsApiParams.lng = data.coords.longitude;
   if (appStore.observationsApiParams.radius === undefined) {
     appStore.observationsApiParams.radius = appStore.radius;
   }
-  appStore.geolocation = "current";
-
-  addCurrentPlaceToMapAndStore(appStore);
-  await renderAndFetchLatLong(appStore, componentCtx);
 }
 
 export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
@@ -44,16 +36,20 @@ export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
   if (!appStore.observationsApiParams.lng) return;
   if (!appStore.map.map) return;
 
-  let locationData = createCurrentLocationCircle(appStore);
-  if (!locationData) return;
+  let circle = renderCircle(appStore);
+  if (!circle) return;
+
+  circle.addTo(appStore.map.map);
+  let coors = convertCircleToBBox(circle);
+  let place = currentLocationPlaceRecord(coors);
 
   // update store
   appStore.selectedPlaces = appStore.selectedPlaces.filter((p) => p.id !== -1);
-  appStore.selectedPlaces.push(locationData.place);
+  appStore.selectedPlaces.push(place);
 
   // update map
   appStore.placesMarkers.forEach((m) => m.remove());
-  appStore.placesMarkers = [locationData.marker];
+  appStore.placesMarkers = [circle];
 
   let marker;
   if (appStore.geolocation === "tracking") {
@@ -76,41 +72,4 @@ export function addCurrentPlaceToMapAndStore(appStore: AppStoreType) {
   appStore.placesMarkers.push(marker);
 
   fitBoundsPlaces(appStore);
-}
-
-export async function renderAndFetchLatLong(
-  appStore: AppStoreType,
-  componentCtx: ViewSearch,
-) {
-  if (!componentCtx.latitudeEl) return;
-  if (!componentCtx.longitudeEl) return;
-  if (!componentCtx.radiusEl) return;
-
-  let latitude = appStore.observationsApiParams.lat;
-  let longitude = appStore.observationsApiParams.lng;
-  let radius = appStore.observationsApiParams.radius;
-  if (!latitude) return;
-  if (!longitude) return;
-  if (!radius) return;
-
-  // update form
-  componentCtx.latitudeEl.value = latitude.toString();
-  componentCtx.longitudeEl.value = longitude.toString();
-  componentCtx.radiusEl.value = radius.toString();
-
-  await componentCtx.formChangeHandlerDebounced(componentCtx.formEl);
-}
-
-export function createCurrentLocationCircle(appStore: AppStoreType) {
-  if (!appStore.map.map) return;
-
-  // need to add circle to map first, before we can get bounds for circle
-  let circle = renderCircle(appStore);
-  if (!circle) return;
-
-  circle.addTo(appStore.map.map);
-  let coors = convertCircleToBBox(circle);
-  let place = currentLocationPlaceRecord(coors);
-
-  return { marker: circle, place };
 }

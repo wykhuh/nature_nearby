@@ -4,6 +4,7 @@ import { geoprivacyValues, obscurationValues } from "../../data/inat_data";
 import { html } from "../../lib/component_utils";
 import { capitalizeFirstLetter, range } from "../../lib/utils";
 import type { AppStoreType, DataComponentType } from "../../types/app";
+import type { ViewSearch } from "./component";
 
 export const iNatObservationsYears = [
   ...range(2000, new Date().getFullYear()).reverse(),
@@ -193,4 +194,25 @@ export function renderPresetDates() {
   </select>`;
 
   return content;
+}
+
+export function updateFormLatLong(
+  appStore: AppStoreType,
+  componentCtx: ViewSearch,
+) {
+  if (!componentCtx.latitudeEl) return;
+  if (!componentCtx.longitudeEl) return;
+  if (!componentCtx.radiusEl) return;
+
+  let latitude = appStore.observationsApiParams.lat;
+  let longitude = appStore.observationsApiParams.lng;
+  let radius = appStore.observationsApiParams.radius;
+  if (!latitude) return;
+  if (!longitude) return;
+  if (!radius) return;
+
+  // update form
+  componentCtx.latitudeEl.value = latitude.toString();
+  componentCtx.longitudeEl.value = longitude.toString();
+  componentCtx.radiusEl.value = radius.toString();
 }

@@ -144,7 +144,7 @@ describe("formatAppParams", () => {
   });
 
   test.each(validGeolocationType)(
-    "returns lat and lng, ignore place_id if store has geolocation and current location",
+    "returns geolocation, ignore place_id if store has geolocation and current location",
     (type) => {
       let store = structuredClone(defaultStore);
       store.observationsApiParams.lat = 0;
@@ -154,12 +154,12 @@ describe("formatAppParams", () => {
 
       let result = formatAppParams(store);
 
-      expect(result).toBe(`geolocation=${type}&lat=0&lng=10`);
+      expect(result).toBe(`geolocation=${type}`);
     },
   );
 
   test.each(validGeolocationType)(
-    "returns lat and lng, place_id if store has selected place, geolocation, and current location",
+    "returns geolocation, place_id if store has selected place, geolocation, and current location",
     (type) => {
       let store = structuredClone(defaultStore);
       store.observationsApiParams.lat = 0;
@@ -169,9 +169,7 @@ describe("formatAppParams", () => {
 
       let result = formatAppParams(store);
 
-      expect(result).toBe(
-        `place_id=${placeCity.id}&geolocation=${type}&lat=0&lng=10`,
-      );
+      expect(result).toBe(`place_id=${placeCity.id}&geolocation=${type}`);
     },
   );
 

@@ -105,6 +105,11 @@ export function formatAppParams(appStore: AppStoreType, format = "string") {
     }
   });
 
+  if (geolocation && validGeolocationType.includes(geolocation)) {
+    params.delete("lat");
+    params.delete("lng");
+  }
+
   if (format === "string") {
     return params.toString().replaceAll("%2C", ",");
   } else {

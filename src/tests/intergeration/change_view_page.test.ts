@@ -18,10 +18,10 @@ import {
   setupMapAndStore,
 } from "../fixtures/test_helpers";
 import { initApp, initPopulateMap } from "../../lib/init_app";
-import { currentLocationHandler } from "../../lib/search_current_place";
 import type { ViewSearch } from "../../components/ViewSearch/component";
 import { getLatLong } from "../../lib/geolocation";
 import { clearMapLayers, removeMap, renderMap } from "../../lib/map_utils";
+import { currentLocationHandler } from "../../components/ViewSearch/utils";
 
 const server = createMockServer();
 beforeAll(() => {

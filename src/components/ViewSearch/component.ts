@@ -1,14 +1,10 @@
 import { setupComponent } from "../../lib/component_utils";
-import {
-  addCurrentPlaceToMapAndStore,
-  currentLocationHandler,
-} from "../../lib/search_current_place";
+import { addCurrentPlaceToMapAndStore } from "../../lib/search_current_place";
 import {
   placeSelectedHandler,
   setupPlacesSearch,
 } from "../../lib/search_places";
 import { setupTaxaSearch, taxonSelectedHandler } from "../../lib/search_taxa";
-import { trackingLocationHandler } from "../../lib/search_tracking_location";
 import {
   setupUnobservedByUserSearch,
   unobservedByUserSelectedHandler,
@@ -18,14 +14,17 @@ import type { AppStoreType } from "../../types/app";
 import {
   renderSelectedMoreFiltersList,
   renderSelectedFiltersList,
+  updateFormLatLong,
 } from "./render_utils";
 import { updateAppWithFormData } from "./shared_utils";
 import { template } from "./template";
 import {
+  currentLocationHandler,
   initFilters,
   presetDatesHandler,
   resetFormHandler,
   showMoreOptionsHandler,
+  trackingLocationHandler,
 } from "./utils";
 
 export class ViewSearch extends HTMLElement {
@@ -76,6 +75,7 @@ export class ViewSearch extends HTMLElement {
     this.currentLocationEl?.addEventListener("click", this);
     this.trackLocationEl?.addEventListener("click", this);
     this.moreOptionsButton?.addEventListener("click", this);
+    window.addEventListener("geoTrackingSuccess", this);
   }
 
   disconnectedCallback() {
@@ -87,6 +87,7 @@ export class ViewSearch extends HTMLElement {
     this.currentLocationEl?.removeEventListener("click", this);
     this.trackLocationEl?.removeEventListener("click", this);
     this.moreOptionsButton?.removeEventListener("click", this);
+    window.removeEventListener("geoTrackingSuccess", this);
   }
 
   handleEvent(event: CustomEvent) {
@@ -145,6 +146,12 @@ export class ViewSearch extends HTMLElement {
       } else if (target.id === "search-unobserved-by-user") {
         unobservedByUserSelectedHandler(record, appStore);
       }
+    }
+
+    if (event.type === "geoTrackingSuccess") {
+      renderSelectedFiltersList(appStore);
+      renderSelectedMoreFiltersList(appStore);
+      updateFormLatLong(appStore, this);
     }
   }
 

@@ -1,49 +1,12 @@
-import type { ViewSearch } from "../components/ViewSearch/component";
-import {
-  renderSelectedFiltersList,
-  renderSelectedMoreFiltersList,
-} from "../components/ViewSearch/render_utils";
 import type { AppStoreType } from "../types/app";
+import { addDefaultTaxaRecordToMap } from "./data_utils";
+import { addCurrentPlaceToMapAndStore } from "./search_current_place";
+import { updateTilesForSelectedTaxa } from "./search_utils";
 
-import {
-  addCurrentPlaceToMapAndStore,
-  renderAndFetchLatLong,
-} from "./search_current_place";
-
-export async function trackingLocationHandler(
-  appStore: AppStoreType,
-  componentCtx: ViewSearch,
-) {
-  if (!componentCtx.trackLocationEl) return;
-  if (!navigator.geolocation) {
-    return;
-  }
-
-  // stop tracking
-  if (appStore.geolocation === "tracking") {
-    delete appStore.geolocation;
-    delete appStore.trackingTimestamp;
-    if (appStore.trackingId) {
-      navigator.geolocation.clearWatch(appStore.trackingId);
-      delete appStore.trackingId;
-    }
-    componentCtx.trackLocationEl.textContent = "Track location";
-
-    // start tracking
-  } else {
-    appStore.geolocation = "tracking";
-    initGeoTracking(appStore, componentCtx);
-
-    componentCtx.trackLocationEl.textContent = "Stop tracking";
-  }
-}
-
-export function initGeoTracking(
-  appStore: AppStoreType,
-  componentCtx: ViewSearch | null,
-) {
+export function initGeoTracking(appStore: AppStoreType) {
+  appStore.geolocation = "tracking";
   appStore.trackingId = navigator.geolocation.watchPosition(
-    (data) => geoTrackingSuccess(data, appStore, componentCtx),
+    (data) => geoTrackingSuccess(data),
     (error) => geoTrackingError(error),
     {
       enableHighAccuracy: true,
@@ -53,10 +16,17 @@ export function initGeoTracking(
   );
 }
 
-export async function geoTrackingSuccess(
+export function geoTrackingSuccess(data: GeolocationPosition) {
+  window.dispatchEvent(
+    new CustomEvent("geoTrackingSuccess", {
+      detail: data,
+    }),
+  );
+}
+
+export async function geoTrackingHandler(
   data: GeolocationPosition,
   appStore: AppStoreType,
-  componentCtx: ViewSearch | null,
 ) {
   let map = appStore.map.map;
   if (!map) {
@@ -67,6 +37,7 @@ export async function geoTrackingSuccess(
     let diff = data.timestamp - appStore.trackingTimestamp;
     if (diff < 200) {
       console.log("calibrating", diff);
+      return;
     } else if (diff < 1000 * 10) {
       console.log("too recent", diff);
       return;
@@ -80,20 +51,18 @@ export async function geoTrackingSuccess(
   appStore.observationsApiParams.lat = latitude;
   appStore.observationsApiParams.lng = longitude;
   appStore.trackingTimestamp = data.timestamp;
-  if (appStore.observationsApiParams.radius === undefined) {
-    appStore.observationsApiParams.radius = appStore.radius;
-  }
 
   addCurrentPlaceToMapAndStore(appStore);
 
-  // update ui
-  renderSelectedFiltersList(appStore);
-  renderSelectedMoreFiltersList(appStore);
-
-  //  update ui and app state
-  if (componentCtx) {
-    await renderAndFetchLatLong(appStore, componentCtx);
+  if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {
+    // load default Taxa map tiles
+    await addDefaultTaxaRecordToMap(appStore);
+  } else {
+    // update taxa tiles for selected taxa
+    await updateTilesForSelectedTaxa(appStore);
   }
+
+  window.dispatchEvent(new Event("updateHeaderCount"));
 }
 
 export function geoTrackingError(error: GeolocationPositionError) {
