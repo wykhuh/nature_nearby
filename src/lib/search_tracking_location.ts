@@ -1,5 +1,5 @@
 import type { AppStoreType } from "../types/app";
-import { addDefaultTaxaRecordToMap } from "./data_utils";
+import { addDefaultTaxaRecordToMap, clearMapLayers } from "./data_utils";
 import { addCurrentPlaceToMapAndStore } from "./search_current_place";
 import { updateTilesForSelectedTaxa } from "./search_utils";
 
@@ -53,6 +53,9 @@ export async function geoTrackingHandler(
   appStore.trackingTimestamp = data.timestamp;
 
   addCurrentPlaceToMapAndStore(appStore);
+
+  // remove map layers
+  clearMapLayers(appStore.taxaMapLayers, appStore.map.layerControl);
 
   if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {
     // load default Taxa map tiles

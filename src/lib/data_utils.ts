@@ -226,7 +226,7 @@ export function removeDefaultTaxonFromStoreAndMap(appStore: AppStoreType) {
   appStore.color = "";
 }
 
-function clearMapLayers(
+export function clearMapLayers(
   mapLayers: { [index: string]: TileLayer[] },
   layerControl: L.Control.Layers,
 ) {
