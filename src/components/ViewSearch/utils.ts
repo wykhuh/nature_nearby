@@ -23,6 +23,7 @@ import {
 } from "../../lib/search_current_place";
 import { updateFormLatLong } from "./render_utils";
 import { initGeoTracking } from "../../lib/search_tracking_location";
+import { updateAppUrl } from "../../lib/url_utils";
 
 export function initFilters(
   appStore: AppStoreType,
@@ -193,19 +194,18 @@ export function showMoreOptionsHandler(componentCtx: ViewSearch) {
   }
 }
 
+// called when button clicked
 export async function currentLocationHandler(
   appStore: AppStoreType,
   componentCtx: ViewSearch,
 ) {
+  if (!componentCtx.trackLocationEl) return;
+
   let map = appStore.map.map;
   if (!map) return;
 
-  // stop tracking
-  delete appStore.trackingTimestamp;
-  if (appStore.trackingId) {
-    navigator.geolocation.clearWatch(appStore.trackingId);
-    delete appStore.trackingId;
-  }
+  stopTracking(appStore);
+  componentCtx.trackLocationEl.textContent = "Track location";
 
   await initGeoCurrent(appStore);
   addCurrentPlaceToMapAndStore(appStore);
@@ -213,6 +213,7 @@ export async function currentLocationHandler(
   await componentCtx.formChangeHandlerDebounced(componentCtx.formEl);
 }
 
+// called when button clicked
 export async function trackingLocationHandler(
   appStore: AppStoreType,
   componentCtx: ViewSearch,
@@ -224,14 +225,7 @@ export async function trackingLocationHandler(
 
   // stop tracking
   if (appStore.geolocation === "tracking") {
-    delete appStore.geolocation;
-
-    delete appStore.trackingTimestamp;
-    if (appStore.trackingId) {
-      navigator.geolocation.clearWatch(appStore.trackingId);
-      delete appStore.trackingId;
-    }
-
+    stopTracking(appStore);
     addCurrentPlaceToMapAndStore(appStore);
     componentCtx.trackLocationEl.textContent = "Track location";
 
@@ -241,4 +235,15 @@ export async function trackingLocationHandler(
 
     componentCtx.trackLocationEl.textContent = "Stop tracking";
   }
+}
+
+export function stopTracking(appStore: AppStoreType) {
+  delete appStore.geolocation;
+
+  delete appStore.trackingTimestamp;
+  if (appStore.trackingId) {
+    navigator.geolocation.clearWatch(appStore.trackingId);
+    delete appStore.trackingId;
+  }
+  updateAppUrl(window.location, appStore);
 }

@@ -33,7 +33,7 @@ import {
 import { initApp, initPopulateMap } from "../../lib/init_app";
 import { allTaxaRecord, bboxPlaceRecord } from "../../data/inat_data";
 import { leafletMapLayers } from "../../lib/data_utils";
-import { geoTrackingHandler } from "../../lib/search_tracking_location";
+import { geoTrackingSuccessHandler } from "../../lib/search_tracking_location";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -340,7 +340,7 @@ describe("initApp and initPopulateMap", () => {
       await initApp(`?geolocation=${type}`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -371,7 +371,7 @@ describe("initApp and initPopulateMap", () => {
       await initApp(`?geolocation=${type}&radius=5`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -422,7 +422,7 @@ describe("initApp and initPopulateMap", () => {
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -462,7 +462,7 @@ describe("initApp and initPopulateMap", () => {
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({

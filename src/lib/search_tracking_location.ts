@@ -2,9 +2,9 @@ import type { AppStoreType } from "../types/app";
 import { addDefaultTaxaRecordToMap, clearMapLayers } from "./data_utils";
 import { addCurrentPlaceToMapAndStore } from "./search_current_place";
 import { updateTilesForSelectedTaxa } from "./search_utils";
+import { updateAppUrl } from "./url_utils";
 
 export function initGeoTracking(appStore: AppStoreType) {
-  appStore.geolocation = "tracking";
   appStore.trackingId = navigator.geolocation.watchPosition(
     (data) => geoTrackingSuccess(data),
     (error) => geoTrackingError(error),
@@ -24,7 +24,7 @@ export function geoTrackingSuccess(data: GeolocationPosition) {
   );
 }
 
-export async function geoTrackingHandler(
+export async function geoTrackingSuccessHandler(
   data: GeolocationPosition,
   appStore: AppStoreType,
 ) {
@@ -32,6 +32,8 @@ export async function geoTrackingHandler(
   if (!map) {
     return;
   }
+  appStore.geolocation = "tracking";
+
   // don't update if previous location update is very recent
   if (appStore.trackingTimestamp) {
     let diff = data.timestamp - appStore.trackingTimestamp;
@@ -51,11 +53,14 @@ export async function geoTrackingHandler(
   appStore.observationsApiParams.lat = latitude;
   appStore.observationsApiParams.lng = longitude;
   appStore.trackingTimestamp = data.timestamp;
-
-  addCurrentPlaceToMapAndStore(appStore);
+  if (appStore.observationsApiParams.radius === undefined) {
+    appStore.observationsApiParams.radius = appStore.radius;
+  }
 
   // remove map layers
   clearMapLayers(appStore.taxaMapLayers, appStore.map.layerControl);
+  // add marker and circle
+  addCurrentPlaceToMapAndStore(appStore);
 
   if (appStore.selectedTaxa.length === 1 && appStore.selectedTaxa[0].id === 0) {
     // load default Taxa map tiles
@@ -65,6 +70,7 @@ export async function geoTrackingHandler(
     await updateTilesForSelectedTaxa(appStore);
   }
 
+  updateAppUrl(window.location, appStore);
   window.dispatchEvent(new Event("updateHeaderCount"));
 }
 

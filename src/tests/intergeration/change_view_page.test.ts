@@ -72,6 +72,7 @@ describe("switch pages", () => {
   let context = {
     latitudeEl: {},
     longitudeEl: {},
+    trackLocationEl: {},
     formChangeHandlerDebounced: () => {},
   } as ViewSearch;
 

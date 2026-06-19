@@ -56,40 +56,29 @@ class SelectedFiltersItem extends HTMLElement {
   }
 
   handleEvent(event: Event) {
+    let appStore = window.app.store;
     if (event.type === "click") {
       if (this.type === "taxon") {
-        removeTaxon(
-          Number((this.data as NormalizedTaxon).id),
-          window.app.store,
-        );
+        removeTaxon(Number((this.data as NormalizedTaxon).id), appStore);
         this.innerHTML = "";
         setInputValue(`#observations-form input#search-taxa`, "");
       } else if (this.type === "place") {
-        removePlace(
-          Number((this.data as NormalizedPlace).id),
-          window.app.store,
-        );
+        removePlace(Number((this.data as NormalizedPlace).id), appStore);
         this.innerHTML = "";
         setInputValue(`#observations-form input#search-places`, "");
       } else if (this.type === "custom_boundary") {
-        removePlace(
-          Number((this.data as NormalizedPlace).id),
-          window.app.store,
-        );
+        removePlace(Number((this.data as NormalizedPlace).id), appStore);
         this.innerHTML = "";
       } else if (this.type === "current_location") {
-        removePlace(
-          Number((this.data as NormalizedPlace).id),
-          window.app.store,
-        );
+        removePlace(Number((this.data as NormalizedPlace).id), appStore);
         this.innerHTML = "";
         deleteCurrentLocationFilter();
       } else if (this.type === "unobservedByUser") {
-        removeUnobservedByUser(window.app.store);
+        removeUnobservedByUser(appStore);
         this.innerHTML = "";
       } else {
         let field = (this.data as ParamsType).field;
-        deleteFilter(field, (this.data as ParamsType).value, window.app.store);
+        deleteFilter(field, (this.data as ParamsType).value, appStore);
         if (field === "month" || field === "year") {
           setSelectedOption(`#observations-form select#presetDates option`);
         }

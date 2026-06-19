@@ -259,6 +259,7 @@ export function renderCircle(appStore: AppStoreType) {
   if (appStore.observationsApiParams.radius === undefined) return;
   if (appStore.observationsApiParams.lat === undefined) return;
   if (appStore.observationsApiParams.lng === undefined) return;
+
   return L.circle(
     [appStore.observationsApiParams.lat, appStore.observationsApiParams.lng],
     {

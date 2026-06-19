@@ -9,7 +9,7 @@ import { clearMapLayers, removeMap, renderMap } from "../../lib/map_utils.ts";
 import { viewComponentObj } from "../../data/app_data.ts";
 import { initPopulateMap } from "../../lib/init_app.ts";
 import { renderDemoLayers } from "../../lib/dev_utils.ts";
-import { geoTrackingHandler } from "../../lib/search_tracking_location.ts";
+import { geoTrackingSuccessHandler } from "../../lib/search_tracking_location.ts";
 
 class PageHome extends HTMLElement {
   constructor() {
@@ -39,7 +39,7 @@ class PageHome extends HTMLElement {
     if (!target) return;
 
     if (event.type === "geoTrackingSuccess") {
-      geoTrackingHandler(event.detail, window.app.store);
+      geoTrackingSuccessHandler(event.detail, window.app.store);
     }
   }
 

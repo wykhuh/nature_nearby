@@ -31,7 +31,7 @@ import { currentLocationHandler } from "../../components/ViewSearch/utils";
 import type { ViewSearch } from "../../components/ViewSearch/component";
 import { getLatLong } from "../../lib/geolocation";
 import { validGeolocationType } from "../../data/app_data";
-import { geoTrackingHandler } from "../../lib/search_tracking_location";
+import { geoTrackingSuccessHandler } from "../../lib/search_tracking_location";
 
 const server = createMockServer();
 beforeAll(() => {
@@ -179,7 +179,7 @@ describe("removePlace", () => {
       await initApp(`?lat=10&lng=10&geolocation=${type}`, "/", store);
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -251,7 +251,7 @@ describe("removePlace", () => {
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -304,7 +304,7 @@ describe("removePlace", () => {
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -355,7 +355,7 @@ describe("removePlace", () => {
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -415,7 +415,7 @@ describe("removePlace", () => {
       );
       await initPopulateMap(map, terraDraw, layerControl, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -565,7 +565,7 @@ describe("drawBBoxHandler", () => {
       await initPopulateMap(map, terraDraw, layerControl, store);
       await drawBBoxHandler(coors, store);
       if (type === "tracking") {
-        await geoTrackingHandler(trackingData, store);
+        await geoTrackingSuccessHandler(trackingData, store);
       }
 
       expect(store.observationsApiParams).toStrictEqual({
@@ -605,6 +605,7 @@ describe("currentLocationHandler", () => {
   let context = {
     latitudeEl: {},
     longitudeEl: {},
+    trackLocationEl: {},
     formChangeHandlerDebounced: () => {},
   } as ViewSearch;
 

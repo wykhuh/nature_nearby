@@ -17,7 +17,10 @@ import {
 } from "./data_utils.ts";
 import { fitBoundsPlaces } from "./map_utils.ts";
 import { updateAppState } from "../components/ViewSearch/shared_utils.ts";
-import { setPlaceIdFormField } from "../components/ViewSearch/utils.ts";
+import {
+  setPlaceIdFormField,
+  stopTracking,
+} from "../components/ViewSearch/utils.ts";
 
 export function setupPlacesSearch(selector: string) {
   const autoCompletePlacesJS = new autoComplete({
@@ -175,6 +178,11 @@ export function removeOnePlaceFromStore(
     delete appStore.observationsApiParams.lng;
     delete appStore.observationsApiParams.radius;
     appStore.placesMarkers = [];
+
+    if (appStore.geolocation === "tracking") {
+      stopTracking(appStore);
+    }
+    delete appStore.geolocation;
 
     // update observationsApiParams for places
   } else {

@@ -34,9 +34,17 @@ const basicFields = html`
       </div>
 
       <div class="form-group">
-        <button type="button" id="track-location" name="track-location">
-          Track location
-        </button>
+        <button
+          type="button"
+          id="track-location"
+          name="track-location"
+          class="btn-primary"
+        >
+          Track location</button
+        ><app-tooltip
+          data-content="?"
+          data-tooltip="Sets latitude and longitude using your current location. As you move around, the location, species and observations will be updated."
+        ></app-tooltip>
       </div>
 
       <div class="form-group">
