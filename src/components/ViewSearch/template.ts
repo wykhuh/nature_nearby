@@ -361,6 +361,9 @@ let observationPane = html`
         ></label>
         <select name="radius" id="radius">
           <option></option>
+          <option value=".012">39.4 ft (12 m)</option>
+          <option value=".025">82.0 ft (25 m)</option>
+          <option value=".05">164.0 ft (50 m)</option>
           <option value=".1">328.1 ft (100 m)</option>
           <option value=".2">656.2 ft (200 m)</option>
           <option value=".4">1,312.3 feet (400 m)</option>
