@@ -225,12 +225,14 @@ export async function trackingLocationHandler(
   // stop tracking
   if (appStore.geolocation === "tracking") {
     delete appStore.geolocation;
-    
+
     delete appStore.trackingTimestamp;
     if (appStore.trackingId) {
       navigator.geolocation.clearWatch(appStore.trackingId);
       delete appStore.trackingId;
     }
+
+    addCurrentPlaceToMapAndStore(appStore);
     componentCtx.trackLocationEl.textContent = "Track location";
 
     // start tracking
