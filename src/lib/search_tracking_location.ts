@@ -28,6 +28,13 @@ export async function geoTrackingSuccessHandler(
   data: GeolocationPosition,
   appStore: AppStoreType,
 ) {
+  if (import.meta.env?.VITE_CACHE_GEO === "true") {
+    data = {
+      coords: { latitude: 34.136555, longitude: -118.294197 },
+      timestamp: Date.now(),
+    } as GeolocationPosition;
+  }
+
   let map = appStore.map.map;
   if (!map) {
     return;
