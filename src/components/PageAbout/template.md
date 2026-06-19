@@ -16,22 +16,27 @@ Nature Nearby is a website that allows people to discover the plants, animals, f
 
 This site provides a few ways find the species for a given location.
 
-1. **Select location**. There are three ways to select a location.
+1. **Select location**. There are four ways to select a location.
    1. If you want search for species within a place, enter the place name in the "Places" search box. You can search for multiple places.
    2. If you want to search for species near your current location, click the "Current Location" button. The app uses your device's GPS, WiFi, or celluar signals to determine your location. By default, the app creates a circular area with a radius of 1 mile (1.6 kilometer) from your current location. You can change the radius using "More Options" > "Geospatial" > "Radius".
-   3. If you want to search for species within a custom rectangular area, click the <icon-square></icon-square> icon in the upper left of the map. Click on the map to set one corner of the rectangle, move your cursor, and click the map to set the second corner of the rectangle.
+   3. If you want the site to update the location as you walk around an area, click "Track location". You can change the radius using "More Options" > "Geospatial" > "Radius".
+   4. If you want to search for species within a custom rectangular area, click the <icon-square></icon-square> icon in the upper left of the map. Click on the map to set one corner of the rectangle, move your cursor, and click the map to set the second corner of the rectangle.
 
 2. **Select species.** By default, this site shows all species. You can search for a species by typing in the species name in "Species" search box. You can search for mutiple species. You can also select one or more of well known species.
 
 3. **Select date.** By default, this site shows all dates. You can select species that were observed during a specific time period by selecting a date range from the "Observed Dates" dropdown. If you want more date options, use 'More Options" > "Date Observed".
 
-4. For more search options, click the "More Options" button.
+4. **Select unobserved species.** If you have an iNaturalist acoount, and you want to see species you have not observed, enter your iNaturalist username for "Unobserved by user".
 
-[Here's a search](/?place_id=854&lat=37.7740&lng=-122.4194&radius=1.6&iconic_taxa=Aves&month=5,6&year=2024,2025,2026) for "birds" in "San Francisco", with currrent location, and May-June 2024-2026 observed dates.
+5. For more search options, click the "More Options" button.
+
+[Here's a search](/?taxon_id=3&place_id=962&geolocation=current&radius=1.6&month=6&year=2024,2025,2026) for "birds" in "Los Angeles", with currrent location, and June 2024-2026 observed dates.
+
 <img src="/images/search.jpg" width="300px">
 
 Notes:
 
+- This site does not track, save, or share your search queries, location information, or site usage.
 - The fields for your search query will be shown in green.
 - Click the "x" for the green search fields to delete the search query.
 - Click "Reset" button to delete all search queries.
@@ -55,7 +60,7 @@ Click on the observation image to show a popup with all the photos and sounds fo
 
 ## Technical Details
 
-This site grabs data from the iNaturalist v2 API (https://api.inaturalist.org/v2/docs/).
+This site grabs data from the [iNaturalist v2 API](https://api.inaturalist.org/v2/docs/). The site uses observations and photos with "cc0", "cc-by", "cc-by-nc", "cc-by-sa", or "cc-by-nc-sa" license.
 
 This site is built using JavaScript/TypeScript, custom web components, CSS, and HTML. I tried to keep third party library to a minimum. This site uses [Leaflet](https://leafletjs.com/) (maps) and[Autocomplete.js](https://tarekraafat.github.io/autoComplete.js/) (autocomplete search). I also wanted to keep costs low as possible so this is a static site that is hosted for free on Cloudflare Pages.
 
