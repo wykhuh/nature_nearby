@@ -8,7 +8,11 @@ import img from '../../assets/images/search.jpg'
 
 ## About
 
+Have you ever taken a walk or hike and wonder what kinds of animals and plants are in the area?
+
 Nature Nearby is a website that allows people to discover the plants, animals, fungi, etc. that are present at a given location. The data and photos comes from [iNaturalist](https://www.inaturalist.org), a platform that encourages people to observe and identify living organisms.
+
+The idea for this site came from Dane's post [Is an app to see the nearest observation wortwhile?](https://forum.inaturalist.org/t/is-an-app-to-see-the-nearest-observation-wortwhile/79594) on the iNaturalist forum.
 
 ## Instructions
 
@@ -17,9 +21,9 @@ Nature Nearby is a website that allows people to discover the plants, animals, f
 This site provides a few ways find the species for a given location.
 
 1. **Select location**. There are four ways to select a location.
-   1. If you want search for species within a place, enter the place name in the "Places" search box. You can search for multiple places.
-   2. If you want to search for species near your current location, click the "Current Location" button. The app uses your device's GPS, WiFi, or celluar signals to determine your location. By default, the app creates a circular area with a radius of 1 mile (1.6 kilometer) from your current location. You can change the radius using "More Options" > "Geospatial" > "Radius".
-   3. If you want the site to update the location as you walk around an area, click "Track location". You can change the radius using "More Options" > "Geospatial" > "Radius".
+   1. If you want the site to update the location as you walk around an area, click "Track location". The app uses your device's GPS, WiFi, or celluar signals to determine your location. By default, the app creates a circular area with a radius of 1 mile (1.6 kilometer) from your current location. You can change the radius using "More Options" > "Geospatial" > "Radius".
+   2. If you want to search for species near your current location, click the "Current Location" button. You need to click the button everytime you want to update your location. You can change the radius using "More Options" > "Geospatial" > "Radius".
+   3. If you want search for species within a place, enter the place name in the "Places" search box. You can search for multiple places.
    4. If you want to search for species within a custom rectangular area, click the <icon-square></icon-square> icon in the upper left of the map. Click on the map to set one corner of the rectangle, move your cursor, and click the map to set the second corner of the rectangle.
 
 2. **Select species.** By default, this site shows all species. You can search for a species by typing in the species name in "Species" search box. You can search for mutiple species. You can also select one or more of well known species.
@@ -36,7 +40,6 @@ This site provides a few ways find the species for a given location.
 
 Notes:
 
-- This site does not track, save, or share your search queries, location information, or site usage.
 - The fields for your search query will be shown in green.
 - Click the "x" for the green search fields to delete the search query.
 - Click "Reset" button to delete all search queries.
@@ -46,7 +49,7 @@ Notes:
 
 Click "Species" in the top menu to see a list of species that match your search query.
 
-Click on the observations link for the species to view the observations for that species.
+Click on the observations links to view the observations for that species.
 
 If you search for place by name, a badge will be shown in the upper right corner for species are marked as native (green N) or invasive (pink IN) by iNaturalist.
 
@@ -57,6 +60,10 @@ If you search for place by name, a badge will be shown in the upper right corner
 Click "Observations" in the top menu to see a list of iNaturalist observations that match your search query.
 
 Click on the observation image to show a popup with all the photos and sounds for the observation.
+
+## Privacy
+
+This site does not save or share your search queries, location information, site usage, or personal data.
 
 ## Technical Details
 
